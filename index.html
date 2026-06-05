@@ -597,8 +597,8 @@
     --border: #ffd6b3;
     --border-light: #ffcaa0;
     --text-primary: #5d4037;
-    --text-secondary: #8d6e63;
-    --text-muted: #a1887f;
+    --text-secondary: #6d4c41;  /* 加深颜色提高对比度 */
+    --text-muted: #8d6e63;      /* 加深颜色提高对比度 */
     --accent: #ff9800;
     --accent-light: #ffb74d;
     --success: #4caf50;
@@ -610,13 +610,21 @@
     --info: #2196f3;
     --info-bg: #e3f2fd;
     --purple: #9c27b0;
+  }
+  
+  /* 暖色主题下的表格标题样式 */
+  :root[data-theme="warm"] .data-table th,
+  :root[data-theme="warm"] .pay-detail-table th {
+    background: #fff5eb !important;
+    color: #5d4037 !important;  /* 使用深色文字 */
+    border-bottom-color: #ffd6b3;
   }</style>
 </head>
 <body>
 
 <!-- ===== SIDEBAR ===== -->
 <aside class="sidebar" id="sidebar">
-  <button id="themeToggleBtn" onclick="toggleTheme()" style="position:fixed;top:10px;right:240px;background:var(--bg-card);border:1px solid var(--border);border-radius:20px;padding:6px 12px;font-size:12px;cursor:pointer;color:var(--text-secondary);">🌙</button><div class="sidebar-logo">
+  <div class="sidebar-logo">
     <div class="icon">📊</div>
     <div class="text">遇见美好<span>财务数据看板 V3</span></div>
   </div>
@@ -647,6 +655,7 @@
 <div class="main-area">
   <header class="main-header">
     <div class="page-title" id="pageTitle">📈 总览面板</div>
+    <button id="themeToggleBtn" onclick="toggleTheme(event)" style="background:var(--bg-card);border:1px solid var(--border);border-radius:20px;padding:4px 10px;font-size:14px;cursor:pointer;color:var(--text-secondary);margin-left:10px;display:inline-flex;align-items:center;gap:4px;" title="切换主题">🌙</button>
     <small id="pageVer" style="font-size:9px;color:var(--text-muted);opacity:0.5;margin-left:8px;">v20260528b</small>
     <small id="filterStatus" style="font-size:9px;color:var(--text-muted);opacity:0.5;margin-left:6px;">等待筛选...</small>
     <div class="header-actions">
@@ -738,7 +747,7 @@
     </div>
   </header>
 
-  <div class="main-content"<button id="themeToggleBtn" onclick="toggleTheme()">🌙</button>>
+  <div class="main-content">
 
     <!-- ===== MODULE 1: DASHBOARD ===== -->
     <div class="module-pane active" id="pane-dashboard">
@@ -983,7 +992,73 @@
   <div class="modal" id="recModalBox"></div>
 </div>
 
-<script src="gh-config.js?v=3"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/dist/umd/supabase.min.js"></script>
+<script>
+// Supabase 配置
+const SUPABASE_URL = 'https://wzkeqjpxrdhorlbktzen.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_Pn6kcFw6eZvtBKbMskhPQg_hZw86U-r';
+
+// 初始化 Supabase 客户端
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// 实时订阅
+let realtimeSubscription = null;
+
+// Supabase Realtime 实时监听函数
+function setupRealtimeSubscription() {
+  console.log('[Realtime] 正在设置实时监听...');
+  
+  // 监听 projects 表的变化
+  const projectsChannel = supabaseClient
+    .channel('public:projects')
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'projects' },
+      (payload) => {
+        console.log('[Realtime] Projects 表变化:', payload.eventType, payload.new);
+        // 使用console.log替代showToast，因为showToast可能还未定义
+        console.log('🔄 检测到数据更新，正在刷新...');
+        setTimeout(() => location.reload(), 1500);
+      }
+    )
+    .subscribe((status) => {
+      console.log('[Realtime] Projects 订阅状态:', status);
+    });
+  
+  // 监听 incomes 表的变化
+  const incomesChannel = supabaseClient
+    .channel('public:incomes')
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'incomes' },
+      (payload) => {
+        console.log('[Realtime] Incomes 表变化:', payload.eventType);
+        console.log('🔄 检测到收入数据更新，正在刷新...');
+        setTimeout(() => location.reload(), 1500);
+      }
+    )
+    .subscribe();
+  
+  // 监听 costs 表的变化
+  const costsChannel = supabaseClient
+    .channel('public:costs')
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'costs' },
+      (payload) => {
+        console.log('[Realtime] Costs 表变化:', payload.eventType);
+        console.log('🔄 检测到成本数据更新，正在刷新...');
+        setTimeout(() => location.reload(), 1500);
+      }
+    )
+    .subscribe();
+  
+  // 保存订阅引用，以便页面卸载时清理
+  realtimeSubscription = { projectsChannel, incomesChannel, costsChannel };
+  
+  console.log('[Realtime] ✅ 实时监听已启用');
+}
+</script>
 
   <script src="data.js?v=3"></script>
 <script src="supplier-categories.js?v=3"></script>
@@ -1000,10 +1075,10 @@
    优先级: Supabase > GitHub > 本地 data.js
 ========================================================================== */
 
-/* ---------- GitHub 数据存储（配置见 gh-config.js） ---------- */
+/* ---------- Supabase 数据存储（云数据库） ---------- */
 
+// UTF-8编码工具函数（保留用于兼容）
 function utf8ToBase64(str) {
-  // ★ 使用 TextEncoder API 确保 UTF-8 编码正确（修复 unescape 导致的乱码问题）
   var bytes = new TextEncoder().encode(str);
   var binStr = '';
   for (var i = 0; i < bytes.length; i++) {
@@ -1012,155 +1087,171 @@ function utf8ToBase64(str) {
   return btoa(binStr);
 }
 
-/* 从 GitHub 加载数据 */
-var _githubLastError = null;
-/* 安全的 UTF-8 base64 解码 - v20260529 修复版（解决中文乱码） */
+var _supabaseLastError = null;
+var _githubLastError = null; // 保留兼容性
+
+/* 安全的 UTF-8 base64 解码 */
 function safeAtob(base64) {
   try {
-    // 1. Base64 解码为二进制字符串
     var binary = atob(base64);
-    
-    // 2. 将二进制字符串转换为字节数组
     var bytes = new Uint8Array(binary.length);
     for (var i = 0; i < binary.length; i++) {
       bytes[i] = binary.charCodeAt(i);
     }
-    
-    // 3. 使用 TextDecoder 正确解码 UTF-8（始终使用，不判断）
     return new TextDecoder('utf-8').decode(bytes);
   } catch(e) {
     console.error('[safeAtob] UTF-8解码失败:', e.message);
-    // 降级方案：尝试直接返回（可能会有乱码）
     try { return atob(base64); } catch(e2) { return ''; }
   }
 }
 
-async function githubLoadData() {
-  _githubLastError = null;
+/* 从 Supabase 加载所有团期数据 */
+async function supabaseLoadData() {
+  _supabaseLastError = null;
   try {
-    var resp = await fetch(GITHUB_RAW_URL, { cache: 'no-cache' });
-    if (!resp.ok) throw new Error('HTTP ' + resp.status + ' ' + resp.statusText);
-    var data = await resp.json();
-    if (!Array.isArray(data) || data.length === 0) throw new Error('数据为空');
-    _githubLastError = null;
-    return data;
+    console.log('[Supabase] 开始加载团期数据...');
+    
+    const { data: projects, error } = await supabaseClient
+      .from('projects')
+      .select(`
+        *,
+        incomes (*),
+        costs (*),
+        people_details (*)
+      `)
+      .order('created_at', { ascending: false });
+    
+    if (error) throw error;
+    if (!projects || projects.length === 0) {
+      console.warn('[Supabase] 数据为空');
+      return [];
+    }
+    
+    // 数据格式转换：Supabase → V2格式
+    const formattedData = projects.map(p => ({
+      id: p.id,
+      name: p.name,
+      productType: p.product_type,
+      startDate: p.start_date,
+      operator: p.operator,
+      remark: p.remark,
+      incomes: (p.incomes || []).map(i => ({
+        id: i.id,
+        name: i.name,
+        amount: parseFloat(i.amount) || 0
+      })),
+      costs: (p.costs || []).map(c => ({
+        id: c.id,
+        name: c.name,
+        amount: parseFloat(c.amount) || 0,
+        paidAmount: parseFloat(c.paid_amount) || 0,
+        _supplierId: c.supplier_id
+      })),
+      peopleDetails: (p.people_details || []).map(pd => ({
+        name: pd.name,
+        count: pd.count || 0
+      })),
+      created_at: p.created_at,
+      updated_at: p.updated_at
+    }));
+    
+    _supabaseLastError = null;
+    console.log(`[Supabase] 加载成功，${formattedData.length}个团期`);
+    return formattedData;
+    
   } catch(e) {
-    _githubLastError = e.message || String(e);
-    console.warn('[GitHub] 拉取失败:', _githubLastError);
-    // 尝试用 API 端点（带 Token）作为备选
-    try {
-      var apiResp = await fetch(GITHUB_API_URL, {
-        headers: { 'Authorization': 'Bearer ' + (typeof GITHUB_TOKEN !== 'undefined' ? GITHUB_TOKEN : ''), 'Accept': 'application/vnd.github+json' },
-        cache: 'no-cache'
-      });
-      if (apiResp.ok) {
-        var apiData = await apiResp.json();
-        if (apiData && apiData.content && apiData.encoding === 'base64') {
-          var decoded = JSON.parse(safeAtob(apiData.content.replace(/\s/g, '')));
-          if (Array.isArray(decoded)) {
-            _githubLastError = null;
-            console.log('[GitHub] API端点备用加载成功, ' + decoded.length + '条');
-            return decoded;
-          }
-        }
-      }
-    } catch(e2) { console.warn('[GitHub] API备用也失败:', e2.message); }
+    _supabaseLastError = e.message || String(e);
+    console.error('[Supabase] 加载失败:', _supabaseLastError);
     return null;
   }
 }
 
-/* 保存完整 projects 数组到 GitHub data.json（含乐观锁冲突检测） */
-async function githubSaveData(projectsArray) {
+// 别名：保持兼容性
+githubLoadData = supabaseLoadData;
+
+/* 保存数据到 Supabase */
+async function supabaseSaveData(projectsArray) {
   try {
-    var getResp = await fetch(GITHUB_API_URL, {
-      headers: { 'Authorization': 'Bearer ' + GITHUB_TOKEN, 'Accept': 'application/vnd.github+json' }
-    });
-    if (!getResp.ok) throw new Error('无法获取云端数据状态');
-    var fileInfo = await getResp.json();
-    var sha = fileInfo.sha;
-
-    // ★ 乐观锁：构造 payload
-    var payload = projectsArray.length > 0 ? JSON.parse(JSON.stringify(projectsArray)) : [{}];
-    if (typeof suppliers !== 'undefined' && suppliers && suppliers.length > 0) {
-      payload[0]._suppliers = suppliers;
-    }
-
-    var body = {
-      message: 'Update data.json from web panel',
-      content: utf8ToBase64(JSON.stringify(payload, null, 2)),
-      sha: sha
-    };
-
-    var putResp = await fetch(GITHUB_API_URL, {
-      method: 'PUT',
-      headers: { 'Authorization': 'Bearer ' + GITHUB_TOKEN, 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    });
-
-    // ★ 冲突检测：如果 sha 不匹配（409 Conflict），自动拉取最新数据并重试
-    if (putResp.status === 409) {
-      console.warn('[GitHub Save] 检测到云端数据已被他人更新，自动拉取最新数据...');
-      // 重新拉取云端最新数据
-      var latestResp = await fetch(GITHUB_RAW_URL, { cache: 'no-cache' });
-      if (latestResp.ok) {
-        var latestData = await latestResp.json();
-        if (latestData && Array.isArray(latestData) && latestData.length > 0) {
-          // 用云端最新数据作为基础，合并当前本地修改
-          window.TOUR_DATA = latestData;
-          // 重新获取 sha
-          var reGetResp = await fetch(GITHUB_API_URL, {
-            headers: { 'Authorization': 'Bearer ' + GITHUB_TOKEN, 'Accept': 'application/vnd.github+json' }
-          });
-          if (reGetResp.ok) {
-            var reFileInfo = await reGetResp.json();
-            // 用云端最新数据构造 payload（保留当前编辑的项目）
-            var mergedPayload = JSON.parse(JSON.stringify(latestData));
-            // 将当前 projectsArray 中的修改合并进去（基于 id 匹配）
-            for (var mi = 0; mi < projectsArray.length; mi++) {
-              var cur = projectsArray[mi];
-              var found = false;
-              for (var mj = 0; mj < mergedPayload.length; mj++) {
-                if (mergedPayload[mj].id === cur.id) {
-                  mergedPayload[mj] = cur;
-                  found = true;
-                  break;
-                }
-              }
-              if (!found) mergedPayload.push(cur); // 新增的项目
-            }
-            if (typeof suppliers !== 'undefined' && suppliers && suppliers.length > 0) {
-              mergedPayload[0]._suppliers = suppliers;
-            }
-            var retryBody = {
-              message: 'Update data.json from web panel (auto-merged)',
-              content: utf8ToBase64(JSON.stringify(mergedPayload, null, 2)),
-              sha: reFileInfo.sha
-            };
-            var retryResp = await fetch(GITHUB_API_URL, {
-              method: 'PUT',
-              headers: { 'Authorization': 'Bearer ' + GITHUB_TOKEN, 'Content-Type': 'application/json' },
-              body: JSON.stringify(retryBody)
-            });
-            if (!retryResp.ok) throw new Error('合并保存失败: HTTP ' + retryResp.status);
-            // 更新本地数据为合并后的版本
-            window.TOUR_DATA = mergedPayload;
-            projects = mergedPayload.map(function(p) { return normalizeProject(p); });
-            await appendChangeLog('save', '数据保存(自动合并)', mergedPayload.length);
-            return true;
-          }
+    console.log(`[Supabase] 开始保存 ${projectsArray.length} 个团期...`);
+    
+    // 批量插入/更新团期数据
+    for (const project of projectsArray) {
+      // 保存团期基本信息
+      const { error: projectError } = await supabaseClient
+        .from('projects')
+        .upsert({
+          id: project.id,
+          name: project.name,
+          product_type: project.productType,
+          start_date: project.startDate,
+          operator: project.operator,
+          remark: project.remark
+        }, { onConflict: 'id' });
+      
+      if (projectError) throw projectError;
+      
+      // 保存收入项
+      if (project.incomes && project.incomes.length > 0) {
+        for (const income of project.incomes) {
+          const { error: incomeError } = await supabaseClient
+            .from('incomes')
+            .upsert({
+              id: income.id || `${project.id}_income_${income.name}`,
+              project_id: project.id,
+              name: income.name,
+              amount: income.amount || 0
+            }, { onConflict: 'id' });
+          
+          if (incomeError) throw incomeError;
         }
       }
-      throw new Error('云端数据冲突，自动合并失败');
+      
+      // 保存成本项
+      if (project.costs && project.costs.length > 0) {
+        for (const cost of project.costs) {
+          const { error: costError } = await supabaseClient
+            .from('costs')
+            .upsert({
+              id: cost.id || `${project.id}_cost_${cost.name}`,
+              project_id: project.id,
+              name: cost.name,
+              amount: cost.amount || 0,
+              paid_amount: cost.paidAmount || 0,
+              supplier_id: cost._supplierId || null
+            }, { onConflict: 'id' });
+          
+          if (costError) throw costError;
+        }
+      }
+      
+      // 保存人员明细
+      if (project.peopleDetails && project.peopleDetails.length > 0) {
+        for (const person of project.peopleDetails) {
+          const { error: personError } = await supabaseClient
+            .from('people_details')
+            .upsert({
+              id: `${project.id}_people_${person.name}`,
+              project_id: project.id,
+              name: person.name,
+              count: person.count || 0
+            }, { onConflict: 'id' });
+          
+          if (personError) throw personError;
+        }
+      }
     }
-
-    if (!putResp.ok) throw new Error('HTTP ' + putResp.status + ': ' + await putResp.text());
-
-    // ★ 数据保存成功后自动追加变更日志（含完整快照）
-    await appendChangeLog('save', '数据保存', projectsArray.length);
-
+    
+    console.log('[Supabase] 保存成功！');
     return true;
-  } catch(e) { console.error('GitHub save error:', e); return false; }
+    
+  } catch(e) {
+    console.error('[Supabase] 保存失败:', e.message);
+    return false;
+  }
 }
+
+// 别名：保持兼容性
+githubSaveData = supabaseSaveData;
 
 /* ========== 数据变更日志系统（版本回滚用） ========== */
 var _changelogCache = null;
@@ -1298,80 +1389,119 @@ async function rollbackToVersion(logId) {
 (async function() {
   'use strict';
 
-  // ==================== 多级数据加载 ====================
-  // 优先级: GitHub → 本地 data.js
-  var dataSource = 'local';
+  // ==================== Supabase 数据加载 ====================
+  var dataSource = 'supabase';
   window._dataSource = dataSource;
 
-  // 1️⃣ 尝试从 GitHub 加载
+  // 从 Supabase 加载数据
   try {
-    var ghData = await githubLoadData();
-    if (ghData && Array.isArray(ghData) && ghData.length > 0) {
-      window.TOUR_DATA = ghData;
-      dataSource = 'github';
-      window._dataSource = 'github';
-      updateDataSourceBadge('github');
-      console.log('✅ 已从 GitHub 加载数据，共 ' + ghData.length + ' 条团期记录');
+    const { data: projects, error } = await supabaseClient
+      .from('projects')
+      .select('*')
+      .order('created_at', { ascending: false });
+    
+    if (error) throw error;
+    
+    if (projects && Array.isArray(projects) && projects.length > 0) {
+      console.log(`[Supabase] 加载到 ${projects.length} 个团期`);
+      
+      // 转换Supabase数据格式为原有格式（字段名映射）
+      window.TOUR_DATA = projects.map(project => ({
+        id: project.id,
+        name: project.name,
+        productType: project.product_type || '',  // product_type → productType
+        operator: project.operator || '',
+        startDate: project.start_date || '',      // start_date → startDate
+        remark: project.remark || '',
+        incomes: [],     // 需要单独加载
+        costs: [],       // 需要单独加载
+        peopleDetails: [] // people_details → peopleDetails
+      }));
+      
+      console.log(`[Supabase] 开始加载关联数据...`);
+      
+      // 加载收入、成本、人员明细
+      for (let i = 0; i < window.TOUR_DATA.length; i++) {
+        const project = window.TOUR_DATA[i];
+        
+        // 加载收入
+        const { data: incomes, error: incErr } = await supabaseClient
+          .from('incomes')
+          .select('*')
+          .eq('project_id', project.id);
+        
+        if (incErr) {
+          console.error(`[Supabase] 加载 ${project.name} 的收入失败:`, incErr);
+        } else {
+          // 字段名转换：received_amount → receivedAmount
+          project.incomes = (incomes || []).map(inc => ({
+            id: inc.id,
+            name: inc.name,
+            amount: parseFloat(inc.amount) || 0,
+            receivedAmount: parseFloat(inc.received_amount) || 0 // received_amount → receivedAmount
+          }));
+        }
+        
+        // 加载成本
+        const { data: costs, error: costErr } = await supabaseClient
+          .from('costs')
+          .select('*')
+          .eq('project_id', project.id);
+        
+        if (costErr) {
+          console.error(`[Supabase] 加载 ${project.name} 的成本失败:`, costErr);
+        } else {
+          // 字段名转换：paid_amount → paidAmount, supplier_id → _supplierId
+          project.costs = (costs || []).map(cst => ({
+            id: cst.id,
+            name: cst.name,
+            amount: parseFloat(cst.amount) || 0,
+            paidAmount: parseFloat(cst.paid_amount) || 0,      // paid_amount → paidAmount
+            _supplierId: cst.supplier_id || null                // supplier_id → _supplierId
+          }));
+        }
+        
+        // 加载人员明细
+        const { data: people, error: pplErr } = await supabaseClient
+          .from('people_details')
+          .select('*')
+          .eq('project_id', project.id);
+        
+        if (pplErr) {
+          console.error(`[Supabase] 加载 ${project.name} 的人员明细失败:`, pplErr);
+        } else {
+          project.peopleDetails = (people || []).map(ppl => ({
+            id: ppl.id,
+            name: ppl.name,
+            count: parseInt(ppl.count) || 0
+          }));
+        }
+        
+        if ((i + 1) % 10 === 0) {
+          console.log(`[Supabase] 已加载 ${i + 1}/${window.TOUR_DATA.length} 个团期的关联数据`);
+        }
+      }
+      
+      dataSource = 'supabase';
+      window._dataSource = 'supabase';
+      updateDataSourceBadge('supabase');
+      console.log('✅ 已从 Supabase 加载数据，共 ' + projects.length + ' 条团期记录');
+      console.log('✅ 数据样本:', window.TOUR_DATA[0]);
+    } else {
+      console.warn('⚠️ Supabase 中没有数据');
+      window.TOUR_DATA = [];
     }
-  } catch(ghErr) {
-    console.warn('⚠️ GitHub 加载失败', ghErr);
-    window._githubError = ghErr.message || String(ghErr);
-  }
-  if (dataSource === 'local') {
-    window._dataSource = 'local';
-    window._githubError = window._githubError || _githubLastError;
-    updateDataSourceBadge('local');
-    console.log('📁 使用本地 data.js 数据源' + (window._githubError ? ' (GitHub错误: ' + window._githubError + ')' : ''));
+  } catch(err) {
+    console.error('❌ Supabase 加载失败', err);
+    window._supabaseError = err.message || String(err);
+    window.TOUR_DATA = [];
   }
 
   // 标记数据已就绪，供 init() 检测
   window._dataReady = true;
 
-  // ★ 自动刷新检测机制（每30秒检查一次云端是否有新数据）
-  if (dataSource === 'github') {
-    var _lastCheckTime = Date.now();
-    var _autoRefreshInterval = setInterval(async function() {
-      try {
-        var resp = await fetch(GITHUB_API_URL, {
-          headers: { 'Authorization': 'Bearer ' + GITHUB_TOKEN },
-          cache: 'no-cache'
-        });
-        
-        if (resp.ok) {
-          var info = await resp.json();
-          var cloudTime = new Date(info.commit ? info.commit.committer.date : 0);
-          var timeDiff = Date.now() - _lastCheckTime;
-          
-          // 如果云端数据比上次检查新，且超过60秒
-          if (cloudTime.getTime() > _lastCheckTime && timeDiff > 60000) {
-            console.log('[自动检测] 云端有新版本，准备刷新...');
-            
-            // 如果用户正在编辑，提示保存
-            if (document.querySelector('.modal.show')) {
-              if (confirm('检测到云端有新数据，但您正在编辑中。是否立即刷新？未保存的数据将丢失。')) {
-                location.reload();
-              }
-            } else {
-              showToast('🔔 检测到云端有新数据，自动刷新中...');
-              setTimeout(() => location.reload(), 2000);
-            }
-            
-            clearInterval(_autoRefreshInterval);
-          }
-        }
-      } catch(e) {
-        // 静默失败，不影响用户体验
-        console.debug('[自动刷新] 检查失败:', e.message);
-      }
-    }, 30000); // 30秒检查一次
-    
-    // 页面卸载时清理定时器
-    window.addEventListener('beforeunload', function() {
-      clearInterval(_autoRefreshInterval);
-    });
-    
-    console.log('[自动刷新] 已启用，每30秒检测一次云端更新');
-  }
+  // ★ Supabase Realtime 实时监听
+  setupRealtimeSubscription();
 
   // ==================== 数据层 ====================
 
@@ -3104,7 +3234,13 @@ async function rollbackToVersion(logId) {
   function updateDataSourceBadge(source) {
     var badge = document.getElementById('dataSourceBadge');
     if (!badge) return;
-    if (source === 'github') {
+    if (source === 'supabase') {
+      badge.innerHTML = '🌐 Supabase';
+      badge.style.background = 'rgba(16,185,129,0.15)';
+      badge.style.color = '#34d399';
+      badge.style.cursor = 'default';
+      badge.title = '当前使用 Supabase 云数据库（实时同步）';
+    } else if (source === 'github') {
       badge.innerHTML = '🌐 GitHub';
       badge.style.background = 'rgba(16,185,129,0.15)';
       badge.style.color = '#34d399';
@@ -3933,19 +4069,25 @@ async function rollbackToVersion(logId) {
     });
   }
 
-  window.toggleTheme = function() {
-  var root = document.documentElement;
-  var isWarm = root.getAttribute('data-theme') === 'warm';
-  if (isWarm) {
-    root.removeAttribute('data-theme');
-    localStorage.setItem('theme', 'dark');
-    document.getElementById('themeToggleBtn').textContent = '🌙';
-  } else {
-    root.setAttribute('data-theme', 'warm');
-    localStorage.setItem('theme', 'warm');
-    document.getElementById('themeToggleBtn').textContent = '☀️';
-  }
-};
+  window.toggleTheme = function(event) {
+    // 阻止事件冒泡，防止触发其他按钮事件
+    if (event) {
+      event.stopPropagation();
+      event.preventDefault();
+    }
+    
+    var root = document.documentElement;
+    var isWarm = root.getAttribute('data-theme') === 'warm';
+    if (isWarm) {
+      root.removeAttribute('data-theme');
+      localStorage.setItem('theme', 'dark');
+      document.getElementById('themeToggleBtn').textContent = '🌙';
+    } else {
+      root.setAttribute('data-theme', 'warm');
+      localStorage.setItem('theme', 'warm');
+      document.getElementById('themeToggleBtn').textContent = '☀️';
+    }
+  };
 
 // 加载保存的主题
 (function(){ var t = localStorage.getItem('theme'); if(t==='warm') document.documentElement.setAttribute('data-theme','warm'); })();
@@ -4110,18 +4252,7 @@ async function rollbackToVersion(logId) {
   init();
 
 })();
-
-window.toggleTheme = function() {
-  var root = document.documentElement;
-  var isWarm = root.getAttribute('data-theme') === 'warm';
-  if (isWarm) {
-    root.removeAttribute('data-theme');
-    document.getElementById('themeToggleBtn').textContent = '🌙';
-  } else {
-    root.setAttribute('data-theme', 'warm');
-    document.getElementById('themeToggleBtn').textContent = '☀️';
-  }
-};</script>
+</script>
 
 </body>
 </html>
