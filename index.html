@@ -2079,6 +2079,7 @@ async function rollbackToVersion(logId) {
   }
 
   // ==================== MODULE 4: PAYABLES (V3 卡片+月度+分析) ====================
+  let payPage = 1;
   var payMonthFilter = 'all'; // 首次渲染时自动切换到最新月份
   var _payMonthAutoSet = false; // 是否已自动设置过月份
   var payKPIDetail = null; // null | 'paid' | 'unpaid' | 'unsettled'
