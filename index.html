@@ -666,24 +666,24 @@
         </button>
         <div class="date-range-popover" id="dateRangePopover">
           <div class="preset-row">
-            <button class="preset-btn" onclick="applyPreset('thisMonth')">本月</button>
-            <button class="preset-btn" onclick="applyPreset('thisQuarter')">本季度</button>
-            <button class="preset-btn" onclick="applyPreset('thisYear')">本年度</button>
-            <button class="preset-btn" onclick="applyPreset('last3')">近3个月</button>
-            <button class="preset-btn" onclick="applyPreset('all')">全部数据</button>
+            <button class="preset-btn" onclick="window._applyPreset('thisMonth')">本月</button>
+            <button class="preset-btn" onclick="window._applyPreset('thisQuarter')">本季度</button>
+            <button class="preset-btn" onclick="window._applyPreset('thisYear')">本年度</button>
+            <button class="preset-btn" onclick="window._applyPreset('last3')">近3个月</button>
+            <button class="preset-btn" onclick="window._applyPreset('all')">全部数据</button>
           </div>
           <div class="preset-row" style="margin-top:8px;">
-            <button class="preset-btn" onclick="applyPreset('q1')">1季度</button>
-            <button class="preset-btn" onclick="applyPreset('q2')">2季度</button>
-            <button class="preset-btn" onclick="applyPreset('q3')">3季度</button>
-            <button class="preset-btn" onclick="applyPreset('q4')">4季度</button>
+            <button class="preset-btn" onclick="window._applyPreset('q1')">1季度</button>
+            <button class="preset-btn" onclick="window._applyPreset('q2')">2季度</button>
+            <button class="preset-btn" onclick="window._applyPreset('q3')">3季度</button>
+            <button class="preset-btn" onclick="window._applyPreset('q4')">4季度</button>
           </div>
           <div class="custom-row">
             <label>自定义</label>
             <input type="month" id="rangeStart" value="2026-01" title="开始月份">
             <span style="color:var(--text-muted);">→</span>
             <input type="month" id="rangeEnd" value="2026-12" title="结束月份">
-            <button class="preset-btn" style="background:var(--success);color:white;" onclick="applyCustomRange()">确定</button>
+            <button class="preset-btn" style="background:var(--success);color:white;" onclick="window._applyCustomRange()">确定</button>
           </div>
         </div>
       </div>
@@ -3553,24 +3553,26 @@ async function rollbackToVersion(logId) {
     renderCurrentPane();
   });
 
-  // 时间筛选 - input 事件（即时）+ change 事件（兜底）
+  // 时间筛选 - 只在确定按钮时触发筛选
   document.getElementById('rangeStart').addEventListener('input', function() { 
-    getPaneRange().start = this.value; updateDateRangeLabel();
-    applyDateFilter(false);
+    getPaneRange().start = this.value; 
+    updateDateRangeLabel();
+    // 不关闭弹窗，不触发筛选
   });
   document.getElementById('rangeStart').addEventListener('change', function() { 
-    getPaneRange().start = this.value; updateDateRangeLabel();
-    document.getElementById('dateRangePopover').classList.remove('show');
-    applyDateFilter(true);
+    getPaneRange().start = this.value; 
+    updateDateRangeLabel();
+    // 不关闭弹窗，不触发筛选
   });
   document.getElementById('rangeEnd').addEventListener('input', function() { 
-    getPaneRange().end = this.value; updateDateRangeLabel();
-    applyDateFilter(false);
+    getPaneRange().end = this.value; 
+    updateDateRangeLabel();
+    // 不关闭弹窗，不触发筛选
   });
   document.getElementById('rangeEnd').addEventListener('change', function() { 
-    getPaneRange().end = this.value; updateDateRangeLabel();
-    document.getElementById('dateRangePopover').classList.remove('show');
-    applyDateFilter(true);
+    getPaneRange().end = this.value; 
+    updateDateRangeLabel();
+    // 不关闭弹窗，不触发筛选
   });
   document.getElementById('applyThreshold').addEventListener('click', function() {
     marginThreshold = parseFloat(document.getElementById('marginThresholdGreen').value) || 30;
@@ -3793,6 +3795,10 @@ async function rollbackToVersion(logId) {
     document.getElementById('dateRangePopover').classList.remove('show');
     applyDateFilter(true);
   }
+  
+  // 暴露到全局作用域，供HTML onclick调用
+  window._applyPreset = applyPreset;
+  window._applyCustomRange = applyCustomRange;
 
   // ==================== 统一时间筛选触发（防抖） ====================
   var _dateFilterTimer = null;
