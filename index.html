@@ -1449,6 +1449,27 @@ async function rollbackToVersion(logId) {
   // 标记数据已就绪，供 init() 检测
   window._dataReady = true;
 
+  // ★ 自动保存清理后的人数明细数据（如果检测到重复）
+  if (window._needSavePeopleDetails && window._needSavePeopleDetails.length > 0) {
+    console.log('[人数明细] 检测到 ' + window._needSavePeopleDetails.length + ' 个团期有重复数据，正在自动保存清理...');
+    
+    // 批量保存去重后的团期数据
+    var projectsToUpdate = projects.filter(function(p) {
+      return window._needSavePeopleDetails.indexOf(p.id) !== -1;
+    });
+    
+    githubSaveData(projectsToUpdate).then(function(ok) {
+      if (ok) {
+        console.log('[人数明细] ✅ 重复数据清理并保存成功！');
+        window._needSavePeopleDetails = [];
+      } else {
+        console.warn('[人数明细] ️ 保存失败，但本地已去重显示正确');
+      }
+    }).catch(function(e) {
+      console.warn('[人数明细] ⚠️ 自动保存异常:', e.message);
+    });
+  }
+
   // ★ Supabase Realtime 实时监听
   setupRealtimeSubscription();
 
@@ -1718,11 +1739,48 @@ async function rollbackToVersion(logId) {
     if (!p.incomes || p.incomes.length===0) p.incomes = [];
     if (!p.costs || p.costs.length===0) p.costs = [];
     if (!p.peopleDetails || p.peopleDetails.length===0) {
+      // 如果没有人数明细，从旧的 people 字段初始化
       p.peopleDetails = [
         { name:'线上', count: p.people || 0 },
         { name:'线下', count: 0 },
         { name:'切位', count: 0 }
       ];
+    } else {
+      // ★ 修复：人数明细固定为3个渠道（线上/线下/切位），直接去重（保留第一条，不累加）
+      var uniquePeople = {};
+      p.peopleDetails.forEach(function(d) {
+        var name = d.name || '';
+        var count = d.count || 0;
+        
+        // 只保留3个固定渠道，忽略其他类型
+        if (name === '线上' || name === '线下' || name === '切位') {
+          // 如果这个渠道已存在，跳过（保留第一条，不累加）
+          if (!uniquePeople[name]) {
+            uniquePeople[name] = { name: name, count: count };
+          }
+          // 如果已存在，直接忽略重复记录
+        }
+      });
+      
+      // 确保包含3个固定渠道（如果缺失则初始化为0）
+      if (!uniquePeople['线上']) uniquePeople['线上'] = { name:'线上', count: p.people || 0 };
+      if (!uniquePeople['线下']) uniquePeople['线下'] = { name:'线下', count: 0 };
+      if (!uniquePeople['切位']) uniquePeople['切位'] = { name:'切位', count: 0 };
+      
+      // 按固定顺序排列：线上、线下、切位
+      p.peopleDetails = [
+        uniquePeople['线上'],
+        uniquePeople['线下'],
+        uniquePeople['切位']
+      ];
+      
+      // ★ 如果原始数据超过3条，说明有重复，需要清理并保存到Supabase
+      if (p.peopleDetails.length > 3 || (Array.isArray(p.peopleDetails) && p.peopleDetails.length !== 3)) {
+        console.log('[人数明细] 检测到重复数据（' + p.peopleDetails.length + '条），已去重保留3条');
+        // 标记需要保存（延迟保存，避免阻塞加载）
+        window._needSavePeopleDetails = window._needSavePeopleDetails || [];
+        window._needSavePeopleDetails.push(p.id);
+      }
     }
     // 自动关联成本项到供应商 + 初始化付款数据字段
     (p.costs||[]).forEach(function(c){
@@ -3454,15 +3512,31 @@ async function rollbackToVersion(logId) {
     html += '</div>';
     html += `<button class="btn btn-sm btn-outline" onclick="addSubItemInline('ed_costs_list','cost')" style="margin-bottom:12px;">＋ 添加成本项</button>`;
 
-    // 人数明细（可编辑）
+    // 人数明细（固定3个渠道：线上/线下/切位）
     html += '<h4 style="margin:12px 0 8px;">👥 人数明细</h4>';
     html += '<div id="ed_people_list" class="sub-item-list">';
-    (p.peopleDetails||[]).forEach(function(d,idx){
-      html += `<div class="sub-item"><input placeholder="类型" value="${escHtml(d.name)}" data-ppl-name="${idx}">`;
-      html += `<input placeholder="人数" value="${d.count||0}" data-ppl-cnt="${idx}" style="width:90px;"></div>`;
+    
+    // 确保有3个固定渠道的数据
+    var peopleData = {
+      '线上': 0,
+      '线下': 0,
+      '切位': 0
+    };
+    (p.peopleDetails||[]).forEach(function(d) {
+      if (peopleData.hasOwnProperty(d.name)) {
+        peopleData[d.name] = d.count || 0;
+      }
     });
+    
+    // 按固定顺序渲染：线上、线下、切位
+    ['线上', '线下', '切位'].forEach(function(type) {
+      html += '<div class="sub-item">';
+      html += '<input placeholder="类型" value="' + type + '" data-ppl-name="' + type + '" readonly style="background:var(--bg-tertiary);cursor:not-allowed;">';
+      html += '<input placeholder="人数" value="' + peopleData[type] + '" data-ppl-cnt="' + type + '" style="width:90px;"></div>';
+    });
+    
     html += '</div>';
-    html += `<button class="btn btn-sm btn-outline" onclick="addSubItemInline('ed_people_list','people')" style="margin-bottom:4px;">＋ 添加人数类型</button>`;
+    // ★ 隐藏“添加人数类型”按钮，不允许用户添加其他类型
 
     // 操作按钮
     html += `<div class="modal-save-bar">
@@ -3532,10 +3606,32 @@ async function rollbackToVersion(logId) {
       costIdx++;
     });
 
+    // ★ 人数明细：只处理3个固定渠道（线上/线下/切位），忽略其他类型
+    var peopleMap = {
+      '线上': { name: '线上', count: 0 },
+      '线下': { name: '线下', count: 0 },
+      '切位': { name: '切位', count: 0 }
+    };
+    
     document.querySelectorAll('#ed_people_list .sub-item').forEach(function(el){
       var n=el.querySelector('[data-ppl-name]'), c=el.querySelector('[data-ppl-cnt]');
-      if(n&&n.value.trim()) peopleDetails.push({name:n.value.trim(), count:parseInt(c.value)||0});
+      if(n&&n.value.trim()) {
+        var name = n.value.trim();
+        var count = parseInt(c.value)||0;
+        
+        // 只处理3个固定渠道，忽略其他输入
+        if (peopleMap.hasOwnProperty(name)) {
+          peopleMap[name].count = count; // 更新该渠道的人数
+        }
+      }
     });
+    
+    // 按固定顺序输出：线上、线下、切位（严格3条记录）
+    var peopleDetails = [
+      peopleMap['线上'],
+      peopleMap['线下'],
+      peopleMap['切位']
+    ];
 
     var updated = { id: origId, name: document.getElementById('ed_name').value.trim(),
       productType: document.getElementById('ed_type').value.trim(), operator: document.getElementById('ed_op').value.trim(),
