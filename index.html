@@ -618,6 +618,16 @@
     background: #fff5eb !important;
     color: #5d4037 !important;  /* 使用深色文字 */
     border-bottom-color: #ffd6b3;
+  }
+  
+  /* 暖色主题下的产品线卡片标题 */
+  :root[data-theme="warm"] .product-card .line-name {
+    color: #5d4037 !important;
+  }
+  
+  /* 暖色主题下的产品线统计数值 */
+  :root[data-theme="warm"] .product-card .line-stat .val {
+    color: #5d4037 !important;
   }</style>
 </head>
 <body>
@@ -2104,6 +2114,8 @@ async function rollbackToVersion(logId) {
   var selectedProductType = null; // null=全部，否则=选中的产品线
   function renderProductLines() {
     const allList = getFilteredProjects('productLines');
+    // ★ 检测当前主题
+    var isWarm = document.documentElement.getAttribute('data-theme') === 'warm';
     // 如果选中了某个产品线，过滤数据
     const list = selectedProductType ? allList.filter(p => (p.productType || '未分类') === selectedProductType) : allList;
     const groups = {};
@@ -2153,8 +2165,8 @@ async function rollbackToVersion(logId) {
       }, {
         indexAxis: 'y',
         scales: {
-          y: { ticks: { color: '#e2e8f0', font: { size: 11 } }, grid: { display: false } },
-          x: { ticks: { color: '#94a3b8', callback: function(v){return v>=10000?(v/10000).toFixed(1)+'万':v;} }, grid: { color: 'rgba(30,58,95,0.4)' } }
+          y: { ticks: { color: isWarm ? '#5d4037' : '#e2e8f0', font: { size: 11 } }, grid: { display: false } },
+          x: { ticks: { color: isWarm ? '#5d4037' : '#94a3b8', callback: function(v){return v>=10000?(v/10000).toFixed(1)+'万':v;} }, grid: { color: isWarm ? 'rgba(255,214,179,0.4)' : 'rgba(30,58,95,0.4)' } }
         }
       });
     } else {
@@ -2168,8 +2180,8 @@ async function rollbackToVersion(logId) {
       }, {
         indexAxis: 'y',
         scales: {
-          y: { ticks: { color: '#e2e8f0', font: { size: 12, weight: 'bold' } }, grid: { display: false } },
-          x: { ticks: { color: '#94a3b8', callback: function(v){return v>=10000?(v/10000).toFixed(1)+'万':v;} }, grid: { color: 'rgba(30,58,95,0.4)' } }
+          y: { ticks: { color: isWarm ? '#5d4037' : '#e2e8f0', font: { size: 12, weight: 'bold' } }, grid: { display: false } },
+          x: { ticks: { color: isWarm ? '#5d4037' : '#94a3b8', callback: function(v){return v>=10000?(v/10000).toFixed(1)+'万':v;} }, grid: { color: isWarm ? 'rgba(255,214,179,0.4)' : 'rgba(30,58,95,0.4)' } }
         }
       });
     }
@@ -2179,7 +2191,7 @@ async function rollbackToVersion(logId) {
       var margin = d.income ? (gross/d.income*100) : 0;
       var isActive = (type === selectedProductType);
       return '<div class="product-card' + (isActive ? ' active-card' : '') + '" data-pl-type="' + escHtml(type).replace(/"/g,'&quot;') + '" style="cursor:pointer;" title="点击查看' + escHtml(type) + '详情">' +
-        '<div class="line-name">' + escHtml(type) + ' <span style="font-size:11px;color:var(--text-muted);font-weight:400;">' + d.count + '个团期' + (isActive ? ' (已选中)' : '') + '</span></div>' +
+        '<div class="line-name" style="color:var(--text-primary);">' + escHtml(type) + ' <span style="font-size:11px;color:var(--text-muted);font-weight:400;">' + d.count + '个团期' + (isActive ? ' (已选中)' : '') + '</span></div>' +
         '<div class="line-stats">' +
           '<div class="line-stat">收入<span class="val income">' + fmt(d.income) + '</span></div>' +
           '<div class="line-stat">成本<span class="val cost">' + fmt(d.cost) + '</span></div>' +
@@ -2190,8 +2202,15 @@ async function rollbackToVersion(logId) {
     
     document.getElementById('productCards').innerHTML = cardHtml;
     
-    // 使用事件委托绑定点击（避免内联onclick找不到函数的问题）
-    document.getElementById('productCards').addEventListener('click', function(e) {
+    // ★ 使用事件委托绑定点击（避免重复绑定和卡顿问题）
+    var productCardsEl = document.getElementById('productCards');
+    
+    // 移除旧的事件监听器（如果存在）
+    var newEl = productCardsEl.cloneNode(true);
+    productCardsEl.parentNode.replaceChild(newEl, productCardsEl);
+    
+    // 重新绑定点击事件
+    newEl.addEventListener('click', function(e) {
       var card = e.target.closest('.product-card');
       if (!card) return;
       var t = card.getAttribute('data-pl-type');
@@ -3946,6 +3965,12 @@ async function rollbackToVersion(logId) {
     if (chartInstances[canvasId]) chartInstances[canvasId].destroy();
     const ctx = document.getElementById(canvasId);
     if (!ctx) return;
+    
+    // ★ 根据主题自动调整图表字体颜色
+    var isWarm = document.documentElement.getAttribute('data-theme') === 'warm';
+    var textColor = isWarm ? '#5d4037' : '#94a3b8';
+    var gridColor = isWarm ? 'rgba(255,214,179,0.4)' : 'rgba(30,58,95,0.4)';
+    
     chartInstances[canvasId] = new Chart(ctx, {
       type,
       data,
@@ -3953,12 +3978,12 @@ async function rollbackToVersion(logId) {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          legend: { labels: { color: '#94a3b8', font: { size: 12 } } }
+          legend: { labels: { color: textColor, font: { size: 12 } } }
         },
         scales: type !== 'doughnut' ? {
-          x: { ticks: { color: '#94a3b8' }, grid: { display: false } },
-          y: { ticks: { color: '#94a3b8', callback: v => v>=10000 ? (v/10000).toFixed(1)+'万' : v },
-            grid: { color: 'rgba(30,58,95,0.4)' } }
+          x: { ticks: { color: textColor }, grid: { display: false } },
+          y: { ticks: { color: textColor, callback: v => v>=10000 ? (v/10000).toFixed(1)+'万' : v },
+            grid: { color: gridColor } }
         } : {},
         ...extraOpts
       }
