@@ -876,7 +876,7 @@
             <select id="projectMarginFilter"><option value="all">全部毛利率</option><option value="above">高于阈值</option><option value="medium">警告区间</option><option value="below">低于阈值</option></select>
           </div>
         </div>
-        <div class="table-scroll"><table class="data-table" id="projectTable"><thead><tr><th>团号</th><th>产品线</th><th>计调</th><th>收入</th><th>成本</th><th>毛利</th><th>毛利率</th><th>人数</th><th>操作</th></tr></thead><tbody></tbody></table></div>
+        <div class="table-scroll"><table class="data-table" id="projectTable"><thead><tr><th>月份</th><th>团号</th><th>产品线</th><th>计调</th><th>收入</th><th>成本</th><th>毛利</th><th>毛利率</th><th>人数</th><th>操作</th></tr></thead><tbody></tbody></table></div>
         <div class="pagination" id="projectPagination"></div>
       </div>
     </div>
@@ -1944,11 +1944,31 @@ async function rollbackToVersion(logId) {
   function getFilteredProjects(pane) {
     var r = pane ? (paneRanges[pane] || paneRanges.dashboard) : getPaneRange();
     var s = r.start.replace('-',''), e = r.end.replace('-','');
-    var filtered = projects.filter(function(p) {
+    
+    // ★ 过滤掉空团号的脏数据
+    var validProjects = projects.filter(function(p) {
+      return p.name && p.name.trim() !== '';
+    });
+    
+    var filtered = validProjects.filter(function(p) {
       if (!p.startDate) return false;
       var ym = p.startDate.substring(0,7).replace('-','');
       return ym >= s && ym <= e;
     });
+    
+    // ★ 调试：找出未匹配的团期（仅开发调试用）
+    var unmatched = validProjects.filter(function(p) {
+      if (filtered.indexOf(p) === -1) return true;
+      return false;
+    });
+    if (unmatched.length > 0 && pane === 'projects' && unmatched.length <= 3) {
+      console.log('[团期明细] 未匹配时间筛选的团期 (' + unmatched.length + '个):');
+      unmatched.forEach(function(p) {
+        console.log('  - 团号: "' + (p.name || '空') + '", ID: ' + p.id + ', 出发日期: ' + (p.startDate || '无'));
+      });
+      console.log('💡 建议：在Supabase中删除这些空团号记录，或补充完整数据');
+    }
+    
     return filtered;
   }
 
@@ -3081,6 +3101,13 @@ async function rollbackToVersion(logId) {
   let projPage = 1, projTypeFilter = 'all', projOpFilter = 'all', projMarginFilter = 'all';
   function renderProjects() {
     let list = getFilteredProjects('projects');
+    
+    // ★ 按出发日期从早到晚排序
+    list.sort(function(a, b) {
+      if (!a.startDate) return 1;
+      if (!b.startDate) return -1;
+      return a.startDate.localeCompare(b.startDate);
+    });
 
     // 联动筛选：先按产品线过滤，再在结果中取计调选项
     if (projTypeFilter !== 'all') list = list.filter(p => p.productType === projTypeFilter);
@@ -3098,24 +3125,32 @@ async function rollbackToVersion(logId) {
     // 筛选状态提示
     var panelTitle = document.querySelector('#pane-projects .panel-title');
     if (panelTitle) {
-      var hint = list.length < projects.length
-        ? '<span style="font-size:11px;color:var(--info);margin-left:8px;font-weight:normal;">(' + list.length + '/' + projects.length + ' 条匹配当前时间筛选)</span>'
+      // ★ 使用有效团期总数（过滤掉空团号）
+      var validTotal = projects.filter(function(p) {
+        return p.name && p.name.trim() !== '';
+      }).length;
+      
+      var hint = list.length < validTotal
+        ? '<span style="font-size:11px;color:var(--info);margin-left:8px;font-weight:normal;">(' + list.length + '/' + validTotal + ' 条匹配当前时间筛选)</span>'
         : '';
       panelTitle.innerHTML = '<span class="dot" style="background:var(--success);"></span>团期明细列表' + hint;
     }
 
     document.getElementById('projectTable').querySelector('tbody').innerHTML = paged.map(p => {
       const margin = getTrafficMargin(p);
+      // 提取月份 (YYYY-MM)
+      var month = p.startDate ? p.startDate.substring(0, 7) : '-';
       return `<tr>
+        <td style="font-weight:600;color:var(--text-secondary);">${month}</td>
         <td>${escHtml(p.name)}</td><td>${p.productType||'-'}</td><td>${p.operator||'-'}</td>
         <td class="amount-income">${fmt(sumIncome(p))}</td>
         <td class="amount-cost">${fmt(sumCost(p))}</td>
         <td class="amount-gross">${fmt(sumGross(p))}</td>
         <td style="font-weight:700;color:${margin!==null&&margin>=marginThreshold?'var(--success)':'var(--danger)'};">${fmtMargin(margin)}</td>
         <td>${sumPeople(p, excludeKeWei)}</td>
-        <td><button class="btn btn-sm" onclick="window._showProjectDetail('${p.id}')">📋 详情</button></td>
+        <td><button class="btn btn-sm" onclick="window._showProjectDetail('${p.id}')"> 详情</button></td>
       </tr>`;
-    }).join('') || '<tr><td colspan="9" style="text-align:center;padding:30px;color:var(--text-muted);">暂无团期数据</td></tr>';
+    }).join('') || '<tr><td colspan="10" style="text-align:center;padding:30px;color:var(--text-muted);">暂无团期数据</td></tr>';
 
     document.getElementById('projectPagination').innerHTML = totalPages > 1
       ? Array.from({length:totalPages},(_,i)=>`<button class="${i+1===projPage?'active':''}" onclick="window._projPage=${i+1};window._renderProjects()">${i+1}</button>`).join('')
