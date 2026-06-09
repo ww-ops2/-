@@ -622,6 +622,13 @@
 </head>
 <body>
 
+<!-- 页面加载动画 -->
+<div id="pageLoader" style="position:fixed;top:0;left:0;width:100%;height:100%;background:var(--bg-primary);z-index:10000;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 0.3s;">
+  <div style="width:50px;height:50px;border:4px solid rgba(59,130,246,0.2);border-top-color:#3b82f6;border-radius:50%;animation:spin 0.8s linear infinite;"></div>
+  <div style="margin-top:20px;font-size:14px;color:var(--text-secondary);">正在加载数据...</div>
+  <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
+</div>
+
 <!-- ===== SIDEBAR ===== -->
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-logo">
@@ -880,7 +887,37 @@
             <p style="font-size:12px;color:var(--text-muted);margin-top:6px;">支持 .xlsx / .xls / .csv 格式</p>
           </div>
           <input type="file" id="importFileInput" accept=".xlsx,.xls,.csv" style="display:none;">
-          <div id="importPreview" style="margin-top:12px;"></div>
+          
+          <!-- 数据预览区域 -->
+          <div id="importPreview" style="margin-top:16px;display:none;">
+            <div style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:8px;padding:16px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                <h4 style="margin:0;font-size:15px;color:var(--text-primary);">📊 导入数据预览</h4>
+                <button class="btn btn-outline btn-sm" onclick="cancelImport()" style="font-size:11px;">✕ 取消</button>
+              </div>
+              <div id="previewStats" style="display:flex;gap:12px;margin-bottom:12px;"></div>
+              <div class="table-scroll" style="max-height:300px;overflow-y:auto;">
+                <table class="data-table" id="previewTable" style="font-size:12px;">
+                  <thead>
+                    <tr>
+                      <th>状态</th>
+                      <th>团号</th>
+                      <th>产品线</th>
+                      <th>计调</th>
+                      <th>出发日期</th>
+                      <th>收入项</th>
+                      <th>成本项</th>
+                      <th>人数明细</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+              <div style="margin-top:12px;padding:10px;background:rgba(99,102,241,0.1);border-radius:6px;font-size:12px;color:var(--text-secondary);">
+                💡 <strong>提示：</strong>请检查上方数据，确认无误后点击「☁️ 导入到Supabase」按钮上传。重复团号将合并更新，新团号将新增。
+              </div>
+            </div>
+          </div>
         </div>
         <div class="panel">
           <div class="panel-title" style="margin-bottom:12px;">🔧 从「遇见美好」系统同步</div>
@@ -3086,6 +3123,8 @@ async function rollbackToVersion(logId) {
   }
 
   // ==================== MODULE 7: DATA IMPORT ====================
+  var _pendingImport = null; // 临时存储待导入的数据（预览阶段）
+
   function renderDataImport() {
     // Import zone click
     document.getElementById('importZone').onclick = function(){ document.getElementById('importFileInput').click(); };
@@ -3094,29 +3133,6 @@ async function rollbackToVersion(logId) {
     document.getElementById('importToSupabaseBtn').onclick = pushImportedToGitHub;
     // 有数据时显示云端导入按钮
     document.getElementById('importToSupabaseBtn').style.display = projects.length > 0 ? 'inline-block' : 'none';
-  }
-
-  async function pushImportedToGitHub() {
-    var btn = document.getElementById('importToSupabaseBtn');
-    btn.disabled = true;
-    btn.textContent = '⏳ 推送中...';
-    try {
-      var clean = projects.map(function(p){ return {
-        id:p.id, name:p.name, productType:p.productType||'', operator:p.operator||'',
-        startDate:p.startDate||'', remark:p.remark||'',
-        incomes:p.incomes||[], costs:p.costs||[], peopleDetails:p.peopleDetails||[]
-      }; });
-
-      var ok = await githubSaveData(clean);
-      if (!ok) throw new Error('Supabase写入失败');
-      updateDataSourceBadge('supabase');
-      showImportMsg('✅ 已推送 '+clean.length+' 条数据到Supabase！');
-      addImportLog('☁️ 数据已保存到 Supabase');
-    } catch(e) {
-      showImportMsg('<span style="color:var(--danger);">❌ 推送失败：'+e.message+'</span>');
-    }
-    btn.disabled = false;
-    btn.textContent = '☁️ 导入到云端';
   }
 
   function handleFileImport(e) {
@@ -3194,9 +3210,16 @@ async function rollbackToVersion(logId) {
           var ts = Date.now();
           if (useNewIncome) {
             var incs = [], idx = 0;
-            if (colMap.incomeOnline)  incs.push({ id: 'inc_'+ts+'_'+(idx++), name: '线上收入', amount: parseFloat(row[colMap.incomeOnline]) || 0, receivedAmount: 0 });
-            if (colMap.incomeOffline) incs.push({ id: 'inc_'+ts+'_'+(idx++), name: '线下收入', amount: parseFloat(row[colMap.incomeOffline]) || 0, receivedAmount: 0 });
-            if (colMap.incomeCutPos)  incs.push({ id: 'inc_'+ts+'_'+(idx++), name: '切位收入', amount: parseFloat(row[colMap.incomeCutPos]) || 0, receivedAmount: 0 });
+            // ★ 只有当列存在且有值时才添加收入项
+            if (colMap.incomeOnline && row[colMap.incomeOnline] && parseFloat(row[colMap.incomeOnline]) > 0) {
+              incs.push({ id: 'inc_'+ts+'_'+(idx++), name: '线上收入', amount: parseFloat(row[colMap.incomeOnline]) || 0, receivedAmount: 0 });
+            }
+            if (colMap.incomeOffline && row[colMap.incomeOffline] && parseFloat(row[colMap.incomeOffline]) > 0) {
+              incs.push({ id: 'inc_'+ts+'_'+(idx++), name: '线下收入', amount: parseFloat(row[colMap.incomeOffline]) || 0, receivedAmount: 0 });
+            }
+            if (colMap.incomeCutPos && row[colMap.incomeCutPos] && parseFloat(row[colMap.incomeCutPos]) > 0) {
+              incs.push({ id: 'inc_'+ts+'_'+(idx++), name: '切位收入', amount: parseFloat(row[colMap.incomeCutPos]) || 0, receivedAmount: 0 });
+            }
             return incs;
           }
           // 旧格式：名称:金额, 名称:金额
@@ -3213,10 +3236,11 @@ async function rollbackToVersion(logId) {
           if (useNewCost) {
             var cst = [], idx = 0;
             function addCost(name, amtCol, supCol) {
-              if (amtCol) {
+              // ★ 只有当列存在且有值时才添加成本项
+              if (amtCol && row[amtCol] && parseFloat(row[amtCol]) > 0) {
                 var amt = parseFloat(row[amtCol]) || 0;
                 var supName = supCol ? String(row[supCol]||'').trim() : '';
-                var supId = resolveSupplierId(supName);
+                var supId = supName ? resolveSupplierId(supName) : '';  // ★ 只有供应商名称不为空时才创建/匹配
                 cst.push({ id: 'cost_imp_'+Date.now()+'_'+(idx++), name: name, amount: amt, _supplierId: supId });
               }
             }
@@ -3242,9 +3266,16 @@ async function rollbackToVersion(logId) {
         function parsePeople(row) {
           if (useNewPeople) {
             var ppl = [];
-            if (colMap.peopleOnline)  ppl.push({ name: '线上', count: parseInt(row[colMap.peopleOnline]) || 0 });
-            if (colMap.peopleOffline) ppl.push({ name: '线下', count: parseInt(row[colMap.peopleOffline]) || 0 });
-            if (colMap.peopleCutPos)  ppl.push({ name: '切位', count: parseInt(row[colMap.peopleCutPos]) || 0 });
+            // ★ 只有当列存在且有值时才添加人数项
+            if (colMap.peopleOnline && row[colMap.peopleOnline] && parseInt(row[colMap.peopleOnline]) > 0) {
+              ppl.push({ name: '线上', count: parseInt(row[colMap.peopleOnline]) || 0 });
+            }
+            if (colMap.peopleOffline && row[colMap.peopleOffline] && parseInt(row[colMap.peopleOffline]) > 0) {
+              ppl.push({ name: '线下', count: parseInt(row[colMap.peopleOffline]) || 0 });
+            }
+            if (colMap.peopleCutPos && row[colMap.peopleCutPos] && parseInt(row[colMap.peopleCutPos]) > 0) {
+              ppl.push({ name: '切位', count: parseInt(row[colMap.peopleCutPos]) || 0 });
+            }
             return ppl;
           }
           // 旧格式：类型:数量, 类型:数量
@@ -3256,21 +3287,72 @@ async function rollbackToVersion(logId) {
           }).filter(function(x){ return x.name&&x.count>0; });
         }
 
-        var imported = 0, updated = 0, skipped = 0, detailLog = [];
+        var imported = 0, updated = 0, skipped = 0, detailLog = [], parsedData = [];
+        
+        // Excel日期转换函数：将Excel序列号转换为YYYY-MM-DD格式
+        function parseExcelDate(value) {
+          if (!value) return '';
+          // 如果已经是字符串格式（包含-或/），直接返回
+          if (typeof value === 'string' && (value.indexOf('-') !== -1 || value.indexOf('/') !== -1)) {
+            return value.trim();
+          }
+          // 如果是数字（Excel日期序列号），转换为日期
+          if (typeof value === 'number') {
+            // Excel日期从1900-01-01开始，序列号1代表1900-01-01
+            var excelEpoch = new Date(1900, 0, 1);
+            // Excel有个bug：认为1900年是闰年，所以需要减去2天
+            var jsDate = new Date(excelEpoch.getTime() + (value - 2) * 24 * 60 * 60 * 1000);
+            var year = jsDate.getFullYear();
+            var month = String(jsDate.getMonth() + 1).padStart(2, '0');
+            var day = String(jsDate.getDate()).padStart(2, '0');
+            return year + '-' + month + '-' + day;
+          }
+          return String(value).trim();
+        }
+        
+        // ★ 智能团号匹配函数：标准化处理后匹配
+        function findProjectByName(name) {
+          if (!name) return null;
+          
+          // 1. 精确匹配（优先）
+          var exact = projects.find(function(p){ return p.name === name; });
+          if (exact) return exact;
+          
+          // 2. 标准化匹配：统一处理空格、特殊字符、大小写
+          function normalize(str) {
+            return str
+              .toLowerCase()                          // 转小写
+              .replace(/[\s\-\_\.]+/g, '')            // 去除所有空格、连字符、下划线、点
+              .replace(/[（\(][^）\)]*[）\)]/g, '')   // 去除括号内容（如：武汉(3天)）
+              .replace(/[^a-z0-9\u4e00-\u9fa5]/g, ''); // 只保留字母、数字、中文
+          }
+          
+          var normalizedName = normalize(name);
+          var matched = projects.find(function(p){ 
+            return normalize(p.name) === normalizedName; 
+          });
+          
+          if (matched) {
+            console.log('[智能匹配] "' + name + '" -> "' + matched.name + '"');
+          }
+          
+          return matched || null;
+        }
+        
         data.forEach(function(row,idx){
           var rowName = (row[colMap.name]||'').toString().trim();
           if (!rowName) { skipped++; detailLog.push('第'+(idx+2)+'行: 团期名称为空，已跳过'); return; }
 
-          // 自动生成内部ID，用团号（name）匹配已有团期
+          // ★ 智能团号匹配：标准化处理后匹配，避免大小写、空格、特殊字符问题
           var useId = 'proj_' + (Date.now()+idx) + '_' + Math.random().toString(36).slice(2,6);
-          var existing = projects.find(function(p){ return p.name === rowName; });
+          var existing = findProjectByName(rowName);
 
           var proj = {
             id: useId,
             name: rowName,
             productType: (row[colMap.type]||'').toString().trim(),
             operator: (row[colMap.op]||'').toString().trim(),
-            startDate: (row[colMap.date]||'').toString().trim(),
+            startDate: parseExcelDate(row[colMap.date]),  // ★ 使用日期转换函数
             remark: (row[colMap.remark]||'').toString().trim(),
             incomes: parseIncomes(row),
             costs: parseCosts(row),
@@ -3280,6 +3362,7 @@ async function rollbackToVersion(logId) {
           if (existing) {
             // 合并：保留已有的ID和收款/付款数据，用导入数据覆盖结构字段
             proj.id = existing.id;
+            proj._matchType = (existing.name === rowName) ? 'exact' : 'smart'; // 记录匹配类型
             if (!proj.name) proj.name = existing.name;
             if (!proj.productType) proj.productType = existing.productType || '';
             if (!proj.operator) proj.operator = existing.operator || '';
@@ -3308,27 +3391,227 @@ async function rollbackToVersion(logId) {
             if (proj.peopleDetails.length === 0) proj.peopleDetails = (existing.peopleDetails||[]).slice();
             proj.receivableStatus = existing.receivableStatus || 'unpaid';
             proj.payableStatus = existing.payableStatus || 'unpaid';
-            var exIdx = projects.findIndex(function(p){ return p.id === existing.id; });
-            projects[exIdx] = proj;
+            proj.isUpdate = true; // 标记为更新
             updated++;
-            detailLog.push('第'+(idx+2)+'行: 「' + rowName + '」已更新 (收入'+proj.incomes.length+'项, 成本'+proj.costs.length+'项, 人数'+proj.peopleDetails.length+'项)');
+            detailLog.push('第'+(idx+2)+'行: 「' + rowName + '」将更新 (收入'+proj.incomes.length+'项, 成本'+proj.costs.length+'项, 人数'+proj.peopleDetails.length+'项)');
           } else {
-            projects.push(proj);
+            proj.isUpdate = false; // 标记为新增
             imported++;
-            detailLog.push('第'+(idx+2)+'行: 「' + rowName + '」新增成功 (收入'+proj.incomes.length+'项, 成本'+proj.costs.length+'项, 人数'+proj.peopleDetails.length+'项)');
+            detailLog.push('第'+(idx+2)+'行: 「' + rowName + '」将新增 (收入'+proj.incomes.length+'项, 成本'+proj.costs.length+'项, 人数'+proj.peopleDetails.length+'项)');
           }
+          
+          parsedData.push(proj);
         });
 
-        renderCurrentPane();
-        renderSupplierEditList();
-        refreshSupplierDatalist();
-        showImportMsg('✅ 导入完成：新增 ' + imported + ' 个团期，更新 ' + updated + ' 个，跳过 ' + skipped + ' 行。<br><small style="color:var(--text-muted);">' + detailLog.join('<br>') + '</small>');
-        addImportLog('导入文件 "' + file.name + '"：新增'+imported+' 更新'+updated+' 跳过'+skipped);
+        // ★★ 不直接合并到projects，而是存储到临时变量用于预览
+        _pendingImport = {
+          data: parsedData,
+          stats: { imported: imported, updated: updated, skipped: skipped },
+          detailLog: detailLog,
+          fileName: file.name
+        };
+
+        // 显示预览界面
+        showImportPreview(_pendingImport);
       } catch(err) {
         showImportMsg('<span style="color:var(--danger);">❌ 导入失败：' + err.message + '</span>');
       }
     };
     reader.readAsArrayBuffer(file);
+  }
+
+  // 显示导入预览
+  function showImportPreview(importData) {
+    var preview = document.getElementById('importPreview');
+    var previewTableEl = document.getElementById('previewTable');
+    var previewStats = document.getElementById('previewStats');
+    
+    // ★ 安全检查：确保元素存在
+    if (!preview || !previewTableEl || !previewStats) {
+      console.error('[导入预览] 页面元素未找到');
+      alert(' 页面加载不完整，请刷新页面后重试');
+      return;
+    }
+    
+    var previewTable = previewTableEl.querySelector('tbody');
+    if (!previewTable) {
+      console.error('[导入预览] 表格tbody未找到');
+      return;
+    }
+    
+    // 显示统计信息
+    var stats = importData.stats;
+    previewStats.innerHTML = `
+      <div style="flex:1;padding:10px;background:rgba(34,197,94,0.1);border-radius:6px;text-align:center;">
+        <div style="font-size:20px;font-weight:bold;color:#22c55e;">${stats.imported}</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">新增团期</div>
+      </div>
+      <div style="flex:1;padding:10px;background:rgba(59,130,246,0.1);border-radius:6px;text-align:center;">
+        <div style="font-size:20px;font-weight:bold;color:#3b82f6;">${stats.updated}</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">更新团期</div>
+      </div>
+      <div style="flex:1;padding:10px;background:rgba(239,68,68,0.1);border-radius:6px;text-align:center;">
+        <div style="font-size:20px;font-weight:bold;color:#ef4444;">${stats.skipped}</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">跳过行</div>
+      </div>
+    `;
+    
+    // 渲染预览表格
+    var html = '';
+    importData.data.forEach(function(item) {
+      var statusBadge = item.isUpdate 
+        ? '<span style="padding:2px 8px;border-radius:4px;background:rgba(59,130,246,0.15);color:#3b82f6;font-size:11px;">更新</span>'
+        : '<span style="padding:2px 8px;border-radius:4px;background:rgba(34,197,94,0.15);color:#22c55e;font-size:11px;">新增</span>';
+      
+      // ★ 显示匹配类型提示
+      var matchBadge = '';
+      if (item.isUpdate && item._matchType === 'smart') {
+        matchBadge = '<br><small style="color:#3b82f6;">🔍 智能匹配</small>';
+      }
+      
+      var incomeCount = (item.incomes||[]).length;
+      var costCount = (item.costs||[]).length;
+      var peopleCount = (item.peopleDetails||[]).length;
+      
+      // 检查数据异常
+      var warnings = [];
+      if (!item.name) warnings.push('团号为空');
+      if (!item.startDate) warnings.push('出发日期为空');
+      if (incomeCount === 0) warnings.push('无收入项');
+      if (costCount === 0) warnings.push('无成本项');
+      
+      var warningHtml = warnings.length > 0 
+        ? '<br><small style="color:#f59e0b;">⚠️ ' + warnings.join(', ') + '</small>'
+        : '';
+      
+      html += '<tr>';
+      html += '<td>' + statusBadge + matchBadge + warningHtml + '</td>';
+      html += '<td style="font-weight:600;">' + escHtml(item.name) + '</td>';
+      html += '<td>' + escHtml(item.productType || '-') + '</td>';
+      html += '<td>' + escHtml(item.operator || '-') + '</td>';
+      html += '<td>' + (item.startDate || '-') + '</td>';
+      html += '<td>' + incomeCount + '项</td>';
+      html += '<td>' + costCount + '项</td>';
+      html += '<td>' + peopleCount + '类</td>';
+      html += '</tr>';
+    });
+    
+    previewTable.innerHTML = html;
+    
+    // 显示预览区域
+    preview.style.display = 'block';
+    
+    // 显示导入按钮
+    document.getElementById('importToSupabaseBtn').style.display = 'inline-block';
+    document.getElementById('importToSupabaseBtn').textContent = '☁️ 确认导入 (' + (stats.imported + stats.updated) + '个团期)';
+    
+    console.log('[导入预览] 已加载', importData.data.length, '条数据');
+  }
+
+  // 取消导入
+  window.cancelImport = function() {
+    _pendingImport = null;
+    document.getElementById('importPreview').style.display = 'none';
+    document.getElementById('importFileInput').value = '';
+    document.getElementById('importToSupabaseBtn').style.display = projects.length > 0 ? 'inline-block' : 'none';
+    document.getElementById('importToSupabaseBtn').textContent = '☁️ 导入到云端';
+    console.log('[导入] 已取消导入');
+  }
+
+  // 确认导入到云端
+  async function pushImportedToGitHub() {
+    if (!_pendingImport) {
+      alert('⚠️ 没有待导入的数据，请先上传Excel文件');
+      return;
+    }
+    
+    var btn = document.getElementById('importToSupabaseBtn');
+    btn.disabled = true;
+    btn.textContent = '⏳ 导入中...';
+    
+    // ★ 显示进度条
+    var progressBar = document.createElement('div');
+    progressBar.id = 'importProgressBar';
+    progressBar.style.cssText = 'position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,#3b82f6,#10b981);z-index:9999;transition:width 0.3s;width:0%;';
+    document.body.appendChild(progressBar);
+    
+    try {
+      var importData = _pendingImport.data;
+      var totalItems = importData.length;
+      var processed = 0;
+      
+      // ★ 增量保存：只保存新增/更新的团期，不是全部53个
+      var changedProjects = [];
+      
+      for (var i = 0; i < importData.length; i++) {
+        var proj = importData[i];
+        
+        // 更新进度条
+        processed = i + 1;
+        var progress = Math.round((processed / totalItems) * 100);
+        progressBar.style.width = progress + '%';
+        btn.textContent = '⏳ 导入中... ' + progress + '%';
+        
+        // 添加到变更列表
+        if (proj.isUpdate) {
+          var idx = projects.findIndex(function(p){ return p.id === proj.id; });
+          if (idx >= 0) {
+            projects[idx] = proj;
+          }
+        } else {
+          projects.push(proj);
+        }
+        
+        // 只保存变更的团期（增量保存）
+        changedProjects.push({
+          id:proj.id, name:proj.name, productType:proj.productType||'', operator:proj.operator||'',
+          startDate:proj.startDate||'', remark:proj.remark||'',
+          incomes:proj.incomes||[], costs:proj.costs||[], peopleDetails:proj.peopleDetails||[]
+        });
+        
+        // 每个团期之间短暂延迟，让进度条动画更平滑
+        await new Promise(resolve => setTimeout(resolve, 50));
+      }
+      
+      // ★ 增量保存：只上传变更的团期（20个），不是全部53个
+      console.log('[导入] 增量保存：只上传 ' + changedProjects.length + ' 个变更团期');
+      progressBar.style.width = '100%';
+      btn.textContent = '⏳ 保存到Supabase...';
+      
+      var ok = await githubSaveData(changedProjects);
+      if (!ok) throw new Error('Supabase写入失败');
+      
+      // 导入完成
+      progressBar.style.opacity = '0';
+      setTimeout(function() { progressBar.remove(); }, 300);
+      
+      updateDataSourceBadge('supabase');
+      renderCurrentPane();
+      renderSupplierEditList();
+      refreshSupplierDatalist();
+      
+      var stats = _pendingImport.stats;
+      showImportMsg('✅ 导入成功！新增 ' + stats.imported + ' 个，更新 ' + stats.updated + ' 个团期。<br><small style="color:var(--text-muted);">' + _pendingImport.detailLog.join('<br>') + '</small>');
+      addImportLog('☁️ 从 "' + _pendingImport.fileName + '" 导入：新增'+stats.imported+' 更新'+stats.updated);
+      
+      // 清空预览
+      _pendingImport = null;
+      document.getElementById('importFileInput').value = '';
+      document.getElementById('importToSupabaseBtn').textContent = '☁️ 导入到云端';
+      
+    } catch(e) {
+      progressBar.style.opacity = '0';
+      setTimeout(function() { progressBar.remove(); }, 300);
+      showImportMsg('<span style="color:var(--danger);">❌ 导入失败：'+e.message+'</span>');
+    }
+    
+    btn.disabled = false;
+    if (_pendingImport) {
+      var stats = _pendingImport.stats;
+      btn.textContent = '☁️ 确认导入 (' + (stats.imported + stats.updated) + '个团期)';
+    } else {
+      btn.textContent = '☁️ 导入到云端';
+    }
   }
 
   function showImportMsg(msg) {
@@ -4460,6 +4743,13 @@ async function rollbackToVersion(logId) {
 
     // ★ v20260529: 供应商数据已改为独立Supabase表存储，自动同步由saveSuppliers函数处理
     // 删除旧的autoSyncSuppliers逻辑（不再需要）
+    
+    // ★ 隐藏页面加载动画
+    var loader = document.getElementById('pageLoader');
+    if (loader) {
+      loader.style.opacity = '0';
+      setTimeout(function() { loader.remove(); }, 300);
+    }
   }
 
   init();
