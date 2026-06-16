@@ -653,7 +653,146 @@
   :root[data-theme="warm"] .tour-row { border-bottom-color: rgba(255,214,179,0.3); }
   :root[data-theme="warm"] .tour-row-name { color: #5d4037; }
   :root[data-theme="warm"] .tour-row-divider { background: #ffd6b3; }
-  :root[data-theme="warm"] .tour-bar-val { color: rgba(93,64,55,0.8); }</style>
+  :root[data-theme="warm"] .tour-bar-val { color: rgba(93,64,55,0.8); }
+
+  /* ===== SUPPLIER BUBBLE STYLES ===== */
+  .sup-bubble-layout { display: flex; gap: 14px; min-height: 460px; }
+  .sup-bubble-left { width: 300px; flex-shrink: 0; display: flex; flex-direction: column; }
+  .sup-bubble-zone {
+    flex: 1; background: linear-gradient(135deg, rgba(17,24,39,0.6), rgba(30,41,59,0.4));
+    backdrop-filter: blur(16px); border: 1px solid var(--border); border-radius: 14px;
+    position: relative; overflow: hidden; min-height: 300px;
+  }
+  .sup-bubble-zone-title { position: absolute; top: 12px; left: 16px; font-size: 11px; color: var(--text-muted); font-weight: 500; letter-spacing: 0.5px; z-index: 1; opacity: 0.7; }
+  .sup-bubble {
+    position: absolute; border-radius: 50%; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; cursor: pointer;
+    transition: all 0.55s cubic-bezier(0.34,1.56,0.64,1); user-select: none; z-index: 5;
+    backdrop-filter: blur(8px);
+  }
+  .sup-bubble::before { content:''; position: absolute; inset: -3px; border-radius: 50%; background: inherit; filter: blur(14px); opacity: 0.35; z-index: -1; }
+  .sup-bubble .sb-icon { font-size: 18px; margin-bottom: 2px; filter: drop-shadow(0 1px 3px rgba(0,0,0,0.2)); }
+  .sup-bubble .sb-name { font-size: 11px; font-weight: 600; color: #fff; text-shadow: 0 1px 4px rgba(0,0,0,0.3); letter-spacing: 0.3px; }
+  .sup-bubble .sb-amt { font-size: 9px; color: rgba(255,255,255,0.7); margin-top: 1px; }
+  .sup-bubble .sb-cnt { font-size: 9px; color: rgba(255,255,255,0.5); }
+  .sup-bubble:hover { transform: scale(1.08); filter: brightness(1.15); }
+  .sup-bubble:hover::before { opacity: 0.55; }
+  /* Active bubble (selected, top-left) */
+  .sup-bubble.sb-active { z-index: 10; }
+  .sup-bubble.sb-active .sb-amt, .sup-bubble.sb-active .sb-cnt { display: none; }
+  .sup-bubble.sb-active .sb-icon { font-size: 15px; }
+  .sup-bubble.sb-active .sb-name { font-size: 10px; }
+  .sup-bubble.sb-active::after {
+    content:''; position: absolute; inset: -6px; border-radius: 50%;
+    border: 2px solid currentColor; opacity: 0.3; animation: sbPulseRing 2s ease-out infinite;
+  }
+  /* Scattered bubbles (bottom row) */
+  .sup-bubble.sb-scattered { opacity: 0.3; pointer-events: auto; filter: grayscale(0.4) brightness(0.8); }
+  .sup-bubble.sb-scattered::before { opacity: 0.15; }
+  .sup-bubble.sb-scattered .sb-amt { display: none; }
+  .sup-bubble.sb-scattered .sb-cnt { display: none; }
+  .sup-bubble.sb-scattered .sb-icon { font-size: 13px; }
+  .sup-bubble.sb-scattered .sb-name { font-size: 9px; }
+  .sup-bubble.sb-scattered:hover { opacity: 0.6; filter: grayscale(0.2) brightness(0.9); }
+  @keyframes sbPulseRing { 0%{transform:scale(0.95);opacity:0.4;} 50%{transform:scale(1.15);opacity:0.1;} 100%{transform:scale(0.95);opacity:0.4;} }
+  /* Floating particles */
+  .sb-particle { position: absolute; border-radius: 50%; pointer-events: none; z-index: 1; }
+  @keyframes sbFloat1 { 0%,100%{transform:translate(0,0) scale(1);} 50%{transform:translate(15px,-20px) scale(1.1);} }
+  @keyframes sbFloat2 { 0%,100%{transform:translate(0,0) scale(1);} 50%{transform:translate(-12px,18px) scale(0.9);} }
+  @keyframes sbFloat3 { 0%,100%{transform:translate(0,0) scale(1);} 50%{transform:translate(20px,10px) scale(1.05);} }
+  @keyframes sbFloat4 { 0%,100%{transform:translate(0,0) scale(1);} 50%{transform:translate(-18px,-12px) scale(0.95);} }
+  @keyframes sbFloat5 { 0%,100%{transform:translate(0,0) scale(1);opacity:0.5;} 50%{transform:translate(8px,22px) scale(1.1);opacity:0.8;} }
+  @keyframes sbPulse { 0%,100%{opacity:0.3;transform:scale(1);} 50%{opacity:0.7;transform:scale(1.2);} }
+  /* Category summary (left bottom) */
+  .sup-cat-summary {
+    background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 12px 14px; overflow: hidden;
+    transition: all 0.4s ease; max-height: 0; opacity: 0; margin-top: 0;
+  }
+  .sup-cat-summary.sb-show { max-height: 280px; opacity: 1; margin-top: 10px; }
+  .sup-cat-summary-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .sup-cat-summary-title { font-size: 13px; font-weight: 700; }
+  .sup-cat-summary-close { font-size: 11px; color: var(--text-muted); cursor: pointer; padding: 2px 8px; border-radius: 5px; background: var(--bg-input); transition: all 0.2s; }
+  .sup-cat-summary-close:hover { color: var(--text-primary); background: rgba(239,68,68,0.1); }
+  .sup-cat-stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .sup-cat-stat { background: var(--bg-input); border-radius: 6px; padding: 8px 10px; border: 1px solid var(--border-light); }
+  .sup-cat-stat-label { font-size: 10px; color: var(--text-muted); }
+  .sup-cat-stat-val { font-size: 14px; font-weight: 700; margin-top: 2px; }
+  .sup-cat-stat-bar { height: 4px; background: rgba(239,68,68,0.1); border-radius: 3px; margin-top: 6px; overflow: hidden; grid-column: span 2; }
+  .sup-cat-stat-bar-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--success), #34d399); transition: width 0.5s ease; }
+  /* Right detail panel */
+  .sup-bubble-right { flex: 1; display: flex; flex-direction: column; gap: 0; }
+  .sup-detail-panel {
+    flex: 1; background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius);
+    overflow: hidden; display: flex; flex-direction: column;
+  }
+  .sup-detail-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 16px; border-bottom: 1px solid var(--border-light); flex-shrink: 0;
+  }
+  .sup-detail-title { font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+  .sup-detail-title .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .sup-detail-count { font-size: 11px; color: var(--text-muted); background: var(--bg-input); padding: 2px 9px; border-radius: 4px; }
+  .sup-detail-body { flex: 1; overflow-y: auto; }
+  .sup-detail-body::-webkit-scrollbar { width: 5px; }
+  .sup-detail-body::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.2); border-radius: 3px; }
+  .sup-detail-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: var(--text-muted); }
+  .sup-detail-empty .sde-icon { font-size: 36px; margin-bottom: 8px; opacity: 0.3; }
+  .sup-detail-empty .sde-text { font-size: 13px; font-weight: 500; }
+  .sup-detail-empty .sde-hint { font-size: 11px; margin-top: 4px; opacity: 0.5; }
+  .sup-group-hdr { padding: 8px 16px; font-size: 11px; color: var(--text-muted); font-weight: 600; background: var(--bg-input); border-bottom: 1px solid var(--border-light); position: sticky; top: 0; z-index: 1; }
+  .sup-item {
+    display: flex; align-items: center; padding: 10px 16px;
+    border-bottom: 1px solid var(--border-light); cursor: pointer;
+    transition: all 0.15s; animation: sbFadeSlideIn 0.3s ease both;
+  }
+  .sup-item:hover { background: rgba(99,102,241,0.06); }
+  @keyframes sbFadeSlideIn { from{opacity:0;transform:translateX(16px);} to{opacity:1;transform:translateX(0);} }
+  .sup-item-rank {
+    width: 26px; height: 26px; border-radius: 50%; display: flex;
+    align-items: center; justify-content: center; font-size: 11px;
+    font-weight: 700; margin-right: 10px; flex-shrink: 0;
+  }
+  .sup-item-rank.r1 { background: rgba(245,158,11,0.15); color: var(--warning); }
+  .sup-item-rank.r2 { background: rgba(139,92,246,0.15); color: var(--purple); }
+  .sup-item-rank.r3 { background: rgba(59,130,246,0.15); color: var(--info); }
+  .sup-item-rank.rn { background: var(--bg-input); color: var(--text-muted); }
+  .sup-item-info { flex: 1; min-width: 0; }
+  .sup-item-name-row { display: flex; align-items: center; gap: 6px; }
+  .sup-item-nm { font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sup-item-tag { font-size: 9px; color: var(--text-muted); background: var(--bg-input); padding: 1px 6px; border-radius: 3px; flex-shrink: 0; }
+  .sup-item-meta { display: flex; gap: 10px; font-size: 11px; color: var(--text-muted); margin-top: 3px; }
+  .sup-item-amts { text-align: right; flex-shrink: 0; min-width: 130px; }
+  .sup-item-payable { font-size: 13px; font-weight: 700; color: var(--danger); }
+  .sup-item-sub-row { display: flex; gap: 8px; font-size: 10px; justify-content: flex-end; margin-top: 2px; }
+  .sup-item-prog { width: 100%; height: 3px; background: rgba(239,68,68,0.08); border-radius: 2px; margin-top: 4px; }
+  .sup-item-prog-fill { height: 100%; border-radius: 2px; background: linear-gradient(90deg, var(--success), #34d399); transition: width 0.5s ease; }
+  /* Tour detail sub-panel */
+  .sup-tour-detail {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius);
+    margin-top: 10px; overflow: hidden; max-height: 0; opacity: 0; transition: all 0.35s ease;
+  }
+  .sup-tour-detail.sb-show { max-height: 380px; opacity: 1; }
+  .sup-tour-detail-header { padding: 10px 16px; border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center; }
+  .sup-tour-detail-title { font-size: 12px; font-weight: 700; }
+  .sup-tour-detail-close { font-size: 11px; color: var(--text-muted); cursor: pointer; padding: 2px 8px; border-radius: 4px; }
+  .sup-tour-detail-close:hover { background: rgba(239,68,68,0.1); color: var(--danger); }
+  .sup-tour-list { max-height: 260px; overflow-y: auto; }
+  .sup-tour-list::-webkit-scrollbar { width: 5px; }
+  .sup-tour-list::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.2); border-radius: 3px; }
+  .sup-tour-item { display: flex; align-items: center; padding: 8px 16px; border-bottom: 1px solid var(--border-light); font-size: 12px; cursor: pointer; transition: background 0.15s; }
+  .sup-tour-item:hover { background: rgba(99,102,241,0.04); }
+  .sup-tour-item:last-child { border-bottom: none; }
+  .sup-tour-name { flex: 2; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sup-tour-product { flex: 0.8; color: var(--text-muted); font-size: 11px; }
+  .sup-tour-cost { flex: 1; text-align: right; color: var(--danger); font-weight: 600; }
+  .sup-tour-status { flex: 0.6; text-align: right; }
+  .sb-pay-chip { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+  .sb-pay-chip.sb-paid { background: rgba(16,185,129,0.12); color: var(--success); }
+  .sb-pay-chip.sb-unpaid { background: rgba(245,158,11,0.12); color: var(--warning); }
+  .sb-pay-chip.sb-partial { background: rgba(239,68,68,0.12); color: var(--danger); }</style>
 </head>
 <body>
 
@@ -861,19 +1000,48 @@
     <!-- ===== MODULE 5: SUPPLIERS ===== -->
     <div class="module-pane" id="pane-suppliers">
       <div class="kpi-grid" id="supplierKPI"></div>
-      <div class="panel">
-        <div class="panel-header"><div class="panel-title"><span class="dot" style="background:var(--info);"></span>供应商应付总览</div></div>
-        <div class="table-scroll"><table class="data-table" id="supplierTable"><thead><tr><th>供应商名称</th><th>供应类型</th><th>关联团期数</th><th>应付总额</th><th>已付总额</th><th>未付总额</th><th>付款进度</th></tr></thead><tbody></tbody></table></div>
-      </div>
-      <div class="traffic-compact-row" id="supplierDetailRow" style="margin-top:0;">
-        <div class="traffic-compact-left" id="supplierBtnList">
-          <div class="hint" style="font-size:12px;color:var(--text-muted);text-align:center;padding:12px;">👆 点击上方<br>供应商行查看<br>关联团期</div>
+      <div class="sup-bubble-layout">
+        <!-- LEFT: Bubble zone + category summary -->
+        <div class="sup-bubble-left">
+          <div class="sup-bubble-zone" id="supBubbleZone">
+            <div class="sup-bubble-zone-title">供应类型</div>
+            <!-- Particles injected by JS -->
+            <div id="supParticles"></div>
+            <!-- Bubbles injected by JS -->
+            <div id="supBubbles"></div>
+          </div>
+          <div class="sup-cat-summary" id="supCatSummary">
+            <div class="sup-cat-summary-header">
+              <span class="sup-cat-summary-title" id="supCatTitle"></span>
+              <span class="sup-cat-summary-close" onclick="window._supClearSelection&&window._supClearSelection()">收起 ✕</span>
+            </div>
+            <div class="sup-cat-stat-grid">
+              <div class="sup-cat-stat"><div class="sup-cat-stat-label">供应商数</div><div class="sup-cat-stat-val" id="supCsCount" style="color:var(--info);"></div></div>
+              <div class="sup-cat-stat"><div class="sup-cat-stat-label">关联团期</div><div class="sup-cat-stat-val" id="supCsProj"></div></div>
+              <div class="sup-cat-stat"><div class="sup-cat-stat-label">应付总额</div><div class="sup-cat-stat-val" id="supCsPayable" style="color:var(--danger);"></div></div>
+              <div class="sup-cat-stat"><div class="sup-cat-stat-label">未付总额</div><div class="sup-cat-stat-val" id="supCsUnpaid" style="color:var(--warning);"></div></div>
+              <div class="sup-cat-stat-bar"><div class="sup-cat-stat-bar-fill" id="supCsBar" style="width:0%;"></div></div>
+            </div>
+          </div>
         </div>
-        <div class="traffic-compact-mid" id="supplierProjectsMid">
-          <div class="hint">👈 选择供应商<br>查看关联团期明细</div>
-        </div>
-        <div class="traffic-compact-right" id="supplierProjectsRight">
-          <div class="hint">📊<br>应付分布图表</div>
+        <!-- RIGHT: Supplier detail + tour detail -->
+        <div class="sup-bubble-right">
+          <div class="sup-detail-panel">
+            <div class="sup-detail-header">
+              <div class="sup-detail-title"><span class="dot" id="supDetailDot" style="background:var(--accent);"></span><span id="supDetailTitle">供应商明细</span></div>
+              <span class="sup-detail-count" id="supDetailCount"></span>
+            </div>
+            <div class="sup-detail-body" id="supDetailBody">
+              <div class="sup-detail-empty"><div class="sde-icon">👈</div><div class="sde-text">点击左侧气泡选择供应类型</div><div class="sde-hint">查看该类型下的供应商和团期明细</div></div>
+            </div>
+          </div>
+          <div class="sup-tour-detail" id="supTourDetail">
+            <div class="sup-tour-detail-header">
+              <span class="sup-tour-detail-title" id="supTourTitle">📋 关联团期</span>
+              <span class="sup-tour-detail-close" onclick="window._supCloseTourDetail&&window._supCloseTourDetail()">收起 ✕</span>
+            </div>
+            <div class="sup-tour-list" id="supTourList"></div>
+          </div>
         </div>
       </div>
       <!-- 供应商增删改 -->
@@ -3087,202 +3255,236 @@ async function rollbackToVersion(logId) {
       '</div>';
   }
 
-  // ==================== MODULE 5: SUPPLIERS ====================
-  let activeSupplierId = null, supListPage = 1, supChartInstance = null;
+  // ==================== MODULE 5: SUPPLIERS (Bubble Layout) ====================
+  let supActiveCat = null, supActiveSupIdx = null, supCatGroups = {};
+  var SUP_CAT_COLORS = { '地接':'#6366f1', '车票':'#8b5cf6', '导服':'#10b981', '代订':'#3b82f6', '其他':'#94a3b8', '邮轮':'#f59e0b', '保险':'#ec4899' };
+  var SUP_CAT_ICONS = { '地接':'🏨', '车票':'🚄', '导服':'🎤', '代订':'📋', '其他':'📦', '邮轮':'🚢', '保险':'🛡️' };
+  function supCatColor(cat) { return SUP_CAT_COLORS[cat] || '#6366f1'; }
+  function supCatIcon(cat) { return SUP_CAT_ICONS[cat] || '📦'; }
+
   function renderSuppliers() {
-    const list = getFilteredProjects('suppliers');
-    const supStats = {};
-    suppliers.forEach(s => { supStats[s.id] = { ...s, projectCount:0, totalPayable:0, totalPaid:0, projects:new Set(), projectList:[] }; });
-    list.forEach(p => {
-      var projSupPaid = {}; // 防止同一供应商多成本项重复累加已付
-      (p.costs||[]).forEach(c => {
-        const sid = c._supplierId || 'sup_6';
+    var list = getFilteredProjects('suppliers');
+    var supStats = {};
+    suppliers.forEach(function(s) { supStats[s.id] = { id:s.id, name:s.name, category:s.category||'其他', projectCount:0, totalPayable:0, totalPaid:0, projects:new Set(), projectList:[] }; });
+    list.forEach(function(p) {
+      var projSupPaid = {};
+      (p.costs||[]).forEach(function(c) {
+        var sid = c._supplierId || 'sup_6';
         if (supStats[sid]) {
           supStats[sid].totalPayable += c.amount;
-          // 按供应商维度计算已付（每个团期+供应商只算一次）
-          if (!projSupPaid[sid]) {
-            projSupPaid[sid] = sumCostPayments(p.id, c.id, sid);
-          }
+          if (!projSupPaid[sid]) projSupPaid[sid] = sumCostPayments(p.id, c.id, sid);
           supStats[sid].totalPaid += projSupPaid[sid];
           supStats[sid].projects.add(p.id);
-          if (!supStats[sid].projectList.find(x=>x.id===p.id)) supStats[sid].projectList.push(p);
+          if (!supStats[sid].projectList.find(function(x){return x.id===p.id;})) supStats[sid].projectList.push(p);
         }
       });
     });
 
-    const statsArr = Object.values(supStats).filter(s => s.totalPayable > 0).sort((a,b) => b.totalPayable - a.totalPayable);
-    const totalPayable = statsArr.reduce((s,x)=>s+x.totalPayable,0);
-    const totalPaid = statsArr.reduce((s,x)=>s+x.totalPaid,0);
-    window._supplierStatsArr = statsArr;
+    var statsArr = Object.values(supStats).filter(function(s){return s.totalPayable > 0;}).sort(function(a,b){return b.totalPayable - a.totalPayable;});
+    var totalPayable = statsArr.reduce(function(s,x){return s+x.totalPayable;},0);
+    var totalPaid = statsArr.reduce(function(s,x){return s+x.totalPaid;},0);
 
-    document.getElementById('supplierKPI').innerHTML = `
-      <div class="kpi-card"><div class="kpi-label">供应商总数</div><div class="kpi-value" style="color:var(--info);">${statsArr.length}</div></div>
-      <div class="kpi-card cost"><div class="kpi-label">应付总额</div><div class="kpi-value cost">${fmt(totalPayable)}</div></div>
-      <div class="kpi-card gross"><div class="kpi-label">已付总额</div><div class="kpi-value gross">${fmt(totalPaid)}</div></div>
-      <div class="kpi-card cost"><div class="kpi-label">未付总额</div><div class="kpi-value cost">${fmt(totalPayable - totalPaid)}</div></div>`;
+    // KPI
+    document.getElementById('supplierKPI').innerHTML =
+      '<div class="kpi-card"><div class="kpi-label">供应商总数</div><div class="kpi-value" style="color:var(--info);">'+statsArr.length+'</div></div>' +
+      '<div class="kpi-card cost"><div class="kpi-label">应付总额</div><div class="kpi-value cost">'+fmt(totalPayable)+'</div></div>' +
+      '<div class="kpi-card gross"><div class="kpi-label">已付总额</div><div class="kpi-value gross">'+fmt(totalPaid)+'</div></div>' +
+      '<div class="kpi-card cost"><div class="kpi-label">未付总额</div><div class="kpi-value cost">'+fmt(totalPayable - totalPaid)+'</div></div>';
 
-    // Table without 联系人/联系电话
-    document.getElementById('supplierTable').querySelector('tbody').innerHTML = statsArr.map(s => {
-      const unpaid = s.totalPayable - s.totalPaid;
-      const pct = fmtPct(s.totalPaid, s.totalPayable);
-      return `<tr style="cursor:pointer;" onclick="window._selectSupplier('${s.id}')" class="${activeSupplierId===s.id ? 'supplier-row-active' : ''}" id="supRow_${s.id}">
-        <td style="font-weight:700;">${escHtml(s.name)}</td><td>${s.category}</td>
-        <td>${s.projects.size}</td>
-        <td class="amount-cost">${fmt(s.totalPayable)}</td>
-        <td>${fmt(s.totalPaid)}</td>
-        <td class="amount-cost">${fmt(unpaid)}</td>
-        <td><span class="status-chip ${unpaid>0?'status-unpaid':'status-paid'}">${pct}</span></td>
-      </tr>`;
-    }).join('') || '<tr><td colspan="7" style="text-align:center;padding:30px;color:var(--text-muted);">暂无供应商数据，请先在团期成本中关联供应商</td></tr>';
+    // Group by category
+    supCatGroups = {};
+    statsArr.forEach(function(s) {
+      var cat = s.category || '其他';
+      if (!supCatGroups[cat]) supCatGroups[cat] = { suppliers:[], totalPayable:0, totalPaid:0, projSet:new Set() };
+      supCatGroups[cat].suppliers.push(s);
+      supCatGroups[cat].totalPayable += s.totalPayable;
+      supCatGroups[cat].totalPaid += s.totalPaid;
+      s.projects.forEach(function(pid){ supCatGroups[cat].projSet.add(pid); });
+    });
 
-    // Highlight active row
-    if (activeSupplierId && statsArr.find(s=>s.id===activeSupplierId)) {
-      refreshSupplierDetail();
+    // Render bubbles
+    var catEntries = Object.entries(supCatGroups).sort(function(a,b){return b[1].totalPayable - a[1].totalPayable;});
+    var maxPayable = catEntries.length > 0 ? catEntries[0][1].totalPayable : 1;
+
+    // Particles
+    var particleAnims = ['sbFloat1','sbFloat2','sbFloat3','sbFloat4','sbFloat5','sbPulse'];
+    var particleHtml = '';
+    for (var pi = 0; pi < 15; pi++) {
+      var catRef = catEntries[pi % catEntries.length];
+      var pColor = catRef ? supCatColor(catRef[0]) : '#6366f1';
+      var pSize = 4 + Math.floor(Math.random() * 6);
+      var pTop = 30 + Math.floor(Math.random() * 220);
+      var pLeft = 20 + Math.floor(Math.random() * 240);
+      var pAnim = particleAnims[pi % particleAnims.length];
+      var pDur = (3.5 + Math.random() * 3.5).toFixed(1);
+      particleHtml += '<div class="sb-particle" style="width:'+pSize+'px;height:'+pSize+'px;top:'+pTop+'px;left:'+pLeft+'px;background:'+pColor+'40;animation:'+pAnim+' '+pDur+'s ease-in-out infinite'+(pi%2?' reverse':'')+';"></div>';
+    }
+    document.getElementById('supParticles').innerHTML = particleHtml;
+
+    // Bubble sizes based on payable amount
+    var bubblePositions = [
+      {w:130,h:130,t:65,l:80},  // largest
+      {w:100,h:100,t:40,l:200}, // medium
+      {w:78,h:78,t:190,l:50},   // small
+      {w:68,h:68,t:200,l:145},  // smaller
+      {w:56,h:56,t:160,l:230},  // smallest
+      {w:50,h:50,t:230,l:230},  // extra
+      {w:44,h:44,t:100,l:270}   // extra
+    ];
+    var activePositions = [{w:80,h:80,t:10,l:10},{w:72,h:72,t:10,l:10},{w:66,h:66,t:10,l:10},{w:62,h:62,t:10,l:10},{w:58,h:58,t:10,l:10},{w:54,h:54,t:10,l:10},{w:50,h:50,t:10,l:10}];
+    var scatteredBottom = 240;
+
+    var bubbleHtml = '';
+    catEntries.forEach(function(entry, i) {
+      var cat = entry[0];
+      var g = entry[1];
+      var color = supCatColor(cat);
+      var icon = supCatIcon(cat);
+      var pos = bubblePositions[Math.min(i, bubblePositions.length-1)];
+      var actPos = activePositions[Math.min(i, activePositions.length-1)];
+      var amtStr = g.totalPayable >= 10000 ? '¥'+(g.totalPayable/10000).toFixed(1)+'万' : '¥'+g.totalPayable.toLocaleString();
+      var cntStr = g.suppliers.length + '家';
+
+      var isActive = supActiveCat === cat;
+      var isScattered = supActiveCat && supActiveCat !== cat;
+      var cls = 'sup-bubble';
+      var style = '';
+
+      if (isActive) {
+        cls += ' sb-active';
+        style = 'width:'+actPos.w+'px;height:'+actPos.h+'px;top:'+actPos.t+'px;left:'+actPos.l+'px;';
+        style += 'background:radial-gradient(circle at 30% 30%,'+color+'55,'+color+'22);border:1px solid '+color+'50;';
+        style += 'box-shadow:0 8px 28px '+color+'33,inset 0 1px 1px rgba(255,255,255,0.1);color:'+color+';';
+      } else if (isScattered) {
+        cls += ' sb-scattered';
+        var scatLeft = 8 + i * 52;
+        style = 'width:46px;height:46px;top:'+scatteredBottom+'px;left:'+scatLeft+'px;';
+        style += 'background:radial-gradient(circle at 30% 30%,'+color+'55,'+color+'22);border:1px solid '+color+'30;';
+        style += 'box-shadow:0 6px 20px '+color+'18,inset 0 1px 1px rgba(255,255,255,0.08);';
+      } else {
+        style = 'width:'+pos.w+'px;height:'+pos.h+'px;top:'+pos.t+'px;left:'+pos.l+'px;';
+        style += 'background:radial-gradient(circle at 30% 30%,'+color+'55,'+color+'22);border:1px solid '+color+'48;';
+        style += 'box-shadow:0 8px 28px '+color+'30,inset 0 1px 1px rgba(255,255,255,0.1);';
+      }
+
+      bubbleHtml += '<div class="'+cls+'" style="'+style+'" onclick="window._supSelectCat(\''+cat+'\')">';
+      bubbleHtml += '<span class="sb-icon">'+icon+'</span>';
+      bubbleHtml += '<span class="sb-name">'+escHtml(cat)+'</span>';
+      bubbleHtml += '<span class="sb-amt">'+amtStr+'</span>';
+      bubbleHtml += '<span class="sb-cnt">'+cntStr+'</span>';
+      bubbleHtml += '</div>';
+    });
+    document.getElementById('supBubbles').innerHTML = bubbleHtml;
+
+    // If category is selected, show detail
+    if (supActiveCat && supCatGroups[supActiveCat]) {
+      supShowCatDetail(supActiveCat);
     } else {
-      activeSupplierId = null;
-      document.getElementById('supplierBtnList').innerHTML = '<div class="hint" style="font-size:12px;color:var(--text-muted);text-align:center;padding:12px;">👆 点击上方<br>供应商行查看<br>关联团期</div>';
-      document.getElementById('supplierProjectsMid').innerHTML = '<div class="hint">👈 选择供应商<br>查看关联团期明细</div>';
-      document.getElementById('supplierProjectsRight').innerHTML = '<div class="hint">📊<br>应付分布图表</div>';
-      if (supChartInstance) { supChartInstance.destroy(); supChartInstance = null; }
+      supActiveCat = null;
+      document.getElementById('supCatSummary').classList.remove('sb-show');
+      document.getElementById('supDetailDot').style.background = 'var(--accent)';
+      document.getElementById('supDetailTitle').textContent = '供应商明细';
+      document.getElementById('supDetailCount').textContent = '';
+      document.getElementById('supDetailBody').innerHTML = '<div class="sup-detail-empty"><div class="sde-icon">👈</div><div class="sde-text">点击左侧气泡选择供应类型</div><div class="sde-hint">查看该类型下的供应商和团期明细</div></div>';
+      document.getElementById('supTourDetail').classList.remove('sb-show');
+      supActiveSupIdx = null;
     }
   }
 
-  function refreshSupplierDetail() {
-    const s = window._supplierStatsArr.find(x => x.id === activeSupplierId);
-    if (!s) return;
-    const unpaid = s.totalPayable - s.totalPaid;
-    const pct = fmtPct(s.totalPaid, s.totalPayable);
+  function supShowCatDetail(cat) {
+    var g = supCatGroups[cat];
+    if (!g) return;
+    var color = supCatColor(cat);
+    var icon = supCatIcon(cat);
+    var pct = g.totalPayable > 0 ? Math.round(g.totalPaid / g.totalPayable * 100) : 0;
 
-    // Left: supplier info buttons
-    document.getElementById('supplierBtnList').innerHTML = `
-      <div class="traffic-compact-btn green-btn active" style="border-left:4px solid var(--info);">
-        <div class="tcb-icon">🤝</div>
-        <div class="tcb-body">
-          <div class="tcb-num" style="color:var(--info);">${escHtml(s.name)}</div>
-          <div class="tcb-label">${s.category} · ${s.projects.size}个关联团期</div>
-        </div>
-      </div>
-      <div class="tcb-threshold-row" style="flex-direction:column;gap:4px;align-items:flex-start;">
-        <span style="font-size:11px;color:var(--text-muted);">应付 ${fmt(s.totalPayable)}</span>
-        <span style="font-size:11px;color:var(--text-muted);">已付 ${fmt(s.totalPaid)}</span>
-        <span style="font-size:11px;color:var(--text-muted);">未付 ${fmt(unpaid)} (${pct})</span>
-      </div>`;
+    // Category summary
+    document.getElementById('supCatTitle').textContent = icon + ' ' + cat;
+    document.getElementById('supCsCount').textContent = g.suppliers.length;
+    document.getElementById('supCsProj').textContent = g.projSet.size;
+    document.getElementById('supCsPayable').textContent = '¥' + g.totalPayable.toLocaleString();
+    document.getElementById('supCsUnpaid').textContent = '¥' + (g.totalPayable - g.totalPaid).toLocaleString();
+    document.getElementById('supCsBar').style.width = pct + '%';
+    document.getElementById('supCatSummary').classList.add('sb-show');
 
-    // Middle: 关联团期明细
-    const projList = s.projectList || [];
-    const perPage = 6;
-    const totalPages = Math.ceil(projList.length / perPage) || 1;
-    if (supListPage > totalPages) supListPage = totalPages;
-    const paged = projList.slice((supListPage-1)*perPage, supListPage*perPage);
+    // Right detail: supplier list
+    document.getElementById('supDetailDot').style.background = color;
+    document.getElementById('supDetailTitle').textContent = icon + ' ' + cat + ' · 供应商明细';
+    document.getElementById('supDetailCount').textContent = g.suppliers.length + '家供应商';
 
-    let midHtml = '<div class="tc-panel-header-row">';
-    midHtml += '<span style="font-size:12px;font-weight:600;">📋 关联团期 · ' + projList.length + '个</span>';
-    midHtml += '</div>';
-    midHtml += '<div class="tc-content-area"><div class="tc-proj-list">';
-    for (var j = 0; j < paged.length; j++) {
-      var p = paged[j];
-      var margin = getTrafficMargin(p);
-      var mc = margin !== null && margin >= marginThreshold ? 'var(--success)' : 'var(--danger)';
-      midHtml += '<div class="tc-proj-item" style="animation-delay:' + (j*0.04) + 's" onclick="window._showProjectDetail(\'' + p.id + '\')">';
-      midHtml += '<div class="tc-top"><span class="tc-name">' + escHtml(p.name) + '</span>';
-      midHtml += '<span class="tc-margin" style="background:' + mc + '20;color:' + mc + ';">' + fmtMargin(margin) + '</span></div>';
-      midHtml += '<div class="tc-meta">';
-      midHtml += '<span>📦' + (p.productType||'未分类') + '</span>';
-      midHtml += '<span>💰' + fmt(sumIncome(p)) + '</span>';
-      midHtml += '<span>📉' + fmt(sumCost(p)) + '</span>';
-      midHtml += '</div></div>';
+    var html = '<div class="sup-group-hdr">按应付金额排序 · 共' + g.suppliers.length + '家</div>';
+    g.suppliers.forEach(function(s, i) {
+      var unpaid = s.totalPayable - s.totalPaid;
+      var sp = s.totalPayable > 0 ? Math.round(s.totalPaid / s.totalPayable * 100) : 0;
+      var rc = i === 0 ? 'r1' : (i === 1 ? 'r2' : (i === 2 ? 'r3' : 'rn'));
+      var isSelected = supActiveSupIdx === i;
+      html += '<div class="sup-item" style="animation-delay:'+(i*0.06)+'s;'+(isSelected?'background:rgba(99,102,241,0.08);border-left:3px solid var(--accent);':'')+'" onclick="window._supSelectSup(\''+cat+'\','+i+')">';
+      html += '<div class="sup-item-rank '+rc+'">'+(i+1)+'</div>';
+      html += '<div class="sup-item-info"><div class="sup-item-name-row"><span class="sup-item-nm">'+escHtml(s.name)+'</span><span class="sup-item-tag">'+s.projects.size+'个团期</span></div>';
+      html += '<div class="sup-item-meta"><span>已付 '+fmt(s.totalPaid)+'</span><span>未付 '+(unpaid>0?fmt(unpaid):'已付清')+'</span></div></div>';
+      html += '<div class="sup-item-amts"><div class="sup-item-payable">'+fmt(s.totalPayable)+'</div>';
+      html += '<div class="sup-item-prog"><div class="sup-item-prog-fill" style="width:'+sp+'%;"></div></div></div></div>';
+    });
+    document.getElementById('supDetailBody').innerHTML = html;
+
+    // If supplier selected, show tour detail
+    if (supActiveSupIdx !== null && g.suppliers[supActiveSupIdx]) {
+      supShowTourDetail(cat, supActiveSupIdx);
+    } else {
+      document.getElementById('supTourDetail').classList.remove('sb-show');
     }
-    midHtml += '</div></div>';
-    if (totalPages > 1) {
-      midHtml += '<div class="tc-mini-pagination">';
-      for (var pg = 1; pg <= totalPages; pg++) {
-        midHtml += '<button class="' + (pg===supListPage?'active':'') + '" onclick="window._supGoPage(' + pg + ')">' + pg + '</button>';
-      }
-      midHtml += '</div>';
-    }
-    document.getElementById('supplierProjectsMid').innerHTML = midHtml;
-
-    // Right: 应付分布图表
-    document.getElementById('supplierProjectsRight').innerHTML = '<div class="tc-chart-wrap-full"><canvas id="supPayChart"></canvas></div>';
-    setTimeout(function(){ renderSupChart(s); }, 50);
   }
 
-  function renderSupChart(supplierStat) {
-    if (supChartInstance) { supChartInstance.destroy(); supChartInstance = null; }
-    var ctx = document.getElementById('supPayChart');
-    if (!ctx) return;
+  function supShowTourDetail(cat, idx) {
+    var g = supCatGroups[cat];
+    if (!g || !g.suppliers[idx]) return;
+    var s = g.suppliers[idx];
+    var projList = s.projectList || [];
 
-    var projList = supplierStat.projectList || [];
-    // Sort by cost (应付 from this supplier) descending
-    var sorted = projList.slice().sort(function(a,b){
-      var ca = (a.costs||[]).filter(function(c){ return c._supplierId === activeSupplierId; }).reduce(function(s,c){return s+c.amount;},0);
-      var cb = (b.costs||[]).filter(function(c){ return c._supplierId === activeSupplierId; }).reduce(function(s,c){return s+c.amount;},0);
-      return cb - ca;
+    document.getElementById('supTourTitle').textContent = '📋 ' + s.name + ' · 关联团期 (' + projList.length + '个)';
+    var html = '';
+    projList.forEach(function(p) {
+      // Find cost for this supplier in this project
+      var supCost = (p.costs||[]).filter(function(c){return c._supplierId === s.id;}).reduce(function(ss,c){return ss+c.amount;},0);
+      var supPaid = (p.costs||[]).filter(function(c){return c._supplierId === s.id;}).reduce(function(ss,c){return ss+(c.paidAmount||0);},0);
+      var status = supPaid >= supCost && supCost > 0 ? 'sb-paid' : (supPaid === 0 ? 'sb-unpaid' : 'sb-partial');
+      var statusText = supPaid >= supCost && supCost > 0 ? '已付清' : (supPaid === 0 ? '未付' : '部分付');
+      html += '<div class="sup-tour-item" onclick="window._showProjectDetail(\''+p.id+'\')">';
+      html += '<span class="sup-tour-name" title="'+escHtml(p.name)+'">'+escHtml(p.name)+'</span>';
+      html += '<span class="sup-tour-product">'+(p.productType||'未分类')+'</span>';
+      html += '<span class="sup-tour-cost">'+fmt(supCost)+'</span>';
+      html += '<span class="sup-tour-status"><span class="sb-pay-chip '+status+'">'+statusText+'</span></span>';
+      html += '</div>';
     });
-    var labels = sorted.map(function(p){ var n = p.name||''; return n.length > 14 ? n.substring(0,12)+'…' : n; });
-    var payables = sorted.map(function(p){
-      return (p.costs||[]).filter(function(c){ return c._supplierId === activeSupplierId; }).reduce(function(s,c){return s+c.amount;},0);
-    });
-    var paidAmts = sorted.map(function(p){
-      return (p.costs||[]).filter(function(c){ return c._supplierId === activeSupplierId; }).reduce(function(s,c){return s+sumCostPayments(p.id, c.id);},0);
-    });
-
-    supChartInstance = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: labels,
-        datasets: [
-          {
-            label: '应付',
-            data: payables,
-            backgroundColor: 'rgba(239,68,68,0.7)',
-            borderColor: '#ef4444',
-            borderWidth: 1,
-            borderRadius: 3
-          },
-          {
-            label: '已付',
-            data: paidAmts,
-            backgroundColor: 'rgba(16,185,129,0.7)',
-            borderColor: '#10b981',
-            borderWidth: 1,
-            borderRadius: 3
-          }
-        ]
-      },
-      options: {
-        indexAxis: 'y',
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { labels: { color: '#94a3b8', font: { size: 10 }, usePointStyle: true, boxWidth: 8 } },
-          tooltip: {
-            callbacks: {
-              title: function(items){ var i = items[0].dataIndex; return sorted[i].name; },
-              label: function(ctx){ return (ctx.dataset.label||'') + ': ' + fmt(ctx.raw); },
-              afterLabel: function(context){
-                var i = context.dataIndex;
-                var p = sorted[i];
-                return '团号: ' + p.name + ' | 产品线: ' + (p.productType||'未分类') + ' | 总成本: ' + fmt(sumCost(p));
-              }
-            }
-          }
-        },
-        scales: {
-          x: {
-            title: { display: true, text: '金额', color: '#94a3b8', font:{size:10} },
-            ticks: { color: '#94a3b8', font:{size:10} },
-            grid: { color: 'rgba(30,58,95,0.3)' },
-            min: 0
-          },
-          y: {
-            ticks: { color: '#94a3b8', font:{size:10} },
-            grid: { display: false }
-          }
-        }
-      }
-    });
+    if (projList.length === 0) html = '<div style="text-align:center;padding:20px;color:var(--text-muted);font-size:12px;">暂无关联团期数据</div>';
+    document.getElementById('supTourList').innerHTML = html;
+    document.getElementById('supTourDetail').classList.add('sb-show');
   }
+
+  // Global bindings
+  window._supSelectCat = function(cat) {
+    if (supActiveCat === cat) {
+      supActiveCat = null; supActiveSupIdx = null;
+    } else {
+      supActiveCat = cat; supActiveSupIdx = null;
+    }
+    renderSuppliers();
+  };
+  window._supSelectSup = function(cat, idx) {
+    supActiveSupIdx = (supActiveSupIdx === idx) ? null : idx;
+    supShowCatDetail(cat);
+  };
+  window._supClearSelection = function() {
+    supActiveCat = null; supActiveSupIdx = null;
+    renderSuppliers();
+  };
+  window._supCloseTourDetail = function() {
+    supActiveSupIdx = null;
+    document.getElementById('supTourDetail').classList.remove('sb-show');
+    // Remove highlight from supplier items
+    var items = document.querySelectorAll('.sup-item');
+    items.forEach(function(item) { item.style.background = ''; item.style.borderLeft = ''; });
+  };
 
   // ==================== MODULE 6: PROJECTS ====================
   let projPage = 1, projTypeFilter = 'all', projOpFilter = 'all', projMarginFilter = 'all';
@@ -4358,13 +4560,6 @@ async function rollbackToVersion(logId) {
   window._renderPayables = renderPayables;
   window._renderProjects = renderProjects;
   window._tcGoPage = function(pg) { tcListPage = pg; refreshTrafficPanel(); };
-  window._selectSupplier = function(sid) {
-    activeSupplierId = (activeSupplierId === sid) ? null : sid;
-    supListPage = 1;
-    if (supChartInstance) { supChartInstance.destroy(); supChartInstance = null; }
-    renderSuppliers();
-  };
-  window._supGoPage = function(pg) { supListPage = pg; if (activeSupplierId) refreshSupplierDetail(); };
 
   // ==================== EXPORT EXCEL (每个字段独立一列) ====================
   function exportExcel() {
