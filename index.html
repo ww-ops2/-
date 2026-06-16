@@ -3384,7 +3384,7 @@ async function rollbackToVersion(logId) {
       try {
         var wb = XLSX.read(ev.target.result, { type: 'array' });
         var ws = wb.Sheets[wb.SheetNames[0]];
-        var data = XLSX.utils.sheet_to_json(ws);
+        var data = XLSX.utils.sheet_to_json(ws, {defval: ''});
         if (data.length === 0) { showImportMsg('⚠️ 文件中没有数据'); return; }
 
         // 智能列名匹配（支持新旧两种模板格式）
