@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -3410,11 +3410,15 @@ async function rollbackToVersion(logId) {
         colMap.incomeOffline = findCol(['线下收入金额','线下收入']);
         colMap.incomeCutPos  = findCol(['切位收入金额','切位收入']);
 
-        // ★新：成本独立列（5组：金额+供应商）
+        // ★新：成本独立列（6组：金额+供应商，地接款支持扩展列）
         colMap.costTicketAmt = findCol(['车票款金额']);
         colMap.costTicketSup = findCol(['车票款供应商']);
-        colMap.costLocalAmt  = findCol(['地接款金额']);
-        colMap.costLocalSup  = findCol(['地接款供应商']);
+        // ★ 地接款2必须在"地接款"之前匹配，避免indexOf误匹配
+        colMap.costLocalAmt2 = findCol(['地接款金额2']);
+        colMap.costLocalSup2 = findCol(['地接款供应商2']);
+        // ★ 基础地接款列：排除已匹配的扩展列（防止indexOf误匹配）
+        colMap.costLocalAmt  = cols.find(function(c){ return c.indexOf('地接款金额')!==-1 && c !== colMap.costLocalAmt2; }) || null;
+        colMap.costLocalSup  = cols.find(function(c){ return c.indexOf('地接款供应商')!==-1 && c !== colMap.costLocalSup2; }) || null;
         colMap.costBookingAmt = findCol(['代订费用金额']);
         colMap.costBookingSup = findCol(['代订费用供应商']);
         colMap.costGuideAmt  = findCol(['导服费金额','导服费用金额']);
@@ -3443,7 +3447,7 @@ async function rollbackToVersion(logId) {
 
         // 判断是否使用新的独立列格式
         var useNewIncome  = !!(colMap.incomeOnline || colMap.incomeOffline || colMap.incomeCutPos);
-        var useNewCost    = !!(colMap.costTicketAmt || colMap.costLocalAmt || colMap.costBookingAmt || colMap.costGuideAmt || colMap.costOtherAmt);
+        var useNewCost    = !!(colMap.costTicketAmt || colMap.costLocalAmt || colMap.costLocalAmt2 || colMap.costBookingAmt || colMap.costGuideAmt || colMap.costOtherAmt);
         var useNewPeople  = !!(colMap.peopleOnline || colMap.peopleOffline || colMap.peopleCutPos);
 
         // 解析收入（优先新格式，回退旧格式）
@@ -3487,6 +3491,7 @@ async function rollbackToVersion(logId) {
             }
             addCost('车票款',   colMap.costTicketAmt,  colMap.costTicketSup);
             addCost('地接款',   colMap.costLocalAmt,   colMap.costLocalSup);
+            addCost('地接款2',  colMap.costLocalAmt2,  colMap.costLocalSup2);
             addCost('代订费用', colMap.costBookingAmt, colMap.costBookingSup);
             addCost('导服费',   colMap.costGuideAmt,   colMap.costGuideSup);
             addCost('其他',     colMap.costOtherAmt,   colMap.costOtherSup);
@@ -4370,35 +4375,36 @@ async function rollbackToVersion(logId) {
       function findCost(name) { return (p.costs||[]).find(function(x){return x.name===name;}); }
       function findPpl(name) { var d=(p.peopleDetails||[]).find(function(x){return x.name===name;}); return d?d.count:0; }
       function supName(c) { if(!c) return ''; var s=suppliers.find(function(x){return x.id===c._supplierId;}); return s?s.name:''; }
-      var ticket=findCost('车票款'), local=findCost('地接款'), booking=findCost('代订费用');
+      var ticket=findCost('车票款'), local=findCost('地接款'), local2=findCost('地接款2'), booking=findCost('代订费用');
       var guide=findCost('导服费')||findCost('导服费用'), other=findCost('其他')||findCost('其他费用');
       return {
         '团号': p.name,
         '产品线': p.productType || '',
         '计调': p.operator || '',
         '出发日期': p.startDate || '',
-        '备注': p.remark || '',
+        '线上人数': findPpl('线上'),
+        '线下人数': findPpl('线下'),
+        '切位人数': findPpl('切位'),
         '线上收入金额': findInc('线上')||findInc('线上收入')||0,
         '线下收入金额': findInc('线下')||findInc('线下收入')||0,
         '切位收入金额': findInc('切位')||findInc('切位收入')||0,
         '车票款金额': ticket?ticket.amount:0, '车票款供应商': supName(ticket),
         '地接款金额': local?local.amount:0, '地接款供应商': supName(local),
+        '地接款金额2': local2?local2.amount:0, '地接款供应商2': supName(local2),
         '代订费用金额': booking?booking.amount:0, '代订费用供应商': supName(booking),
         '导服费金额': guide?guide.amount:0, '导服费供应商': supName(guide),
-        '其他费用金额': other?other.amount:0, '其他费用供应商': supName(other),
-        '线上人数': findPpl('线上'),
-        '线下人数': findPpl('线下'),
-        '切位人数': findPpl('切位')
+        '其他费用金额': other?other.amount:0, '其他费用供应商': supName(other)
       };
     });
     var ws = XLSX.utils.json_to_sheet(data);
     ws['!cols'] = [
-      { wch: 28 },{ wch: 10 },{ wch: 8 },
-      { wch: 12 },{ wch: 14 },
+      { wch: 28 },{ wch: 10 },{ wch: 8 },{ wch: 12 },
+      { wch: 10 },{ wch: 10 },{ wch: 10 },
       { wch: 12 },{ wch: 12 },{ wch: 12 },
       { wch: 12 },{ wch: 14 },{ wch: 12 },{ wch: 14 },
+      { wch: 12 },{ wch: 14 },
       { wch: 14 },{ wch: 14 },{ wch: 12 },{ wch: 14 },
-      { wch: 10 },{ wch: 10 },{ wch: 10 }
+      { wch: 14 },{ wch: 14 }
     ];
     var wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, '团期数据');
@@ -4408,12 +4414,25 @@ async function rollbackToVersion(logId) {
 
   // 下载空白导入模版（每个字段独立一列，方便一一对应）
   window.downloadTemplate = function() {
+    // ★ 收集当前看板中已有的产品线名称（去重排序）
+    var typeSet = {};
+    projects.forEach(function(p) {
+      var t = p.productType || '未分类';
+      typeSet[t] = true;
+    });
+    var typeList = Object.keys(typeSet).sort();
+    if (typeList.length === 0) {
+      typeList = ['国内游', '出境游', '周边游']; // 默认兜底
+    }
+
     var data = [{
       '团号': '示例团期名称（如：YJMH-越南-20260110 南宁）',
       '产品线': '国内游',
       '计调': '张三',
       '出发日期': '2026-05-01',
-      '备注': '备注信息',
+      '线上人数': 30,
+      '线下人数': 10,
+      '切位人数': 5,
       '线上收入金额': 50000,
       '线下收入金额': 20000,
       '切位收入金额': 10000,
@@ -4421,27 +4440,50 @@ async function rollbackToVersion(logId) {
       '车票款供应商': '火车票代订',
       '地接款金额': 25000,
       '地接款供应商': '南宁地接社',
+      '地接款金额2': 12000,
+      '地接款供应商2': '桂林地接社',
       '代订费用金额': 3000,
       '代订费用供应商': '',
       '导服费金额': 2000,
       '导服费供应商': '',
       '其他费用金额': 500,
-      '其他费用供应商': '',
-      '线上人数': 30,
-      '线下人数': 10,
-      '切位人数': 5
+      '其他费用供应商': ''
     }];
     var ws = XLSX.utils.json_to_sheet(data);
     ws['!cols'] = [
-      { wch: 28 },{ wch: 10 },{ wch: 8 },
-      { wch: 12 },{ wch: 14 },
+      { wch: 28 },{ wch: 10 },{ wch: 8 },{ wch: 12 },
+      { wch: 10 },{ wch: 10 },{ wch: 10 },
       { wch: 12 },{ wch: 12 },{ wch: 12 },
       { wch: 12 },{ wch: 14 },{ wch: 12 },{ wch: 14 },
+      { wch: 12 },{ wch: 14 },
       { wch: 14 },{ wch: 14 },{ wch: 12 },{ wch: 14 },
-      { wch: 10 },{ wch: 10 },{ wch: 10 }
+      { wch: 14 },{ wch: 14 }
     ];
+
+    // ★ 创建隐藏参考表，存放产品线列表（供B列下拉选择）
+    var refData = typeList.map(function(t) { return { '产品线列表': t }; });
+    var wsRef = XLSX.utils.json_to_sheet(refData);
+    wsRef['!cols'] = [{ wch: 16 }];
+
     var wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, '导入模板');
+    XLSX.utils.book_append_sheet(wb, wsRef, '产品线参考');
+    wb.Workbook = wb.Workbook || {};
+    wb.Workbook.Sheets = wb.Workbook.Sheets || [];
+    wb.Workbook.Sheets[0] = { Hidden: 0 }; // 导入模板：可见
+    wb.Workbook.Sheets[1] = { Hidden: 1 }; // 产品线参考：隐藏
+
+    // ★ 添加B列数据验证（下拉选择产品线）
+    var lastRefRow = typeList.length + 1; // +1因为参考表有表头占第1行，数据从A2开始
+    ws['!dataValidations'] = [
+      {
+        sqref: 'B2:B200',
+        type: 'list',
+        formulae: ["'产品线参考'!$A$2:$A$" + lastRefRow],
+        showDropDown: false
+      }
+    ];
+
     XLSX.writeFile(wb, '导入模板_空白.xlsx');
   };
 
