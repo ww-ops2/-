@@ -237,6 +237,24 @@
   .product-card .line-stat { font-size: 11px; }
   .product-card .line-stat .val { font-size: 14px; font-weight: 700; display: block; }
 
+  /* ===== TOUR DETAIL ROWS (C2方案) ===== */
+  .tour-detail-panel { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; max-height: 420px; overflow-y: auto; }
+  .tour-detail-header { font-size: 13px; font-weight: 700; color: var(--text-primary); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+  .tour-detail-header .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+  .tour-detail-legend { display: flex; gap: 14px; margin-bottom: 10px; font-size: 11px; color: var(--text-secondary); }
+  .tour-detail-legend span { display: flex; align-items: center; gap: 4px; }
+  .tour-detail-legend .sq { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+  .tour-row { display: flex; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(30,58,95,0.45); }
+  .tour-row:last-child { border-bottom: none; }
+  .tour-row-name { width: 220px; flex-shrink: 0; font-size: 11px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tour-row-badges { width: 90px; flex-shrink: 0; display: flex; align-items: center; justify-content: flex-end; gap: 4px; }
+  .tour-badge-ppl { display: inline-flex; align-items: center; gap: 2px; background: rgba(139,92,246,0.12); color: var(--purple); font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 4px; white-space: nowrap; }
+  .tour-badge-kw { display: inline-flex; align-items: center; background: rgba(245,158,11,0.12); color: var(--warning); font-size: 9px; font-weight: 600; padding: 2px 6px; border-radius: 4px; white-space: nowrap; }
+  .tour-row-divider { width: 1px; height: 26px; background: var(--border-light); flex-shrink: 0; margin: 0 10px; }
+  .tour-row-bars { flex: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0; max-width: 45%; }
+  .tour-bar { height: 9px; border-radius: 4px; position: relative; }
+  .tour-bar-val { position: absolute; right: 4px; top: 50%; transform: translateY(-50%); font-size: 9px; color: rgba(255,255,255,0.75); font-weight: 600; }
+
   /* ===== SUPPLIER CARDS ===== */
   .supplier-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
   .supplier-card {
@@ -628,7 +646,14 @@
   /* 暖色主题下的产品线统计数值 */
   :root[data-theme="warm"] .product-card .line-stat .val {
     color: #5d4037 !important;
-  }</style>
+  }
+
+  /* 暖色主题下的团期明细 */
+  :root[data-theme="warm"] .tour-detail-panel { background: var(--bg-card); border-color: #ffd6b3; }
+  :root[data-theme="warm"] .tour-row { border-bottom-color: rgba(255,214,179,0.3); }
+  :root[data-theme="warm"] .tour-row-name { color: #5d4037; }
+  :root[data-theme="warm"] .tour-row-divider { background: #ffd6b3; }
+  :root[data-theme="warm"] .tour-bar-val { color: rgba(93,64,55,0.8); }</style>
 </head>
 <body>
 
@@ -778,6 +803,7 @@
         <div class="panel-header"><div class="panel-title"><span class="dot" style="background:var(--accent);"></span>各产品线收入对比排行</div></div>
         <div class="chart-wrap" style="height:240px;"><canvas id="lineBarChart"></canvas></div>
       </div>
+      <div id="tourDetailPanel"></div>
       <div class="product-cards" id="productCards"></div>
     </div>
 
@@ -2132,73 +2158,148 @@ async function rollbackToVersion(logId) {
 
   // ==================== MODULE 2: PRODUCT LINES ====================
   var selectedProductType = null; // null=全部，否则=选中的产品线
+  var _plAnimState = null; // ★ FLIP飞入动画状态
   function renderProductLines() {
     const allList = getFilteredProjects('productLines');
     // ★ 检测当前主题
     var isWarm = document.documentElement.getAttribute('data-theme') === 'warm';
-    // 如果选中了某个产品线，过滤数据
-    const list = selectedProductType ? allList.filter(p => (p.productType || '未分类') === selectedProductType) : allList;
-    const groups = {};
-    list.forEach(p => {
+    // ★ 始终用全量数据计算产品线分组（用于图表和团期明细）
+    const allGroups = {};
+    allList.forEach(p => {
       const t = p.productType || '未分类';
-      if (!groups[t]) groups[t] = { count:0, income:0, cost:0, people:0, projects:[] };
-      groups[t].count++; groups[t].income += sumIncome(p);
-      groups[t].cost += sumCost(p); groups[t].people += sumPeople(p, false);
-      groups[t].projects.push(p);
+      if (!allGroups[t]) allGroups[t] = { count:0, income:0, cost:0, people:0, keWei:0, projects:[] };
+      allGroups[t].count++; allGroups[t].income += sumIncome(p);
+      allGroups[t].cost += sumCost(p); allGroups[t].people += sumPeople(p, false);
+      allGroups[t].keWei += sumPeople(p, false) - sumPeople(p, true);
+      allGroups[t].projects.push(p);
     });
-    const entries = Object.entries(groups).sort((a,b) => b[1].income - a[1].income);
+    const allEntries = Object.entries(allGroups).sort((a,b) => b[1].income - a[1].income);
+    // ★ 用于 KPI 显示的当前选中数据
+    const selectedList = selectedProductType ? allList.filter(p => (p.productType || '未分类') === selectedProductType) : allList;
+    const selectedGroups = {};
+    selectedList.forEach(p => {
+      const t = p.productType || '未分类';
+      if (!selectedGroups[t]) selectedGroups[t] = { count:0, income:0, cost:0, people:0, keWei:0, projects:[] };
+      selectedGroups[t].count++; selectedGroups[t].income += sumIncome(p);
+      selectedGroups[t].cost += sumCost(p); selectedGroups[t].people += sumPeople(p, false);
+      selectedGroups[t].keWei += sumPeople(p, false) - sumPeople(p, true);
+      selectedGroups[t].projects.push(p);
+    });
+    const selectedEntries = Object.entries(selectedGroups).sort((a,b) => b[1].income - a[1].income);
 
-    let totalIncome = 0, totalCost = 0;
-    list.forEach(p => { totalIncome += sumIncome(p); totalCost += sumCost(p); });
+    let totalIncome = 0, totalCost = 0, totalPeople = 0, totalExPeople = 0;
+    selectedList.forEach(p => { totalIncome += sumIncome(p); totalCost += sumCost(p); totalPeople += sumPeople(p, false); totalExPeople += sumPeople(p, true); });
     const totalGross = totalIncome - totalCost;
+    // ★ 切位收支计算（切位收入=切位成本，排除后收入和成本都减少，毛利额不变）
+    const cutAmount = selectedList.reduce((s,p) => s + (p.incomes||[]).filter(i=>i.name==='切位收入').reduce((ss,i)=>ss+(i.amount||0),0), 0);
+    const excInc = totalIncome - cutAmount;
+    const excCost = totalCost - cutAmount;
+    const excGross = totalIncome - totalCost; // 毛利额不变
+    const excMarginRate = excInc ? (excGross/excInc*100) : null;
+    var showInc = excludeKeWei ? excInc : totalIncome;
+    var showCost = excludeKeWei ? excCost : totalCost;
+    var showGross = excGross; // 始终不变
+    var showMargin = excludeKeWei ? excMarginRate : (totalIncome ? (totalGross/totalIncome*100) : null);
 
-    // KPI 标题显示当前筛选状态 - 使用 window._resetProductLine 避免作用域问题
-    var kpiTitle = selectedProductType 
-      ? '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;"><div class="kpi-card income" style="min-width:auto;"><div class="kpi-label">当前产品线</div><div class="kpi-value" style="color:var(--accent);font-size:14px;">' + escHtml(selectedProductType) + '</div></div><span onclick="window._resetProductLine&&window._resetProductLine()" style="font-size:12px;color:var(--info);cursor:pointer;text-decoration:none;padding:2px 10px;border:1px solid var(--info);border-radius:4px;">← 返回全部</span></div>'
-      : '';
+    // KPI 标题：选中产品线时，左侧展示紧凑产品线卡片（点击可返回）
+    var kpiTitle = '';
+    if (selectedProductType && allGroups[selectedProductType]) {
+      var selD = allGroups[selectedProductType];
+      var selGross = selD.income - selD.cost;
+      var selNonKW = selD.people - selD.keWei;
+      var selShowPeople = excludeKeWei ? selNonKW : selD.people;
+      var selKW = selD.keWei;
+      // ★ 切位收支：选中产品线的切位收入
+      var selCutAmt = allGroups[selectedProductType].projects.reduce((s,p) => s + (p.incomes||[]).filter(i=>i.name==='切位收入').reduce((ss,i)=>ss+(i.amount||0),0), 0);
+      var selShowInc = excludeKeWei ? (selD.income - selCutAmt) : selD.income;
+      var selShowGross = selGross; // 毛利额不变
+      var selShowMargin = excludeKeWei ? ((selD.income - selCutAmt) ? (selGross/(selD.income - selCutAmt)*100) : 0) : (selD.income ? (selGross/selD.income*100) : 0);
+      kpiTitle = '<div class="kpi-card" style="cursor:pointer;border:2px solid var(--accent);min-width:auto;max-width:380px;" onclick="window._resetProductLine&&window._resetProductLine()" title="点击返回全部产品线">' +
+        '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
+          '<span style="color:var(--accent);font-weight:700;font-size:13px;">' + escHtml(selectedProductType) + '</span>' +
+          '<span style="font-size:10px;color:var(--info);cursor:pointer;">← 返回</span>' +
+          '<span style="width:1px;height:14px;background:var(--border-light);"></span>' +
+          '<span style="font-size:11px;color:var(--text-secondary);">收入 <b style="color:var(--success);">' + fmt(selShowInc) + '</b></span>' +
+          '<span style="font-size:11px;color:var(--text-secondary);">毛利 <b style="color:var(--info);">' + fmt(selShowGross) + '</b></span>' +
+          '<span style="font-size:11px;color:var(--text-secondary);">毛利率 <b style="color:' + (selShowMargin>=marginThreshold?'var(--success)':'var(--danger)') + ';">' + selShowMargin.toFixed(1) + '%</b></span>' +
+          (excludeKeWei && selCutAmt > 0 ? '<span style="font-size:9px;color:var(--text-muted);">(不含切位)</span>' : '') +
+          '<span style="width:1px;height:14px;background:var(--border-light);"></span>' +
+          '<span style="font-size:11px;color:var(--text-secondary);">👥 <b style="color:var(--purple);">' + selShowPeople + '</b>' + (selKW > 0 ? '<span style="font-size:9px;color:var(--warning);"> 切' + selKW + '</span>' : '') + '</span>' +
+        '</div>' +
+      '</div>';
+    }
     // 选中产品线时显示团期数，否则显示产品线数
     var countLabel = selectedProductType ? '团期总数' : '产品线总数';
-    var countValue = selectedProductType ? (entries[0] ? entries[0][1].count : 0) : entries.length;
+    var countValue = selectedProductType ? (selectedEntries[0] ? selectedEntries[0][1].count : 0) : allEntries.length;
     document.getElementById('productLineKPI').innerHTML = (kpiTitle || '') + `
       <div class="kpi-card income"><div class="kpi-label">${countLabel}</div><div class="kpi-value" style="color:var(--info);">${countValue}</div></div>
-      <div class="kpi-card income"><div class="kpi-label">总收入</div><div class="kpi-value income">${fmt(totalIncome)}</div></div>
-      <div class="kpi-card cost"><div class="kpi-label">总成本</div><div class="kpi-value cost">${fmt(totalCost)}</div></div>
-      <div class="kpi-card gross"><div class="kpi-label">总毛利</div><div class="kpi-value gross">${fmt(totalGross)}</div></div>
-      <div class="kpi-card margin"><div class="kpi-label">整体毛利率</div><div class="kpi-value margin">${fmtMargin(totalIncome?(totalGross/totalIncome*100):null)}</div></div>`;
+      <div class="kpi-card income kpi-clickable" onclick="window._toggleKeWei&&window._toggleKeWei()"><div class="kpi-label">总收入</div><div class="kpi-value income">${fmt(showInc)}</div><div class="kpi-change">${excludeKeWei ? '(不含切位)' : (cutAmount > 0 ? '✂️切位: '+fmt(cutAmount) : '')}</div></div>
+      <div class="kpi-card cost kpi-clickable" onclick="window._toggleKeWei&&window._toggleKeWei()"><div class="kpi-label">总成本</div><div class="kpi-value cost">${fmt(showCost)}</div><div class="kpi-change">${excludeKeWei ? '(不含切位)' : (cutAmount > 0 ? '✂️切位: '+fmt(cutAmount) : '')}</div></div>
+      <div class="kpi-card gross kpi-clickable" onclick="window._toggleKeWei&&window._toggleKeWei()"><div class="kpi-label">总毛利</div><div class="kpi-value gross">${fmt(showGross)}</div><div class="kpi-change">${excludeKeWei ? '毛利额不变' : ''}</div></div>
+      <div class="kpi-card margin kpi-clickable" onclick="window._toggleKeWei&&window._toggleKeWei()"><div class="kpi-label">整体毛利率</div><div class="kpi-value margin">${fmtMargin(showMargin)}</div><div class="kpi-change">${excludeKeWei ? '(不含切位)' : ''}</div></div>
+      <div class="kpi-card people kpi-clickable" onclick="window._toggleKeWei&&window._toggleKeWei()"><div class="kpi-label">成交人数</div><div class="kpi-value people">${excludeKeWei?totalExPeople:totalPeople}</div><div class="kpi-change">${excludeKeWei?'不含切位':'含切位'}</div></div>`;
 
-    // 图表：选中产品线 → 各团期对比；否则 → 各产品线汇总对比
-    if (selectedProductType && entries.length > 0) {
-      // 选中某个产品线：水平条形图展示该品类下每个团期的收入/毛利
-      var tourGroups = entries[0][1].projects.slice().sort(function(a,b){ return sumIncome(b) - sumIncome(a); });
-      var tgLabels = tourGroups.map(function(p){
-        // 截取团期名关键部分，太长影响显示
+    // ★ 图表面板和团期明细面板的切换
+    var chartPanelEl = document.getElementById('lineBarChart').closest('.panel');
+    var tourDetailEl = document.getElementById('tourDetailPanel');
+
+    if (selectedProductType && allGroups[selectedProductType]) {
+      // 选中产品线：隐藏图表，显示团期明细替换
+      chartPanelEl.style.display = 'none';
+      var tourProjects = allGroups[selectedProductType].projects.slice().sort(function(a,b){ return sumIncome(b) - sumIncome(a); });
+      var maxTourIncome = tourProjects.length > 0 ? sumIncome(tourProjects[0]) : 1;
+      if (maxTourIncome === 0) maxTourIncome = 1;
+      var tourRowsHtml = tourProjects.map(function(p) {
         var nm = p.name || '未命名';
-        if (nm.length > 28) nm = nm.substring(0, 26) + '…';
-        return nm;
-      });
-      renderChart('lineBarChart', 'bar', {
-        labels: tgLabels,
-        datasets: [
-          { label:'收入', data: tourGroups.map(function(p){return sumIncome(p);}), backgroundColor:'rgba(16,185,129,0.6)', borderRadius:6 },
-          { label:'毛利', data: tourGroups.map(function(p){return sumIncome(p)-sumCost(p);}), backgroundColor:'rgba(59,130,246,0.6)', borderRadius:6 }
-        ]
-      }, {
-        indexAxis: 'y',
-        scales: {
-          y: { ticks: { color: isWarm ? '#5d4037' : '#e2e8f0', font: { size: 11 } }, grid: { display: false } },
-          x: { ticks: { color: isWarm ? '#5d4037' : '#94a3b8', callback: function(v){return v>=10000?(v/10000).toFixed(1)+'万':v;} }, grid: { color: isWarm ? 'rgba(255,214,179,0.4)' : 'rgba(30,58,95,0.4)' } }
-        }
-      });
+        var tIncome = sumIncome(p);
+        var tCost = sumCost(p);
+        var tGross = tIncome - tCost;
+        var tPeople = sumPeople(p, false);
+        var tExPeople = sumPeople(p, true);
+        var tKeWei = tPeople - tExPeople;
+        var showPpl = excludeKeWei ? tExPeople : tPeople;
+        var incomePct = (tIncome / maxTourIncome * 100).toFixed(1);
+        var grossPct = Math.max(0, tGross / maxTourIncome * 100).toFixed(1);
+        var incomeStr = tIncome >= 10000 ? (tIncome/10000).toFixed(1)+'万' : tIncome.toLocaleString();
+        var grossStr = tGross >= 10000 ? (tGross/10000).toFixed(1)+'万' : tGross.toLocaleString();
+        var kwBadge = tKeWei > 0 ? '<span class="tour-badge-kw">切' + tKeWei + '</span>' : '';
+        return '<div class="tour-row">' +
+          '<div class="tour-row-name" title="' + escHtml(nm) + '">' + escHtml(nm) + '</div>' +
+          '<div class="tour-row-badges"><span class="tour-badge-ppl">👥 ' + showPpl + '</span>' + kwBadge + '</div>' +
+          '<div class="tour-row-divider"></div>' +
+          '<div class="tour-row-bars">' +
+            '<div class="tour-bar" style="width:' + incomePct + '%;background:rgba(16,185,129,0.6);"><span class="tour-bar-val">¥' + incomeStr + '</span></div>' +
+            '<div class="tour-bar" style="width:' + grossPct + '%;background:rgba(59,130,246,0.6);"><span class="tour-bar-val">¥' + grossStr + '</span></div>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+      tourDetailEl.innerHTML = '<div class="tour-detail-panel">' +
+        '<div class="tour-detail-header">' +
+          '<span class="dot" style="background:var(--accent);"></span>' + escHtml(selectedProductType) + ' — 各团期收入/毛利明细' +
+          '<span onclick="window._resetProductLine&&window._resetProductLine()" style="margin-left:auto;font-size:11px;color:var(--info);cursor:pointer;padding:2px 8px;border:1px solid var(--info);border-radius:4px;">← 返回全部</span>' +
+        '</div>' +
+        '<div class="tour-detail-legend">' +
+          '<span><span class="sq" style="background:rgba(16,185,129,0.7);"></span>收入</span>' +
+          '<span><span class="sq" style="background:rgba(59,130,246,0.7);"></span>毛利</span>' +
+          '<span><span class="sq" style="background:rgba(139,92,246,0.5);"></span>人数</span>' +
+          (tourProjects.some(function(p){ return sumPeople(p,false) - sumPeople(p,true) > 0; }) ? '<span><span class="sq" style="background:rgba(245,158,11,0.6);"></span>切位</span>' : '') +
+        '</div>' +
+        tourRowsHtml +
+      '</div>';
     } else {
-      // 全部产品线汇总对比
+      // 未选中：显示图表，隐藏团期明细
+      chartPanelEl.style.display = '';
+      tourDetailEl.innerHTML = '';
+      // 图表：各产品线汇总对比（全量数据）
       renderChart('lineBarChart', 'bar', {
-        labels: entries.map(e=>e[0]),
+        labels: allEntries.map(e=>e[0]),
         datasets: [
-          { label:'收入', data:entries.map(function(e){return e[1].income;}), backgroundColor:'rgba(16,185,129,0.6)', borderRadius:6 },
-          { label:'毛利', data:entries.map(function(e){return e[1].income-e[1].cost;}), backgroundColor:'rgba(59,130,246,0.6)', borderRadius:6 }
+          { label:'收入', data:allEntries.map(function(e){return e[1].income;}), backgroundColor:'rgba(16,185,129,0.6)', borderRadius:6 },
+          { label:'毛利', data:allEntries.map(function(e){return e[1].income-e[1].cost;}), backgroundColor:'rgba(59,130,246,0.6)', borderRadius:6 }
         ]
       }, {
         indexAxis: 'y',
+        plugins: { tooltip: { callbacks: { label: function(ctx) { var v = ctx.parsed.x; return ctx.dataset.label + ': ' + (v >= 10000 ? (v/10000).toFixed(1)+'万' : v); } } } },
         scales: {
           y: { ticks: { color: isWarm ? '#5d4037' : '#e2e8f0', font: { size: 12, weight: 'bold' } }, grid: { display: false } },
           x: { ticks: { color: isWarm ? '#5d4037' : '#94a3b8', callback: function(v){return v>=10000?(v/10000).toFixed(1)+'万':v;} }, grid: { color: isWarm ? 'rgba(255,214,179,0.4)' : 'rgba(30,58,95,0.4)' } }
@@ -2206,10 +2307,15 @@ async function rollbackToVersion(logId) {
       });
     }
 
-    var cardHtml = entries.map(([type,d]) => {
+    var cardHtml = allEntries.map(([type,d]) => {
       var gross = d.income - d.cost;
       var margin = d.income ? (gross/d.income*100) : 0;
       var isActive = (type === selectedProductType);
+      var nonKW = d.people - d.keWei;
+      var showPeople = excludeKeWei ? nonKW : d.people;
+      var pplTotal = d.people || 1;
+      var pPct = (nonKW / pplTotal * 100).toFixed(1);
+      var kPct = (d.keWei / pplTotal * 100).toFixed(1);
       return '<div class="product-card' + (isActive ? ' active-card' : '') + '" data-pl-type="' + escHtml(type).replace(/"/g,'&quot;') + '" style="cursor:pointer;" title="点击查看' + escHtml(type) + '详情">' +
         '<div class="line-name" style="color:var(--text-primary);">' + escHtml(type) + ' <span style="font-size:11px;color:var(--text-muted);font-weight:400;">' + d.count + '个团期' + (isActive ? ' (已选中)' : '') + '</span></div>' +
         '<div class="line-stats">' +
@@ -2217,10 +2323,24 @@ async function rollbackToVersion(logId) {
           '<div class="line-stat">成本<span class="val cost">' + fmt(d.cost) + '</span></div>' +
           '<div class="line-stat">毛利<span class="val" style="color:var(--info);">' + fmt(gross) + '</span></div>' +
           '<div class="line-stat">毛利率<span class="val" style="color:' + (margin>=marginThreshold?'var(--success)':'var(--danger)') + ';">' + margin.toFixed(1) + '%</span></div>' +
-        '</div></div>';
+        '</div>' +
+        '<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border-light);">' +
+          '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">' +
+            '<span style="font-size:11px;color:var(--text-secondary);">👥 人数</span>' +
+            '<span style="font-size:12px;font-weight:600;color:var(--purple);">' + showPeople + (excludeKeWei ? ' <span style="font-size:9px;color:var(--text-muted);font-weight:400;">不含切位</span>' : '') + '</span>' +
+          '</div>' +
+          '<div style="height:8px;background:var(--bg-primary);border-radius:4px;overflow:hidden;display:flex;">' +
+            '<div style="width:' + pPct + '%;background:rgba(139,92,246,0.6);"></div>' +
+            '<div style="width:' + kPct + '%;background:rgba(245,158,11,0.7);"></div>' +
+          '</div>' +
+          (d.keWei > 0 ? '<div style="font-size:9px;color:var(--text-muted);margin-top:3px;">' + nonKW + '人 + 切位 ' + d.keWei + '人</div>' : '') +
+        '</div>' +
+      '</div>';
     }).join('');
     
     document.getElementById('productCards').innerHTML = cardHtml;
+    // ★ 选中产品线时隐藏卡片区域，让团期明细占满下方
+    document.getElementById('productCards').style.display = selectedProductType ? 'none' : '';
     
     // ★ 使用事件委托绑定点击（避免重复绑定和卡顿问题）
     var productCardsEl = document.getElementById('productCards');
@@ -2235,6 +2355,8 @@ async function rollbackToVersion(logId) {
       if (!card) return;
       var t = card.getAttribute('data-pl-type');
       if (!t) return;
+      // ★ 捕获点击的卡片位置（飞入动画起点）
+      _plAnimState = { type: t, fromRect: card.getBoundingClientRect() };
       if (selectedProductType === t) {
         selectedProductType = null; // 再次点击取消选中
       } else {
@@ -2242,10 +2364,75 @@ async function rollbackToVersion(logId) {
       }
       renderProductLines();
     });
+    // ★ 执行飞入动画
+    _playProductLineAnimation();
+  }
+  
+  // ★ FLIP 飞入动画：在 DOM 重建后执行
+  function _playProductLineAnimation() {
+    if (!_plAnimState) return;
+    var st = _plAnimState;
+    _plAnimState = null;
+    requestAnimationFrame(function() {
+      if (selectedProductType && st.fromRect) {
+        // 正向飞入：从产品卡片位置 → KPI 卡片位置
+        var kpiCard = document.querySelector('#productLineKPI .kpi-card[style*="border"]');
+        if (kpiCard) {
+          var toRect = kpiCard.getBoundingClientRect();
+          var dx = st.fromRect.left - toRect.left;
+          var dy = st.fromRect.top - toRect.top;
+          var sw = st.fromRect.width / Math.max(toRect.width, 1);
+          var sh = st.fromRect.height / Math.max(toRect.height, 1);
+          kpiCard.style.transform = 'translate(' + dx + 'px,' + dy + 'px) scale(' + sw + ',' + sh + ')';
+          kpiCard.style.transition = 'none';
+          kpiCard.style.transformOrigin = 'top left';
+          kpiCard.style.zIndex = '100';
+          kpiCard.style.opacity = '0.85';
+          requestAnimationFrame(function() {
+            kpiCard.style.transition = 'transform 0.5s cubic-bezier(0.22,1,0.36,1), opacity 0.3s';
+            kpiCard.style.transform = 'none';
+            kpiCard.style.opacity = '1';
+            kpiCard.addEventListener('transitionend', function handler() {
+              kpiCard.style.cssText = kpiCard.style.cssText.replace(/transform[^;]*;?/g,'').replace(/transition[^;]*;?/g,'').replace(/zIndex[^;]*;?/g,'').replace(/opacity[^;]*;?/g,'').replace(/transformOrigin[^;]*;?/g,'');
+              kpiCard.removeEventListener('transitionend', handler);
+            });
+          });
+        }
+      } else if (!selectedProductType && st.toRect) {
+        // 反向飞回：从 KPI 位置 → 产品卡片位置
+        var targetCard = document.querySelector('#productCards .product-card[data-pl-type="' + st.type + '"]');
+        if (targetCard) {
+          var toRect2 = targetCard.getBoundingClientRect();
+          var dx2 = st.toRect.left - toRect2.left;
+          var dy2 = st.toRect.top - toRect2.top;
+          var sw2 = st.toRect.width / Math.max(toRect2.width, 1);
+          var sh2 = st.toRect.height / Math.max(toRect2.height, 1);
+          targetCard.style.transform = 'translate(' + dx2 + 'px,' + dy2 + 'px) scale(' + sw2 + ',' + sh2 + ')';
+          targetCard.style.transition = 'none';
+          targetCard.style.transformOrigin = 'top left';
+          targetCard.style.zIndex = '100';
+          targetCard.style.opacity = '0.85';
+          requestAnimationFrame(function() {
+            targetCard.style.transition = 'transform 0.5s cubic-bezier(0.22,1,0.36,1), opacity 0.3s';
+            targetCard.style.transform = 'none';
+            targetCard.style.opacity = '1';
+            targetCard.addEventListener('transitionend', function handler() {
+              targetCard.style.cssText = targetCard.style.cssText.replace(/transform[^;]*;?/g,'').replace(/transition[^;]*;?/g,'').replace(/zIndex[^;]*;?/g,'').replace(/opacity[^;]*;?/g,'').replace(/transformOrigin[^;]*;?/g,'');
+              targetCard.removeEventListener('transitionend', handler);
+            });
+          });
+        }
+      }
+    });
   }
   
   // 暴露到 window 供 HTML 内联事件使用
   window._resetProductLine = function() {
+    // ★ 捕获当前 KPI 卡片位置（反向飞回动画起点）
+    var kpiCard = document.querySelector('#productLineKPI .kpi-card[style*="border"]');
+    if (kpiCard) {
+      _plAnimState = { type: selectedProductType, toRect: kpiCard.getBoundingClientRect() };
+    }
     selectedProductType = null;
     renderProductLines();
   };
