@@ -1,4 +1,4 @@
-﻿﻿<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -655,133 +655,59 @@
   :root[data-theme="warm"] .tour-row-divider { background: #ffd6b3; }
   :root[data-theme="warm"] .tour-bar-val { color: rgba(93,64,55,0.8); }
 
-  /* ===== SUPPLIER BUBBLE STYLES ===== */
-  .sup-bubble-layout { display: flex; gap: 14px; min-height: 460px; }
-  .sup-bubble-left { width: 300px; flex-shrink: 0; display: flex; flex-direction: column; }
-  .sup-bubble-zone {
-    flex: 1; background: linear-gradient(135deg, rgba(17,24,39,0.6), rgba(30,41,59,0.4));
-    backdrop-filter: blur(16px); border: 1px solid var(--border); border-radius: 14px;
-    position: relative; overflow: hidden; min-height: 300px;
-  }
-  .sup-bubble-zone-title { position: absolute; top: 12px; left: 16px; font-size: 11px; color: var(--text-muted); font-weight: 500; letter-spacing: 0.5px; z-index: 1; opacity: 0.7; }
-  .sup-bubble {
-    position: absolute; border-radius: 50%; display: flex; flex-direction: column;
-    align-items: center; justify-content: center; cursor: pointer;
-    transition: all 0.55s cubic-bezier(0.34,1.56,0.64,1); user-select: none; z-index: 5;
-    backdrop-filter: blur(8px);
-  }
-  .sup-bubble::before { content:''; position: absolute; inset: -3px; border-radius: 50%; background: inherit; filter: blur(14px); opacity: 0.35; z-index: -1; }
-  .sup-bubble .sb-icon { font-size: 18px; margin-bottom: 2px; filter: drop-shadow(0 1px 3px rgba(0,0,0,0.2)); }
-  .sup-bubble .sb-name { font-size: 11px; font-weight: 600; color: #fff; text-shadow: 0 1px 4px rgba(0,0,0,0.3); letter-spacing: 0.3px; }
-  .sup-bubble .sb-amt { font-size: 9px; color: rgba(255,255,255,0.7); margin-top: 1px; }
-  .sup-bubble .sb-cnt { font-size: 9px; color: rgba(255,255,255,0.5); }
-  .sup-bubble:hover { transform: scale(1.08); filter: brightness(1.15); }
-  .sup-bubble:hover::before { opacity: 0.55; }
-  /* Active bubble (selected, top-left) */
-  .sup-bubble.sb-active { z-index: 10; }
-  .sup-bubble.sb-active .sb-amt, .sup-bubble.sb-active .sb-cnt { display: none; }
-  .sup-bubble.sb-active .sb-icon { font-size: 15px; }
-  .sup-bubble.sb-active .sb-name { font-size: 10px; }
-  .sup-bubble.sb-active::after {
-    content:''; position: absolute; inset: -6px; border-radius: 50%;
-    border: 2px solid currentColor; opacity: 0.3; animation: sbPulseRing 2s ease-out infinite;
-  }
-  /* Scattered bubbles (bottom row) */
-  .sup-bubble.sb-scattered { opacity: 0.3; pointer-events: auto; filter: grayscale(0.4) brightness(0.8); }
-  .sup-bubble.sb-scattered::before { opacity: 0.15; }
-  .sup-bubble.sb-scattered .sb-amt { display: none; }
-  .sup-bubble.sb-scattered .sb-cnt { display: none; }
-  .sup-bubble.sb-scattered .sb-icon { font-size: 13px; }
-  .sup-bubble.sb-scattered .sb-name { font-size: 9px; }
-  .sup-bubble.sb-scattered:hover { opacity: 0.6; filter: grayscale(0.2) brightness(0.9); }
-  @keyframes sbPulseRing { 0%{transform:scale(0.95);opacity:0.4;} 50%{transform:scale(1.15);opacity:0.1;} 100%{transform:scale(0.95);opacity:0.4;} }
-  /* Floating particles */
-  .sb-particle { position: absolute; border-radius: 50%; pointer-events: none; z-index: 1; }
-  @keyframes sbFloat1 { 0%,100%{transform:translate(0,0) scale(1);} 50%{transform:translate(15px,-20px) scale(1.1);} }
-  @keyframes sbFloat2 { 0%,100%{transform:translate(0,0) scale(1);} 50%{transform:translate(-12px,18px) scale(0.9);} }
-  @keyframes sbFloat3 { 0%,100%{transform:translate(0,0) scale(1);} 50%{transform:translate(20px,10px) scale(1.05);} }
-  @keyframes sbFloat4 { 0%,100%{transform:translate(0,0) scale(1);} 50%{transform:translate(-18px,-12px) scale(0.95);} }
-  @keyframes sbFloat5 { 0%,100%{transform:translate(0,0) scale(1);opacity:0.5;} 50%{transform:translate(8px,22px) scale(1.1);opacity:0.8;} }
-  @keyframes sbPulse { 0%,100%{opacity:0.3;transform:scale(1);} 50%{opacity:0.7;transform:scale(1.2);} }
-  /* Category summary (left bottom) */
-  .sup-cat-summary {
-    background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 12px 14px; overflow: hidden;
-    transition: all 0.4s ease; max-height: 0; opacity: 0; margin-top: 0;
-  }
-  .sup-cat-summary.sb-show { max-height: 280px; opacity: 1; margin-top: 10px; }
-  .sup-cat-summary-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-  .sup-cat-summary-title { font-size: 13px; font-weight: 700; }
-  .sup-cat-summary-close { font-size: 11px; color: var(--text-muted); cursor: pointer; padding: 2px 8px; border-radius: 5px; background: var(--bg-input); transition: all 0.2s; }
-  .sup-cat-summary-close:hover { color: var(--text-primary); background: rgba(239,68,68,0.1); }
-  .sup-cat-stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-  .sup-cat-stat { background: var(--bg-input); border-radius: 6px; padding: 8px 10px; border: 1px solid var(--border-light); }
-  .sup-cat-stat-label { font-size: 10px; color: var(--text-muted); }
-  .sup-cat-stat-val { font-size: 14px; font-weight: 700; margin-top: 2px; }
-  .sup-cat-stat-bar { height: 4px; background: rgba(239,68,68,0.1); border-radius: 3px; margin-top: 6px; overflow: hidden; grid-column: span 2; }
-  .sup-cat-stat-bar-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--success), #34d399); transition: width 0.5s ease; }
-  /* Right detail panel */
-  .sup-bubble-right { flex: 1; display: flex; flex-direction: column; gap: 0; }
-  .sup-detail-panel {
-    flex: 1; background: var(--bg-card); backdrop-filter: blur(10px);
-    border: 1px solid var(--border); border-radius: var(--radius);
-    overflow: hidden; display: flex; flex-direction: column;
-  }
-  .sup-detail-header {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 12px 16px; border-bottom: 1px solid var(--border-light); flex-shrink: 0;
-  }
-  .sup-detail-title { font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
-  .sup-detail-title .dot { width: 8px; height: 8px; border-radius: 50%; }
-  .sup-detail-count { font-size: 11px; color: var(--text-muted); background: var(--bg-input); padding: 2px 9px; border-radius: 4px; }
-  .sup-detail-body { flex: 1; overflow-y: auto; }
-  .sup-detail-body::-webkit-scrollbar { width: 5px; }
-  .sup-detail-body::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.2); border-radius: 3px; }
-  .sup-detail-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: var(--text-muted); }
-  .sup-detail-empty .sde-icon { font-size: 36px; margin-bottom: 8px; opacity: 0.3; }
-  .sup-detail-empty .sde-text { font-size: 13px; font-weight: 500; }
-  .sup-detail-empty .sde-hint { font-size: 11px; margin-top: 4px; opacity: 0.5; }
-  .sup-group-hdr { padding: 8px 16px; font-size: 11px; color: var(--text-muted); font-weight: 600; background: var(--bg-input); border-bottom: 1px solid var(--border-light); position: sticky; top: 0; z-index: 1; }
-  .sup-item {
-    display: flex; align-items: center; padding: 10px 16px;
-    border-bottom: 1px solid var(--border-light); cursor: pointer;
-    transition: all 0.15s; animation: sbFadeSlideIn 0.3s ease both;
-  }
-  .sup-item:hover { background: rgba(99,102,241,0.06); }
-  @keyframes sbFadeSlideIn { from{opacity:0;transform:translateX(16px);} to{opacity:1;transform:translateX(0);} }
-  .sup-item-rank {
-    width: 26px; height: 26px; border-radius: 50%; display: flex;
-    align-items: center; justify-content: center; font-size: 11px;
-    font-weight: 700; margin-right: 10px; flex-shrink: 0;
-  }
-  .sup-item-rank.r1 { background: rgba(245,158,11,0.15); color: var(--warning); }
-  .sup-item-rank.r2 { background: rgba(139,92,246,0.15); color: var(--purple); }
-  .sup-item-rank.r3 { background: rgba(59,130,246,0.15); color: var(--info); }
-  .sup-item-rank.rn { background: var(--bg-input); color: var(--text-muted); }
-  .sup-item-info { flex: 1; min-width: 0; }
-  .sup-item-name-row { display: flex; align-items: center; gap: 6px; }
-  .sup-item-nm { font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .sup-item-tag { font-size: 9px; color: var(--text-muted); background: var(--bg-input); padding: 1px 6px; border-radius: 3px; flex-shrink: 0; }
-  .sup-item-meta { display: flex; gap: 10px; font-size: 11px; color: var(--text-muted); margin-top: 3px; }
-  .sup-item-amts { text-align: right; flex-shrink: 0; min-width: 130px; }
-  .sup-item-payable { font-size: 13px; font-weight: 700; color: var(--danger); }
-  .sup-item-sub-row { display: flex; gap: 8px; font-size: 10px; justify-content: flex-end; margin-top: 2px; }
-  .sup-item-prog { width: 100%; height: 3px; background: rgba(239,68,68,0.08); border-radius: 2px; margin-top: 4px; }
-  .sup-item-prog-fill { height: 100%; border-radius: 2px; background: linear-gradient(90deg, var(--success), #34d399); transition: width 0.5s ease; }
-  /* Tour detail sub-panel */
-  .sup-tour-detail {
-    background: var(--bg-card); backdrop-filter: blur(10px);
-    border: 1px solid var(--border); border-radius: var(--radius);
-    margin-top: 10px; overflow: hidden; max-height: 0; opacity: 0; transition: all 0.35s ease;
-  }
-  .sup-tour-detail.sb-show { max-height: 380px; opacity: 1; }
-  .sup-tour-detail-header { padding: 10px 16px; border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center; }
-  .sup-tour-detail-title { font-size: 12px; font-weight: 700; }
-  .sup-tour-detail-close { font-size: 11px; color: var(--text-muted); cursor: pointer; padding: 2px 8px; border-radius: 4px; }
-  .sup-tour-detail-close:hover { background: rgba(239,68,68,0.1); color: var(--danger); }
-  .sup-tour-list { max-height: 260px; overflow-y: auto; }
-  .sup-tour-list::-webkit-scrollbar { width: 5px; }
-  .sup-tour-list::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.2); border-radius: 3px; }
+  /* ===== SUPPLIER LIBRARY STYLES ===== */
+  .sup-lib-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+  .sup-lib-section { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .sup-lib-section-hdr { display: flex; align-items: center; gap: 5px; padding: 7px 10px; background: rgba(99,102,241,0.03); border-bottom: 1px solid var(--border-light); }
+  .sup-lib-section-icon { font-size: 13px; }
+  .sup-lib-section-name { font-size: 11px; font-weight: 700; flex: 1; }
+  .sup-lib-section-count { font-size: 10px; color: var(--text-muted); background: var(--bg-input); padding: 1px 7px; border-radius: 4px; }
+  .sup-lib-row { display: flex; align-items: center; padding: 5px 10px; border-bottom: 1px solid var(--border-light); font-size: 11px; transition: background 0.15s; }
+  .sup-lib-row:last-child { border-bottom: none; }
+  .sup-lib-row:hover { background: rgba(99,102,241,0.04); }
+  .sup-lib-row-name { flex: 1; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sup-lib-row-multi { font-size: 10px; margin-right: 4px; opacity: 0.6; letter-spacing: -2px; }
+  .sup-lib-row-del { background: none; border: none; color: var(--text-muted); font-size: 11px; cursor: pointer; opacity: 0; transition: opacity 0.15s; padding: 2px 4px; }
+  .sup-lib-row:hover .sup-lib-row-del { opacity: 1; }
+  .sup-lib-row-del:hover { color: var(--danger); }
+
+  /* ===== SUPPLIER TREE TABLE STYLES ===== */
+  .sup-tree-wrap { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .sup-tree-table { width: 100%; border-collapse: collapse; }
+  .sup-tree-table th { font-size: 11px; color: var(--text-muted); font-weight: 600; padding: 9px 14px; text-align: left; background: var(--bg-input); border-bottom: 1px solid var(--border); white-space: nowrap; }
+  .sup-tree-table th:last-child { text-align: right; }
+  .sup-tree-table td { padding: 10px 14px; font-size: 12px; border-bottom: 1px solid var(--border-light); }
+  .sup-tree-table td:last-child { text-align: right; }
+  /* Group (category) row */
+  .sup-tree-group { cursor: pointer; background: rgba(99,102,241,0.03); transition: background 0.15s; }
+  .sup-tree-group:hover { background: rgba(99,102,241,0.07); }
+  .sup-tree-group td { font-weight: 700; font-size: 13px; }
+  .sup-tree-arrow { display: inline-block; width: 20px; font-size: 10px; color: var(--text-muted); transition: transform 0.25s ease; text-align: center; }
+  .sup-tree-arrow.open { transform: rotate(90deg); }
+  .sup-tree-cat-name { margin-left: 4px; }
+  .sup-tree-cat-count { font-size: 11px; color: var(--text-muted); font-weight: 400; margin-left: 6px; }
+  .sup-tree-cat-bar { display: inline-block; height: 5px; border-radius: 3px; margin-left: 8px; vertical-align: middle; min-width: 4px; transition: width 0.4s ease; }
+  /* Child (supplier) row */
+  .sup-tree-child { background: var(--bg-card); transition: background 0.15s; cursor: pointer; }
+  .sup-tree-child:hover { background: rgba(99,102,241,0.05); }
+  .sup-tree-child td { padding-left: 44px; font-weight: 400; }
+  .sup-tree-child.hidden { display: none; }
+  .sup-tree-sup-name { font-weight: 600; }
+  .sup-tree-sup-proj { font-size: 10px; color: var(--text-muted); margin-left: 6px; }
+  .sup-tree-pct { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+  .sup-tree-pct.good { background: rgba(16,185,129,0.12); color: var(--success); }
+  .sup-tree-pct.bad  { background: rgba(239,68,68,0.12); color: var(--danger); }
+  .sup-tree-pct.mid  { background: rgba(245,158,11,0.12); color: var(--warning); }
+  /* Tour detail panel below tree table */
+  .sup-tour-panel { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); margin-top: 10px; overflow: hidden; max-height: 0; opacity: 0; transition: all 0.35s ease; }
+  .sup-tour-panel.sb-show { max-height: 400px; opacity: 1; }
+  .sup-tour-panel-header { padding: 10px 16px; border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center; }
+  .sup-tour-panel-title { font-size: 12px; font-weight: 700; }
+  .sup-tour-panel-close { font-size: 11px; color: var(--text-muted); cursor: pointer; padding: 2px 8px; border-radius: 4px; }
+  .sup-tour-panel-close:hover { background: rgba(239,68,68,0.1); color: var(--danger); }
+  .sup-tour-panel-list { max-height: 280px; overflow-y: auto; }
+  .sup-tour-panel-list::-webkit-scrollbar { width: 5px; }
+  .sup-tour-panel-list::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.2); border-radius: 3px; }
   .sup-tour-item { display: flex; align-items: center; padding: 8px 16px; border-bottom: 1px solid var(--border-light); font-size: 12px; cursor: pointer; transition: background 0.15s; }
   .sup-tour-item:hover { background: rgba(99,102,241,0.04); }
   .sup-tour-item:last-child { border-bottom: none; }
@@ -1000,60 +926,34 @@
     <!-- ===== MODULE 5: SUPPLIERS ===== -->
     <div class="module-pane" id="pane-suppliers">
       <div class="kpi-grid" id="supplierKPI"></div>
-      <div class="sup-bubble-layout">
-        <!-- LEFT: Bubble zone + category summary -->
-        <div class="sup-bubble-left">
-          <div class="sup-bubble-zone" id="supBubbleZone">
-            <div class="sup-bubble-zone-title">供应类型</div>
-            <!-- Particles injected by JS -->
-            <div id="supParticles"></div>
-            <!-- Bubbles injected by JS -->
-            <div id="supBubbles"></div>
-          </div>
-          <div class="sup-cat-summary" id="supCatSummary">
-            <div class="sup-cat-summary-header">
-              <span class="sup-cat-summary-title" id="supCatTitle"></span>
-              <span class="sup-cat-summary-close" onclick="window._supClearSelection&&window._supClearSelection()">收起 ✕</span>
-            </div>
-            <div class="sup-cat-stat-grid">
-              <div class="sup-cat-stat"><div class="sup-cat-stat-label">供应商数</div><div class="sup-cat-stat-val" id="supCsCount" style="color:var(--info);"></div></div>
-              <div class="sup-cat-stat"><div class="sup-cat-stat-label">关联团期</div><div class="sup-cat-stat-val" id="supCsProj"></div></div>
-              <div class="sup-cat-stat"><div class="sup-cat-stat-label">应付总额</div><div class="sup-cat-stat-val" id="supCsPayable" style="color:var(--danger);"></div></div>
-              <div class="sup-cat-stat"><div class="sup-cat-stat-label">未付总额</div><div class="sup-cat-stat-val" id="supCsUnpaid" style="color:var(--warning);"></div></div>
-              <div class="sup-cat-stat-bar"><div class="sup-cat-stat-bar-fill" id="supCsBar" style="width:0%;"></div></div>
-            </div>
-          </div>
+      <!-- Tree table: category groups + supplier rows -->
+      <div class="sup-tree-wrap">
+        <table class="sup-tree-table">
+          <thead><tr><th style="width:28%;">供应类型 / 供应商名称</th><th>关联团期</th><th>应付总额</th><th>已付总额</th><th>未付总额</th><th>付款进度</th></tr></thead>
+          <tbody id="supTreeBody"></tbody>
+        </table>
+      </div>
+      <!-- Tour detail panel (shown when clicking a supplier row) -->
+      <div class="sup-tour-panel" id="supTourPanel">
+        <div class="sup-tour-panel-header">
+          <span class="sup-tour-panel-title" id="supTourTitle">📋 关联团期</span>
+          <span class="sup-tour-panel-close" onclick="window._supCloseTourDetail&&window._supCloseTourDetail()">收起 ✕</span>
         </div>
-        <!-- RIGHT: Supplier detail + tour detail -->
-        <div class="sup-bubble-right">
-          <div class="sup-detail-panel">
-            <div class="sup-detail-header">
-              <div class="sup-detail-title"><span class="dot" id="supDetailDot" style="background:var(--accent);"></span><span id="supDetailTitle">供应商明细</span></div>
-              <span class="sup-detail-count" id="supDetailCount"></span>
-            </div>
-            <div class="sup-detail-body" id="supDetailBody">
-              <div class="sup-detail-empty"><div class="sde-icon">👈</div><div class="sde-text">点击左侧气泡选择供应类型</div><div class="sde-hint">查看该类型下的供应商和团期明细</div></div>
-            </div>
-          </div>
-          <div class="sup-tour-detail" id="supTourDetail">
-            <div class="sup-tour-detail-header">
-              <span class="sup-tour-detail-title" id="supTourTitle">📋 关联团期</span>
-              <span class="sup-tour-detail-close" onclick="window._supCloseTourDetail&&window._supCloseTourDetail()">收起 ✕</span>
-            </div>
-            <div class="sup-tour-list" id="supTourList"></div>
-          </div>
-        </div>
+        <div class="sup-tour-panel-list" id="supTourList"></div>
       </div>
       <!-- 供应商增删改 -->
       <div class="panel" style="margin-top:14px;">
         <div class="panel-header"><div class="panel-title"><span class="dot" style="background:var(--warning);"></span>供应商库管理</div></div>
         <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px;">
           <input type="text" id="newSupName" placeholder="供应商名称" style="flex:1;min-width:140px;padding:7px 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg-input);color:var(--text-primary);font-size:12px;font-family:inherit;">
-          <input type="text" id="newSupCat" placeholder="供应类型(如地接/车票)" style="width:130px;padding:7px 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg-input);color:var(--text-primary);font-size:12px;font-family:inherit;">
+          <input type="text" id="newSupCat" list="supCatNameList" placeholder="供应类型" style="width:120px;padding:7px 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg-input);color:var(--text-primary);font-size:12px;font-family:inherit;">
           <button class="btn btn-accent btn-sm" id="addSupBtn">＋ 新增</button>
           <button class="btn btn-outline btn-sm" onclick="window._openCategoryModal()">📁 分类管理</button>
         </div>
-        <div id="supplierEditList" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+        <datalist id="supCatNameList">
+          <option value="地接"><option value="车票"><option value="导服"><option value="代订"><option value="邮轮"><option value="保险"><option value="其他">
+        </datalist>
+        <div id="supplierEditList"></div>
       </div>
       <!-- datalist for supplier autocomplete -->
       <datalist id="supplierList"></datalist>
@@ -1851,6 +1751,28 @@ async function rollbackToVersion(logId) {
     return cats;
   }
 
+  // ★ 根据成本明细数据动态计算供应商分类
+  //   同一供应商关联了不同类型的成本 → 出现在多个分类中
+  //   没有关联任何成本 → 默认"其他"
+  //   支持后续手动修改（s._manualCat 覆盖）
+  function computeSupplierCategories() {
+    var supCats = {};
+    suppliers.forEach(function(s) { supCats[s.id] = []; });
+    projects.forEach(function(p) {
+      (p.costs||[]).forEach(function(c) {
+        var sid = c._supplierId;
+        if (!sid || !supCats[sid]) return;
+        var cat = COST_TO_CATEGORY[c.name] || null;
+        if (cat && supCats[sid].indexOf(cat) === -1) supCats[sid].push(cat);
+      });
+    });
+    suppliers.forEach(function(s) {
+      if (s._manualCat) { s.categories = [s._manualCat]; return; }
+      s.categories = supCats[s.id] && supCats[s.id].length > 0 ? supCats[s.id] : ['其他'];
+      s.category = s.categories[0]; // 主分类
+    });
+  }
+
   // 根据供应商名称匹配已有ID，若无则新建
   function resolveSupplierId(name) {
     if (!name || !name.trim()) return '';
@@ -1873,18 +1795,131 @@ async function rollbackToVersion(logId) {
     dl.innerHTML = suppliers.map(function(s){ return '<option value="' + escHtml(s.name) + '">'; }).join('');
   }
 
-  // 渲染供应商管理标签区
+  // 渲染供应商库管理区（按分类分组，整洁列表）
   function renderSupplierEditList() {
+    computeSupplierCategories(); // ★ 动态刷新分类
     var el = document.getElementById('supplierEditList');
     if (!el) return;
-    el.innerHTML = suppliers.map(function(s){
-      return '<div style="display:flex;align-items:center;gap:4px;padding:4px 8px;border:1px solid var(--border);border-radius:16px;font-size:11px;background:var(--bg-card);">' +
-        '<span style="font-weight:600;">' + escHtml(s.name) + '</span>' +
-        '<span style="color:var(--text-muted);font-size:10px;">' + escHtml(s.category||'未分类') + '</span>' +
-        '<button onclick="deleteSupplier(\'' + s.id + '\')" style="background:var(--danger-bg);color:var(--danger);border:none;border-radius:50%;width:18px;height:18px;font-size:10px;cursor:pointer;line-height:1;">✕</button>' +
-        '</div>';
-    }).join('');
+    // 按分类分组（同一供应商可出现在多个分类）
+    var groups = {};
+    suppliers.forEach(function(s) {
+      (s.categories || ['其他']).forEach(function(cat) {
+        if (!groups[cat]) groups[cat] = [];
+        if (!groups[cat].find(function(x){return x.id===s.id;})) groups[cat].push(s);
+      });
+    });
+    var html = '<div class="sup-lib-grid">';
+    var catOrder = ['地接','车票','导服','代订','邮轮','保险','其他'];
+    var rendered = {};
+    function renderCatGroup(cat) {
+      if (!groups[cat] || !groups[cat].length) return;
+      var color = supCatColor(cat), icon = supCatIcon(cat);
+      var g = groups[cat];
+      html += '<div class="sup-lib-section">';
+      html += '<div class="sup-lib-section-hdr" style="border-left:3px solid '+color+';">';
+      html += '<span class="sup-lib-section-icon">'+icon+'</span>';
+      html += '<span class="sup-lib-section-name">'+escHtml(cat)+'</span>';
+      html += '<span class="sup-lib-section-count">'+g.length+'</span>';
+      html += '</div>';
+      g.forEach(function(s) {
+        html += '<div class="sup-lib-row">';
+        html += '<span class="sup-lib-row-name">'+escHtml(s.name)+'</span>';
+        if ((s.categories||[]).length > 1) {
+          html += '<span class="sup-lib-row-multi" title="关联多个分类">'+(s.categories||[]).map(function(c){return supCatIcon(c);}).join('')+'</span>';
+        }
+        html += '<button class="sup-lib-row-del" onclick="deleteSupplier(\''+s.id+'\')">✕</button>';
+        html += '</div>';
+      });
+      html += '</div>';
+    }
+    catOrder.forEach(function(cat) { renderCatGroup(cat); rendered[cat] = true; });
+    Object.keys(groups).forEach(function(cat) { if (!rendered[cat]) renderCatGroup(cat); });
+    html += '</div>';
+    el.innerHTML = html;
   }
+
+  // ===== 分类管理弹窗 =====
+  window._openCategoryModal = function() {
+    computeSupplierCategories();
+    var allCats = {};
+    suppliers.forEach(function(s) {
+      (s.categories||['其他']).forEach(function(c) {
+        if (!allCats[c]) allCats[c] = [];
+        if (!allCats[c].find(function(x){return x.id===s.id;})) allCats[c].push(s);
+      });
+    });
+    var catOrder = ['地接','车票','导服','代订','邮轮','保险','其他'];
+    var extraCats = Object.keys(allCats).filter(function(c){ return catOrder.indexOf(c) < 0; });
+    var orderedCats = catOrder.filter(function(c){ return !!allCats[c]; }).concat(extraCats);
+
+    var html = '<button class="close-btn" onclick="document.getElementById(\'modalOverlay\').classList.remove(\'show\')">✕</button>';
+    html += '<h3>📁 供应商分类管理</h3>';
+    html += '<p style="font-size:11px;color:var(--text-muted);margin-bottom:10px;">分类根据成本明细自动识别。同一供应商关联多种成本时，会出现在多个分类中。下拉可手动锁定分类。</p>';
+    html += '<div style="margin-bottom:14px;display:flex;gap:8px;align-items:center;">';
+    html += '<input type="text" id="catModalNewName" placeholder="新分类名称" style="flex:1;padding:7px 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg-input);color:var(--text-primary);font-size:12px;">';
+    html += '<button class="btn btn-accent btn-sm" onclick="window._catModalAddCat()">＋ 添加分类</button>';
+    html += '</div>';
+
+    html += '<div id="catModalCatList" style="max-height:400px;overflow-y:auto;">';
+    orderedCats.forEach(function(cat) {
+      var color = supCatColor(cat), icon = supCatIcon(cat);
+      var sups = allCats[cat];
+      html += '<div style="margin-bottom:10px;border:1px solid var(--border-light);border-radius:8px;overflow:hidden;">';
+      html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:rgba(99,102,241,0.04);border-bottom:1px solid var(--border-light);border-left:3px solid '+color+';">';
+      html += '<span style="font-weight:700;font-size:13px;">'+icon+' '+escHtml(cat)+'</span>';
+      html += '<span style="font-size:11px;color:var(--text-muted);">'+sups.length+'家</span>';
+      html += '</div>';
+      sups.forEach(function(s) {
+        var isManual = !!s._manualCat;
+        var allCatOptions = catOrder.map(function(c){ return '<option value="'+c+'"'+(c===(s._manualCat||s.category)?' selected':'')+'>'+supCatIcon(c)+' '+c+'</option>'; }).join('');
+        html += '<div style="display:flex;align-items:center;gap:8px;padding:6px 12px;border-bottom:1px solid var(--border-light);">';
+        html += '<span style="flex:1;font-size:12px;font-weight:600;">'+escHtml(s.name)+'</span>';
+        if ((s.categories||[]).length > 1) {
+          html += '<span style="font-size:9px;color:var(--text-muted);background:var(--bg-input);padding:1px 5px;border-radius:3px;">'+(s.categories||[]).join('/')+'</span>';
+        }
+        html += '<select onchange="window._catModalChangeCat(\''+s.id+'\',this.value)" style="padding:4px 8px;border-radius:5px;border:1px solid var(--border-light);background:var(--bg-input);color:var(--text-primary);font-size:11px;min-width:90px;">';
+        html += '<option value=""'+(isManual?'':'  selected')+'>自动</option>';
+        html += allCatOptions;
+        html += '</select>';
+        html += '</div>';
+      });
+      html += '</div>';
+    });
+    html += '</div>';
+
+    document.getElementById('modalBox').innerHTML = html;
+    document.getElementById('modalOverlay').classList.add('show');
+  };
+
+  window._catModalAddCat = function() {
+    var name = document.getElementById('catModalNewName').value.trim();
+    if (!name) { alert('请输入分类名称'); return; }
+    if (!SUP_CAT_COLORS[name]) SUP_CAT_COLORS[name] = '#6366f1';
+    if (!SUP_CAT_ICONS[name]) SUP_CAT_ICONS[name] = '📦';
+    suppliers.push({ id:'sup_'+Date.now(), name:'待分配', contact:'', phone:'', category:name, _manualCat:name, bankInfo:'' });
+    saveSuppliers();
+    refreshSupplierDatalist();
+    renderSupplierEditList();
+    renderSuppliers();
+    window._openCategoryModal();
+  };
+
+  window._catModalChangeCat = function(supId, newCat) {
+    var sup = suppliers.find(function(s){ return s.id === supId; });
+    if (sup) {
+      if (newCat === '' || !newCat) {
+        // 恢复自动分类
+        delete sup._manualCat;
+      } else {
+        sup._manualCat = newCat;
+      }
+      saveSuppliers();
+      computeSupplierCategories();
+      refreshSupplierDatalist();
+      renderSupplierEditList();
+      renderSuppliers();
+    }
+  };
 
   window.deleteSupplier = function(sid) {
     // ★ 检查是否有成本项关联此供应商
@@ -3255,17 +3290,31 @@ async function rollbackToVersion(logId) {
       '</div>';
   }
 
-  // ==================== MODULE 5: SUPPLIERS (Bubble Layout) ====================
-  let supActiveCat = null, supActiveSupIdx = null, supCatGroups = {};
+  // ==================== MODULE 5: SUPPLIERS (Tree Table) ====================
+  let supOpenCats = {}, supActiveSupKey = null, supCatGroups = {};
   var SUP_CAT_COLORS = { '地接':'#6366f1', '车票':'#8b5cf6', '导服':'#10b981', '代订':'#3b82f6', '其他':'#94a3b8', '邮轮':'#f59e0b', '保险':'#ec4899' };
   var SUP_CAT_ICONS = { '地接':'🏨', '车票':'🚄', '导服':'🎤', '代订':'📋', '其他':'📦', '邮轮':'🚢', '保险':'🛡️' };
   function supCatColor(cat) { return SUP_CAT_COLORS[cat] || '#6366f1'; }
   function supCatIcon(cat) { return SUP_CAT_ICONS[cat] || '📦'; }
 
+  // 成本项固定排序 & 分类映射
+  var COST_NAME_ORDER = ['车票款', '地接款', '代订费用', '导服费', '其他'];
+  var COST_TO_CATEGORY = { '车票款':'车票', '地接款':'地接', '代订费用':'代订', '导服费':'导服', '其他':'其他' };
+  var COST_NAME_TO_CAT = {};
+  COST_NAME_ORDER.forEach(function(n){ COST_NAME_TO_CAT[n] = COST_TO_CATEGORY[n]; });
+  // 收入项固定排序
+  var INCOME_NAME_ORDER = ['线上收入', '线下收入', '切位收入'];
+  // 排序辅助函数
+  function costSortIndex(name) { var i = COST_NAME_ORDER.indexOf(name); return i >= 0 ? i : 999; }
+  function incomeSortIndex(name) { var i = INCOME_NAME_ORDER.indexOf(name); return i >= 0 ? i : 999; }
+  function sortCosts(arr) { return arr.slice().sort(function(a,b){ return costSortIndex(a.name) - costSortIndex(b.name); }); }
+  function sortIncomes(arr) { return arr.slice().sort(function(a,b){ return incomeSortIndex(a.name) - incomeSortIndex(b.name); }); }
+
   function renderSuppliers() {
+    computeSupplierCategories(); // ★ 动态计算分类
     var list = getFilteredProjects('suppliers');
     var supStats = {};
-    suppliers.forEach(function(s) { supStats[s.id] = { id:s.id, name:s.name, category:s.category||'其他', projectCount:0, totalPayable:0, totalPaid:0, projects:new Set(), projectList:[] }; });
+    suppliers.forEach(function(s) { supStats[s.id] = { id:s.id, name:s.name, categories:s.categories||['其他'], projectCount:0, totalPayable:0, totalPaid:0, projects:new Set(), projectList:[] }; });
     list.forEach(function(p) {
       var projSupPaid = {};
       (p.costs||[]).forEach(function(c) {
@@ -3291,147 +3340,76 @@ async function rollbackToVersion(logId) {
       '<div class="kpi-card gross"><div class="kpi-label">已付总额</div><div class="kpi-value gross">'+fmt(totalPaid)+'</div></div>' +
       '<div class="kpi-card cost"><div class="kpi-label">未付总额</div><div class="kpi-value cost">'+fmt(totalPayable - totalPaid)+'</div></div>';
 
-    // Group by category
+    // Group by category (★ 同一供应商可出现在多个分类)
     supCatGroups = {};
     statsArr.forEach(function(s) {
-      var cat = s.category || '其他';
-      if (!supCatGroups[cat]) supCatGroups[cat] = { suppliers:[], totalPayable:0, totalPaid:0, projSet:new Set() };
-      supCatGroups[cat].suppliers.push(s);
-      supCatGroups[cat].totalPayable += s.totalPayable;
-      supCatGroups[cat].totalPaid += s.totalPaid;
-      s.projects.forEach(function(pid){ supCatGroups[cat].projSet.add(pid); });
+      (s.categories || ['其他']).forEach(function(cat) {
+        if (!supCatGroups[cat]) supCatGroups[cat] = { suppliers:[], totalPayable:0, totalPaid:0, projSet:new Set() };
+        supCatGroups[cat].suppliers.push(s);
+        supCatGroups[cat].totalPayable += s.totalPayable;
+        supCatGroups[cat].totalPaid += s.totalPaid;
+        s.projects.forEach(function(pid){ supCatGroups[cat].projSet.add(pid); });
+      });
     });
 
-    // Render bubbles
     var catEntries = Object.entries(supCatGroups).sort(function(a,b){return b[1].totalPayable - a[1].totalPayable;});
     var maxPayable = catEntries.length > 0 ? catEntries[0][1].totalPayable : 1;
 
-    // Particles
-    var particleAnims = ['sbFloat1','sbFloat2','sbFloat3','sbFloat4','sbFloat5','sbPulse'];
-    var particleHtml = '';
-    for (var pi = 0; pi < 15; pi++) {
-      var catRef = catEntries[pi % catEntries.length];
-      var pColor = catRef ? supCatColor(catRef[0]) : '#6366f1';
-      var pSize = 4 + Math.floor(Math.random() * 6);
-      var pTop = 30 + Math.floor(Math.random() * 220);
-      var pLeft = 20 + Math.floor(Math.random() * 240);
-      var pAnim = particleAnims[pi % particleAnims.length];
-      var pDur = (3.5 + Math.random() * 3.5).toFixed(1);
-      particleHtml += '<div class="sb-particle" style="width:'+pSize+'px;height:'+pSize+'px;top:'+pTop+'px;left:'+pLeft+'px;background:'+pColor+'40;animation:'+pAnim+' '+pDur+'s ease-in-out infinite'+(pi%2?' reverse':'')+';"></div>';
-    }
-    document.getElementById('supParticles').innerHTML = particleHtml;
+    // Build tree table
+    var html = '';
+    catEntries.forEach(function(entry) {
+      var cat = entry[0], g = entry[1];
+      var color = supCatColor(cat), icon = supCatIcon(cat);
+      var isOpen = !!supOpenCats[cat];
+      var unpaid = g.totalPayable - g.totalPaid;
+      var pct = g.totalPayable > 0 ? Math.round(g.totalPaid / g.totalPayable * 100) : 0;
+      var pctCls = pct >= 80 ? 'good' : (pct >= 50 ? 'mid' : 'bad');
+      var barW = Math.max(4, Math.round(g.totalPayable / maxPayable * 60));
 
-    // Bubble sizes based on payable amount
-    var bubblePositions = [
-      {w:130,h:130,t:65,l:80},  // largest
-      {w:100,h:100,t:40,l:200}, // medium
-      {w:78,h:78,t:190,l:50},   // small
-      {w:68,h:68,t:200,l:145},  // smaller
-      {w:56,h:56,t:160,l:230},  // smallest
-      {w:50,h:50,t:230,l:230},  // extra
-      {w:44,h:44,t:100,l:270}   // extra
-    ];
-    var activePositions = [{w:80,h:80,t:10,l:10},{w:72,h:72,t:10,l:10},{w:66,h:66,t:10,l:10},{w:62,h:62,t:10,l:10},{w:58,h:58,t:10,l:10},{w:54,h:54,t:10,l:10},{w:50,h:50,t:10,l:10}];
-    var scatteredBottom = 240;
+      // Group row
+      html += '<tr class="sup-tree-group" onclick="window._supToggleCat(\''+cat+'\')">';
+      html += '<td><span class="sup-tree-arrow'+(isOpen?' open':'')+'">&#9654;</span>';
+      html += '<span class="sup-tree-cat-name">'+icon+' '+escHtml(cat)+'</span>';
+      html += '<span class="sup-tree-cat-count">('+g.suppliers.length+'家)</span>';
+      html += '<span class="sup-tree-cat-bar" style="width:'+barW+'px;background:'+color+';"></span></td>';
+      html += '<td>'+g.projSet.size+'</td>';
+      html += '<td style="color:var(--danger);font-weight:700;">'+fmt(g.totalPayable)+'</td>';
+      html += '<td style="color:var(--success);">'+fmt(g.totalPaid)+'</td>';
+      html += '<td style="color:var(--warning);font-weight:600;">'+fmt(unpaid)+'</td>';
+      html += '<td><span class="sup-tree-pct '+pctCls+'">'+pct+'%</span></td>';
+      html += '</tr>';
 
-    var bubbleHtml = '';
-    catEntries.forEach(function(entry, i) {
-      var cat = entry[0];
-      var g = entry[1];
-      var color = supCatColor(cat);
-      var icon = supCatIcon(cat);
-      var pos = bubblePositions[Math.min(i, bubblePositions.length-1)];
-      var actPos = activePositions[Math.min(i, activePositions.length-1)];
-      var amtStr = g.totalPayable >= 10000 ? '¥'+(g.totalPayable/10000).toFixed(1)+'万' : '¥'+g.totalPayable.toLocaleString();
-      var cntStr = g.suppliers.length + '家';
+      // Child rows (suppliers)
+      g.suppliers.forEach(function(s, i) {
+        var sUnpaid = s.totalPayable - s.totalPaid;
+        var sPct = s.totalPayable > 0 ? Math.round(s.totalPaid / s.totalPayable * 100) : 0;
+        var sPctCls = sPct >= 80 ? 'good' : (sPct >= 50 ? 'mid' : 'bad');
+        var supKey = cat + ':' + i;
+        var isActive = supActiveSupKey === supKey;
+        html += '<tr class="sup-tree-child'+(isOpen?'':' hidden')+'" onclick="window._supSelectSup(\''+cat+'\','+i+')" style="'+(isActive?'background:rgba(99,102,241,0.08);':'')+'">';
+        html += '<td><span class="sup-tree-sup-name">'+escHtml(s.name)+'</span><span class="sup-tree-sup-proj">'+s.projects.size+'个团期</span></td>';
+        html += '<td>'+s.projects.size+'</td>';
+        html += '<td style="color:var(--danger);">'+fmt(s.totalPayable)+'</td>';
+        html += '<td style="color:var(--success);">'+fmt(s.totalPaid)+'</td>';
+        html += '<td style="color:'+(sUnpaid>0?'var(--warning)':'var(--success)')+';">'+(sUnpaid>0?fmt(sUnpaid):'已付清')+'</td>';
+        html += '<td><span class="sup-tree-pct '+sPctCls+'">'+sPct+'%</span></td>';
+        html += '</tr>';
+      });
+    });
+    document.getElementById('supTreeBody').innerHTML = html;
 
-      var isActive = supActiveCat === cat;
-      var isScattered = supActiveCat && supActiveCat !== cat;
-      var cls = 'sup-bubble';
-      var style = '';
-
-      if (isActive) {
-        cls += ' sb-active';
-        style = 'width:'+actPos.w+'px;height:'+actPos.h+'px;top:'+actPos.t+'px;left:'+actPos.l+'px;';
-        style += 'background:radial-gradient(circle at 30% 30%,'+color+'55,'+color+'22);border:1px solid '+color+'50;';
-        style += 'box-shadow:0 8px 28px '+color+'33,inset 0 1px 1px rgba(255,255,255,0.1);color:'+color+';';
-      } else if (isScattered) {
-        cls += ' sb-scattered';
-        var scatLeft = 8 + i * 52;
-        style = 'width:46px;height:46px;top:'+scatteredBottom+'px;left:'+scatLeft+'px;';
-        style += 'background:radial-gradient(circle at 30% 30%,'+color+'55,'+color+'22);border:1px solid '+color+'30;';
-        style += 'box-shadow:0 6px 20px '+color+'18,inset 0 1px 1px rgba(255,255,255,0.08);';
+    // Tour detail panel
+    if (supActiveSupKey) {
+      var parts = supActiveSupKey.split(':');
+      var aCat = parts[0], aIdx = parseInt(parts[1]);
+      if (supCatGroups[aCat] && supCatGroups[aCat].suppliers[aIdx]) {
+        supShowTourDetail(aCat, aIdx);
       } else {
-        style = 'width:'+pos.w+'px;height:'+pos.h+'px;top:'+pos.t+'px;left:'+pos.l+'px;';
-        style += 'background:radial-gradient(circle at 30% 30%,'+color+'55,'+color+'22);border:1px solid '+color+'48;';
-        style += 'box-shadow:0 8px 28px '+color+'30,inset 0 1px 1px rgba(255,255,255,0.1);';
+        supActiveSupKey = null;
+        document.getElementById('supTourPanel').classList.remove('sb-show');
       }
-
-      bubbleHtml += '<div class="'+cls+'" style="'+style+'" onclick="window._supSelectCat(\''+cat+'\')">';
-      bubbleHtml += '<span class="sb-icon">'+icon+'</span>';
-      bubbleHtml += '<span class="sb-name">'+escHtml(cat)+'</span>';
-      bubbleHtml += '<span class="sb-amt">'+amtStr+'</span>';
-      bubbleHtml += '<span class="sb-cnt">'+cntStr+'</span>';
-      bubbleHtml += '</div>';
-    });
-    document.getElementById('supBubbles').innerHTML = bubbleHtml;
-
-    // If category is selected, show detail
-    if (supActiveCat && supCatGroups[supActiveCat]) {
-      supShowCatDetail(supActiveCat);
     } else {
-      supActiveCat = null;
-      document.getElementById('supCatSummary').classList.remove('sb-show');
-      document.getElementById('supDetailDot').style.background = 'var(--accent)';
-      document.getElementById('supDetailTitle').textContent = '供应商明细';
-      document.getElementById('supDetailCount').textContent = '';
-      document.getElementById('supDetailBody').innerHTML = '<div class="sup-detail-empty"><div class="sde-icon">👈</div><div class="sde-text">点击左侧气泡选择供应类型</div><div class="sde-hint">查看该类型下的供应商和团期明细</div></div>';
-      document.getElementById('supTourDetail').classList.remove('sb-show');
-      supActiveSupIdx = null;
-    }
-  }
-
-  function supShowCatDetail(cat) {
-    var g = supCatGroups[cat];
-    if (!g) return;
-    var color = supCatColor(cat);
-    var icon = supCatIcon(cat);
-    var pct = g.totalPayable > 0 ? Math.round(g.totalPaid / g.totalPayable * 100) : 0;
-
-    // Category summary
-    document.getElementById('supCatTitle').textContent = icon + ' ' + cat;
-    document.getElementById('supCsCount').textContent = g.suppliers.length;
-    document.getElementById('supCsProj').textContent = g.projSet.size;
-    document.getElementById('supCsPayable').textContent = '¥' + g.totalPayable.toLocaleString();
-    document.getElementById('supCsUnpaid').textContent = '¥' + (g.totalPayable - g.totalPaid).toLocaleString();
-    document.getElementById('supCsBar').style.width = pct + '%';
-    document.getElementById('supCatSummary').classList.add('sb-show');
-
-    // Right detail: supplier list
-    document.getElementById('supDetailDot').style.background = color;
-    document.getElementById('supDetailTitle').textContent = icon + ' ' + cat + ' · 供应商明细';
-    document.getElementById('supDetailCount').textContent = g.suppliers.length + '家供应商';
-
-    var html = '<div class="sup-group-hdr">按应付金额排序 · 共' + g.suppliers.length + '家</div>';
-    g.suppliers.forEach(function(s, i) {
-      var unpaid = s.totalPayable - s.totalPaid;
-      var sp = s.totalPayable > 0 ? Math.round(s.totalPaid / s.totalPayable * 100) : 0;
-      var rc = i === 0 ? 'r1' : (i === 1 ? 'r2' : (i === 2 ? 'r3' : 'rn'));
-      var isSelected = supActiveSupIdx === i;
-      html += '<div class="sup-item" style="animation-delay:'+(i*0.06)+'s;'+(isSelected?'background:rgba(99,102,241,0.08);border-left:3px solid var(--accent);':'')+'" onclick="window._supSelectSup(\''+cat+'\','+i+')">';
-      html += '<div class="sup-item-rank '+rc+'">'+(i+1)+'</div>';
-      html += '<div class="sup-item-info"><div class="sup-item-name-row"><span class="sup-item-nm">'+escHtml(s.name)+'</span><span class="sup-item-tag">'+s.projects.size+'个团期</span></div>';
-      html += '<div class="sup-item-meta"><span>已付 '+fmt(s.totalPaid)+'</span><span>未付 '+(unpaid>0?fmt(unpaid):'已付清')+'</span></div></div>';
-      html += '<div class="sup-item-amts"><div class="sup-item-payable">'+fmt(s.totalPayable)+'</div>';
-      html += '<div class="sup-item-prog"><div class="sup-item-prog-fill" style="width:'+sp+'%;"></div></div></div></div>';
-    });
-    document.getElementById('supDetailBody').innerHTML = html;
-
-    // If supplier selected, show tour detail
-    if (supActiveSupIdx !== null && g.suppliers[supActiveSupIdx]) {
-      supShowTourDetail(cat, supActiveSupIdx);
-    } else {
-      document.getElementById('supTourDetail').classList.remove('sb-show');
+      document.getElementById('supTourPanel').classList.remove('sb-show');
     }
   }
 
@@ -3444,7 +3422,6 @@ async function rollbackToVersion(logId) {
     document.getElementById('supTourTitle').textContent = '📋 ' + s.name + ' · 关联团期 (' + projList.length + '个)';
     var html = '';
     projList.forEach(function(p) {
-      // Find cost for this supplier in this project
       var supCost = (p.costs||[]).filter(function(c){return c._supplierId === s.id;}).reduce(function(ss,c){return ss+c.amount;},0);
       var supPaid = (p.costs||[]).filter(function(c){return c._supplierId === s.id;}).reduce(function(ss,c){return ss+(c.paidAmount||0);},0);
       var status = supPaid >= supCost && supCost > 0 ? 'sb-paid' : (supPaid === 0 ? 'sb-unpaid' : 'sb-partial');
@@ -3458,32 +3435,23 @@ async function rollbackToVersion(logId) {
     });
     if (projList.length === 0) html = '<div style="text-align:center;padding:20px;color:var(--text-muted);font-size:12px;">暂无关联团期数据</div>';
     document.getElementById('supTourList').innerHTML = html;
-    document.getElementById('supTourDetail').classList.add('sb-show');
+    document.getElementById('supTourPanel').classList.add('sb-show');
   }
 
   // Global bindings
-  window._supSelectCat = function(cat) {
-    if (supActiveCat === cat) {
-      supActiveCat = null; supActiveSupIdx = null;
-    } else {
-      supActiveCat = cat; supActiveSupIdx = null;
-    }
+  window._supToggleCat = function(cat) {
+    supOpenCats[cat] = !supOpenCats[cat];
+    supActiveSupKey = null;
     renderSuppliers();
   };
   window._supSelectSup = function(cat, idx) {
-    supActiveSupIdx = (supActiveSupIdx === idx) ? null : idx;
-    supShowCatDetail(cat);
-  };
-  window._supClearSelection = function() {
-    supActiveCat = null; supActiveSupIdx = null;
+    var key = cat + ':' + idx;
+    supActiveSupKey = (supActiveSupKey === key) ? null : key;
     renderSuppliers();
   };
   window._supCloseTourDetail = function() {
-    supActiveSupIdx = null;
-    document.getElementById('supTourDetail').classList.remove('sb-show');
-    // Remove highlight from supplier items
-    var items = document.querySelectorAll('.sup-item');
-    items.forEach(function(item) { item.style.background = ''; item.style.borderLeft = ''; });
+    supActiveSupKey = null;
+    document.getElementById('supTourPanel').classList.remove('sb-show');
   };
 
   // ==================== MODULE 6: PROJECTS ====================
@@ -4218,30 +4186,38 @@ async function rollbackToVersion(logId) {
       <div class="edit-field"><label>备注</label><input type="text" id="ed_remark" value="${escHtml(p.remark||'')}"></div>
     </div>`;
 
-    // 收入明细（可编辑）
+    // 收入明细（可编辑，下拉选择+支持新增，固定排序）
     html += '<h4 style="margin:14px 0 8px;">💰 收入明细</h4>';
     html += '<div id="ed_incomes_list" class="sub-item-list">';
-    (p.incomes||[]).forEach(function(inc,idx){
-      html += `<div class="sub-item"><input placeholder="名称" value="${escHtml(inc.name)}" data-inc-name="${idx}">`;
-      html += `<input placeholder="金额" value="${inc.amount||0}" data-inc-amt="${idx}" style="width:110px;">`;
-      html += `<button onclick="this.parentElement.remove()">✕</button></div>`;
+    var origIncomes = p.incomes||[];
+    var sortedIncomes = origIncomes.map(function(inc,i){ return {inc:inc,oi:i}; })
+      .sort(function(a,b){ return incomeSortIndex(a.inc.name) - incomeSortIndex(b.inc.name); });
+    sortedIncomes.forEach(function(item,idx){
+      var inc = item.inc;
+      html += '<div class="sub-item" data-orig-idx="'+item.oi+'"><input list="incomeNameList" placeholder="收入类型" value="'+escHtml(inc.name)+'" data-inc-name="'+idx+'" style="min-width:100px;">';
+      html += '<input placeholder="金额" value="'+(inc.amount||0)+'" data-inc-amt="'+idx+'" style="width:110px;" type="number" step="0.01">';
+      html += '<button onclick="this.parentElement.remove()">✕</button></div>';
     });
     html += '</div>';
-    html += `<button class="btn btn-sm btn-outline" onclick="addSubItemInline('ed_incomes_list','income')" style="margin-bottom:12px;">＋ 添加收入项</button>`;
+    html += '<button class="btn btn-sm btn-outline" onclick="addSubItemInline(\'ed_incomes_list\',\'income\')" style="margin-bottom:12px;">＋ 添加收入项</button>';
 
-    // 成本明细（可编辑，含供应商自由输入）
+    // 成本明细（可编辑，下拉选择+支持新增，固定排序）
     html += '<h4 style="margin:12px 0 8px;">📉 成本明细</h4>';
     html += '<div id="ed_costs_list" class="sub-item-list">';
-    (p.costs||[]).forEach(function(c,idx){
+    var origCosts = p.costs||[];
+    var sortedCosts = origCosts.map(function(c,i){ return {c:c,oi:i}; })
+      .sort(function(a,b){ return costSortIndex(a.c.name) - costSortIndex(b.c.name); });
+    sortedCosts.forEach(function(item,idx){
+      var c = item.c;
       var sup = suppliers.find(function(s){return s.id===c._supplierId;});
       var supName = sup ? sup.name : (c._supplierId || '');
-      html += '<div class="sub-item"><input placeholder="成本项名称" value="'+escHtml(c.name)+'" data-cost-name="'+idx+'">';
+      html += '<div class="sub-item" data-orig-idx="'+item.oi+'"><input list="costNameList" placeholder="成本类型" value="'+escHtml(c.name)+'" data-cost-name="'+idx+'" style="min-width:100px;">';
       html += '<input placeholder="金额" value="'+(c.amount||0)+'" data-cost-amt="'+idx+'" style="width:90px;" type="number" step="0.01">';
       html += '<input list="supplierList" placeholder="供应商(可手输)" value="'+escHtml(supName)+'" data-cost-sup="'+idx+'" style="flex:1;padding:5px 6px;border-radius:6px;border:1px solid var(--border-light);background:var(--bg-secondary);color:var(--text-primary);font-size:11px;min-width:0;font-family:inherit;">';
       html += '<button onclick="this.parentElement.remove()">✕</button></div>';
     });
     html += '</div>';
-    html += `<button class="btn btn-sm btn-outline" onclick="addSubItemInline('ed_costs_list','cost')" style="margin-bottom:12px;">＋ 添加成本项</button>`;
+    html += '<button class="btn btn-sm btn-outline" onclick="addSubItemInline(\'ed_costs_list\',\'cost\')" style="margin-bottom:12px;">＋ 添加成本项</button>';
 
     // 人数明细（固定3个渠道：线上/线下/切位）
     html += '<h4 style="margin:12px 0 8px;">👥 人数明细</h4>';
@@ -4269,6 +4245,14 @@ async function rollbackToVersion(logId) {
     html += '</div>';
     // ★ 隐藏“添加人数类型”按钮，不允许用户添加其他类型
 
+    // 下拉选项 datalist（收入类型 + 成本类型）
+    html += '<datalist id="incomeNameList">';
+    INCOME_NAME_ORDER.forEach(function(n){ html += '<option value="'+n+'">'; });
+    html += '</datalist>';
+    html += '<datalist id="costNameList">';
+    COST_NAME_ORDER.forEach(function(n){ html += '<option value="'+n+'">'; });
+    html += '</datalist>';
+
     // 操作按钮
     html += `<div class="modal-save-bar">
       <button class="btn btn-outline" onclick="document.getElementById('modalOverlay').classList.remove('show')">取消</button>
@@ -4285,9 +4269,9 @@ async function rollbackToVersion(logId) {
     var idx = container.children.length;
     var h = '<div class="sub-item">';
     if (type==='income') {
-      h+='<input placeholder="收入项名称" data-inc-name="'+idx+'"><input placeholder="金额" value="0" data-inc-amt="'+idx+'" style="width:110px;">';
+      h+='<input list="incomeNameList" placeholder="收入类型" data-inc-name="'+idx+'" style="min-width:100px;"><input placeholder="金额" value="0" data-inc-amt="'+idx+'" style="width:110px;" type="number" step="0.01">';
     } else if(type==='cost') {
-      h+='<input placeholder="成本项名称" data-cost-name="'+idx+'"><input placeholder="金额" value="0" data-cost-amt="'+idx+'" style="width:90px;" type="number" step="0.01">';
+      h+='<input list="costNameList" placeholder="成本类型" data-cost-name="'+idx+'" style="min-width:100px;"><input placeholder="金额" value="0" data-cost-amt="'+idx+'" style="width:90px;" type="number" step="0.01">';
       h+='<input list="supplierList" placeholder="供应商(可手输)" value="" data-cost-sup="'+idx+'" style="flex:1;padding:5px 6px;border-radius:6px;border:1px solid var(--border-light);background:var(--bg-secondary);color:var(--text-primary);font-size:11px;min-width:0;font-family:inherit;">';
     } else {
       h+='<input placeholder="类型" data-ppl-name="'+idx+'"><input placeholder="人数" value="0" data-ppl-cnt="" style="width:90px;">';
@@ -4304,11 +4288,11 @@ async function rollbackToVersion(logId) {
     var incomes=[], costs=[], peopleDetails=[];
 
     // 收入项：从编辑框读取，保留已有的 id 和 receivedAmount
-    var incIdx=0;
     document.querySelectorAll('#ed_incomes_list .sub-item').forEach(function(el){
       var n=el.querySelector('[data-inc-name]'), a=el.querySelector('[data-inc-amt]');
       if(n&&n.value.trim()) {
-        var oldInc = oldIncomes[incIdx] || {};
+        var oi = parseInt(el.getAttribute('data-orig-idx'));
+        var oldInc = (!isNaN(oi) && oldIncomes[oi]) ? oldIncomes[oi] : {};
         incomes.push({
           id: oldInc.id || ('income_'+Date.now()+'_'+incomes.length),
           name: n.value.trim(),
@@ -4316,15 +4300,16 @@ async function rollbackToVersion(logId) {
           receivedAmount: oldInc.receivedAmount || 0
         });
       }
-      incIdx++;
     });
+    // 按固定顺序排序
+    incomes.sort(function(a,b){ return incomeSortIndex(a.name) - incomeSortIndex(b.name); });
 
     // 成本项：从编辑框读取，保留已有的 id 和 paidAmount
-    var costIdx=0;
     document.querySelectorAll('#ed_costs_list .sub-item').forEach(function(el){
       var n=el.querySelector('[data-cost-name]'), a=el.querySelector('[data-cost-amt]'), s=el.querySelector('[data-cost-sup]');
       if(n&&n.value.trim()) {
-        var oldCost = oldCosts[costIdx] || {};
+        var oi = parseInt(el.getAttribute('data-orig-idx'));
+        var oldCost = (!isNaN(oi) && oldCosts[oi]) ? oldCosts[oi] : {};
         var supId = resolveSupplierId(s?s.value:''); // 自由输入 → 匹配已有或新建供应商
         costs.push({
           id: oldCost.id || ('cost_'+Date.now()+'_'+costs.length),
@@ -4334,8 +4319,9 @@ async function rollbackToVersion(logId) {
           paidAmount: oldCost.paidAmount || 0
         });
       }
-      costIdx++;
     });
+    // 按固定顺序排序
+    costs.sort(function(a,b){ return costSortIndex(a.name) - costSortIndex(b.name); });
 
     // ★ 人数明细：只处理3个固定渠道（线上/线下/切位），忽略其他类型
     var peopleMap = {
