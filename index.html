@@ -47,157 +47,92 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  /* ===== SIDEBAR (Collapsible + SVG Icons) ===== */
+  /* ===== SIDEBAR ===== */
   .sidebar {
     width: 220px; min-width: 220px;
     height: 100vh; flex-shrink: 0;
     background: var(--bg-secondary);
     border-right: 1px solid var(--border);
     display: flex; flex-direction: column;
-    padding: 0; z-index: 100;
-    transition: width 0.3s ease, min-width 0.3s ease;
-    overflow: hidden; position: relative;
+    padding: 20px 0; z-index: 100;
+    transition: var(--transition);
   }
-  .sidebar.collapsed { width: 56px; min-width: 56px; }
-
   .sidebar-logo {
-    padding: 12px 14px; border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; gap: 10px; height: 49px;
+    padding: 0 16px 20px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px;
   }
-  .sidebar-logo .logo-icon {
-    width: 36px; height: 36px; border-radius: 9px; flex-shrink: 0;
+  .sidebar-logo .icon {
+    width: 34px; height: 34px; border-radius: 10px;
     background: linear-gradient(135deg, var(--accent), var(--purple));
     display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
   }
-  .sidebar-logo .logo-icon svg { width: 18px; height: 18px; fill: #fff; }
-  .sidebar-logo .logo-text {
-    display: flex; flex-direction: column; overflow: hidden;
-    transition: opacity 0.2s ease, width 0.3s ease;
-    white-space: nowrap;
-  }
-  .sidebar-logo .logo-text .brand { font-size: 13px; font-weight: 700; color: var(--text-primary); }
-  .sidebar-logo .logo-text .sub { font-size: 10px; color: var(--text-muted); font-weight: 400; }
-  .sidebar.collapsed .logo-text { opacity: 0; width: 0; }
-
-  .sidebar-nav { flex: 1; padding: 8px 6px; overflow-y: auto; overflow-x: hidden; }
-  .sidebar-nav::-webkit-scrollbar { width: 3px; }
-  .sidebar-nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-  .nav-section { margin-bottom: 12px; }
+  .sidebar-logo .text { font-size: 14px; font-weight: 700; color: var(--text-primary); }
+  .sidebar-logo .text span { display:block; font-size: 10px; color: var(--text-muted); font-weight: 400; }
+  .sidebar-nav { flex: 1; padding: 12px 8px; overflow-y: auto; }
+  .nav-section { margin-bottom: 16px; }
   .nav-section-title {
-    font-size: 9px; font-weight: 600; color: var(--text-muted);
-    text-transform: uppercase; letter-spacing: 1.2px;
-    padding: 8px 12px 4px; margin-bottom: 0;
-    white-space: nowrap; overflow: hidden;
-    transition: opacity 0.2s ease;
+    font-size: 10px; font-weight: 600; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 1px;
+    padding: 6px 12px; margin-bottom: 2px;
   }
-  .sidebar.collapsed .nav-section-title { opacity: 0; height: 0; padding: 0; margin: 0; overflow: hidden; }
-
   .nav-item {
-    display: flex; align-items: center;
-    height: 40px; border-radius: 8px;
-    cursor: pointer; transition: all 0.2s ease;
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 14px; border-radius: 8px;
+    cursor: pointer; transition: var(--transition);
     color: var(--text-secondary); font-size: 13px; font-weight: 500;
-    position: relative; overflow: hidden; white-space: nowrap;
-  }
-  .nav-item .nav-icon {
-    width: 44px; min-width: 44px; height: 40px;
-    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-  }
-  .nav-item .nav-icon svg { width: 17px; height: 17px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-  .nav-item .nav-label {
-    flex: 1; font-size: 13px; font-weight: 500;
-    transition: opacity 0.2s ease; overflow: hidden;
-    padding-right: 8px;
+    position: relative;
   }
   .nav-item:hover { background: var(--bg-card); color: var(--text-primary); }
   .nav-item.active {
-    background: rgba(99,102,241,0.1);
+    background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(139,92,246,0.1));
     color: var(--accent-light); font-weight: 600;
-    box-shadow: inset 3px 0 0 var(--accent);
+    box-shadow: inset 2px 0 0 var(--accent);
   }
+  .nav-item .icon { font-size: 16px; width: 20px; text-align: center; }
   .nav-item .badge {
-    margin-right: 8px; font-size: 10px; padding: 1px 7px; min-width: 20px; text-align: center;
-    border-radius: 16px; background: var(--accent); color: #fff; font-weight: 700;
-    transition: opacity 0.2s ease; flex-shrink: 0;
+    margin-left: auto; font-size: 10px; padding: 2px 7px;
+    border-radius: 16px; background: var(--danger-bg);
+    color: var(--danger); font-weight: 700;
   }
-  .sidebar.collapsed .nav-item .badge { opacity: 0; position: absolute; }
-  .sidebar.collapsed .nav-item .nav-label { opacity: 0; width: 0; }
-
-  /* Sidebar toggle button */
-  .sidebar-toggle {
-    border-top: 1px solid var(--border);
-    display: flex; align-items: center; height: 48px;
-    cursor: pointer; transition: background 0.15s;
-    color: var(--text-muted);
-  }
-  .sidebar-toggle:hover { background: var(--bg-card); color: var(--text-primary); }
-  .sidebar-toggle .toggle-icon {
-    width: 44px; min-width: 44px; height: 48px;
-    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-  }
-  .sidebar-toggle .toggle-icon svg {
-    width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2;
-    stroke-linecap: round; stroke-linejoin: round;
-    transition: transform 0.3s ease;
-  }
-  .sidebar.collapsed .sidebar-toggle .toggle-icon svg { transform: rotate(180deg); }
-  .sidebar-toggle .toggle-label {
-    font-size: 12px; font-weight: 500; white-space: nowrap;
-    transition: opacity 0.2s ease; overflow: hidden;
-  }
-  .sidebar.collapsed .sidebar-toggle .toggle-label { opacity: 0; width: 0; }
-
   .nav-bottom {
-    padding: 10px 12px; border-top: 1px solid var(--border);
-    font-size: 10px; color: var(--text-muted);
-    display: flex; align-items: center; gap: 6px;
-    white-space: nowrap; overflow: hidden;
-    transition: opacity 0.2s ease;
+    padding: 16px 20px; border-top: 1px solid var(--border);
+    font-size: 12px; color: var(--text-muted);
+    display: flex; align-items: center; gap: 8px;
   }
-  .sidebar.collapsed .nav-bottom { opacity: 0; height: 0; padding: 0; border: none; overflow: hidden; }
-  .status-dot { width: 6px; height: 6px; border-radius: 50%;
-    background: var(--success); animation: pulse-dot 2s infinite; flex-shrink: 0; }
+  .status-dot { width: 8px; height: 8px; border-radius: 50%;
+    background: var(--success); animation: pulse-dot 2s infinite; }
   @keyframes pulse-dot { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
-
-  /* Tooltip for collapsed state */
-  .sidebar.collapsed .nav-item:hover::after {
-    content: attr(data-tooltip);
-    position: absolute; left: 52px; top: 50%; transform: translateY(-50%);
-    background: var(--bg-card); border: 1px solid var(--border);
-    color: var(--text-primary); font-size: 12px; font-weight: 500;
-    padding: 5px 12px; border-radius: 6px; white-space: nowrap;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.25); z-index: 200;
-    pointer-events: none;
-  }
 
   /* ===== MAIN ===== */
   .main-area { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
   .main-header {
-    padding: 12px 20px; background: var(--bg-secondary);
+    padding: 10px 20px; background: var(--bg-secondary);
     border-bottom: 1px solid var(--border);
     display: flex; align-items: center; justify-content: space-between;
-    flex-shrink: 0; height: 49px;
+    flex-shrink: 0;
   }
   .main-header .page-title { font-size: 15px; font-weight: 700; }
   .header-actions { display: flex; align-items: center; gap: 8px; }
   .btn {
-    padding: 6px 14px; border-radius: 8px; border: 1px solid var(--border);
+    padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border);
     background: var(--bg-card); color: var(--text-primary); cursor: pointer;
-    font-size: 12px; font-weight: 500; transition: all 0.2s ease;
+    font-size: 12px; font-weight: 500; transition: var(--transition);
     display: flex; align-items: center; gap: 5px; white-space: nowrap;
   }
   .btn:hover { background: var(--bg-card-hover); border-color: var(--accent); }
-  .btn:active { transform: scale(0.97); }
   .btn-accent { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
-  .btn-accent:hover { background: var(--accent-light); border-color: var(--accent-light); }
+  .btn-accent:hover { background: var(--accent-light); }
+.btn-accent:disabled { opacity: 0.7; cursor: not-allowed; animation: savingPulse 1.2s ease-in-out infinite; }
+@keyframes savingPulse { 0%,100% { opacity: 0.5; } 50% { opacity: 1; } }
   .btn-outline { background: transparent; }
-  .btn-sm { padding: 5px 10px; font-size: 11px; }
+  .btn-sm { padding: 5px 10px; font-size: 12px; }
   select, input[type="month"], input[type="text"], input[type="number"] {
-    padding: 6px 10px; border-radius: 8px; border: 1px solid var(--border);
+    padding: 5px 10px; border-radius: 6px; border: 1px solid var(--border);
     background: var(--bg-input); color: var(--text-primary); font-size: 12px;
-    outline: none; transition: border-color 0.2s, box-shadow 0.2s; font-family: inherit;
+    outline: none; transition: var(--transition); font-family: inherit;
   }
-  select:focus, input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
+  select:focus, input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(99,102,241,0.15); }
 
   /* ===== CONTENT ===== */
   .main-content { flex: 1; overflow-y: auto; padding: 14px 20px; }
@@ -229,7 +164,7 @@
   .kpi-card.gross::after { background: var(--info); }
   .kpi-card.margin::after { background: var(--purple); }
   .kpi-card.people::after { background: var(--warning); }
-  .kpi-label { font-size: 10px; color: var(--text-muted); margin-bottom: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+  .kpi-label { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; font-weight: 500; }
   .kpi-value { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
   .kpi-value.income { color: var(--success); } .kpi-value.cost { color: var(--danger); }
   .kpi-value.gross { color: var(--info); } .kpi-value.margin { color: var(--purple); }
@@ -243,14 +178,13 @@
   .panel {
     background: var(--bg-card); border: 1px solid var(--border);
     border-radius: var(--radius); padding: 16px; margin-bottom: 14px;
-    transition: border-color 0.2s ease;
   }
   .panel-header {
     display: flex; align-items: center; justify-content: space-between;
     margin-bottom: 12px;
   }
-  .panel-title { font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
-  .panel-title .dot { width: 6px; height: 6px; border-radius: 50%; }
+  .panel-title { font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+  .panel-title .dot { width: 7px; height: 7px; border-radius: 50%; }
 
   /* ===== GRID LAYOUTS ===== */
   .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
@@ -261,16 +195,16 @@
   /* ===== TABLES ===== */
   .data-table { width: 100%; border-collapse: collapse; font-size: 12px; }
   .data-table th {
-    background: rgba(30,41,59,0.5); padding: 10px 14px; text-align: left;
-    font-weight: 600; color: var(--text-muted); border-bottom: 1px solid var(--border);
-    white-space: nowrap; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px;
+    background: rgba(30,41,59,0.6); padding: 10px 12px; text-align: left;
+    font-weight: 600; color: var(--text-secondary); border-bottom: 2px solid var(--border);
+    white-space: nowrap; font-size: 11px;
   }
-  .data-table td { padding: 10px 14px; border-bottom: 1px solid var(--border-light); }
-  .data-table tr:hover td { background: rgba(99,102,241,0.04); }
-  .data-table tr.supplier-row-active td { background: rgba(59,130,246,0.08); box-shadow: inset 3px 0 0 var(--info); }
+  .data-table td { padding: 9px 12px; border-bottom: 1px solid var(--border-light); }
+  .data-table tr:hover td { background: rgba(99,102,241,0.03); }
+  .data-table tr.supplier-row-active td { background: rgba(59,130,246,0.1); border-left: 3px solid var(--info); }
   .data-table td .status-chip {
     display: inline-block; padding: 3px 10px; border-radius: 20px;
-    font-size: 10px; font-weight: 600; letter-spacing: 0.3px;
+    font-size: 11px; font-weight: 600;
   }
   .status-paid { background: var(--success-bg); color: var(--success); }
   .status-partial { background: var(--warning-bg); color: var(--warning); }
@@ -305,24 +239,6 @@
   .product-card .line-stat { font-size: 11px; }
   .product-card .line-stat .val { font-size: 14px; font-weight: 700; display: block; }
 
-  /* ===== TOUR DETAIL ROWS (C2方案) ===== */
-  .tour-detail-panel { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; max-height: 420px; overflow-y: auto; }
-  .tour-detail-header { font-size: 13px; font-weight: 700; color: var(--text-primary); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
-  .tour-detail-header .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
-  .tour-detail-legend { display: flex; gap: 14px; margin-bottom: 10px; font-size: 11px; color: var(--text-secondary); }
-  .tour-detail-legend span { display: flex; align-items: center; gap: 4px; }
-  .tour-detail-legend .sq { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
-  .tour-row { display: flex; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(30,58,95,0.45); }
-  .tour-row:last-child { border-bottom: none; }
-  .tour-row-name { width: 220px; flex-shrink: 0; font-size: 11px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .tour-row-badges { width: 90px; flex-shrink: 0; display: flex; align-items: center; justify-content: flex-end; gap: 4px; }
-  .tour-badge-ppl { display: inline-flex; align-items: center; gap: 2px; background: rgba(139,92,246,0.12); color: var(--purple); font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 4px; white-space: nowrap; }
-  .tour-badge-kw { display: inline-flex; align-items: center; background: rgba(245,158,11,0.12); color: var(--warning); font-size: 9px; font-weight: 600; padding: 2px 6px; border-radius: 4px; white-space: nowrap; }
-  .tour-row-divider { width: 1px; height: 26px; background: var(--border-light); flex-shrink: 0; margin: 0 10px; }
-  .tour-row-bars { flex: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0; max-width: 45%; }
-  .tour-bar { height: 9px; border-radius: 4px; position: relative; }
-  .tour-bar-val { position: absolute; right: 4px; top: 50%; transform: translateY(-50%); font-size: 9px; color: rgba(255,255,255,0.75); font-weight: 600; }
-
   /* ===== SUPPLIER CARDS ===== */
   .supplier-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
   .supplier-card {
@@ -345,30 +261,28 @@
   /* ===== MODAL ===== */
   .modal-overlay {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.55); backdrop-filter: blur(6px);
+    background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
     z-index: 200; display: none; align-items: center; justify-content: center;
   }
   .modal-overlay.show { display: flex; }
   .modal {
     background: var(--bg-secondary); border: 1px solid var(--border);
-    border-radius: 16px; padding: 24px 28px; width: 90%; max-width: 720px;
-    max-height: 85vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-    animation: modalIn 0.25s ease;
+    border-radius: 20px; padding: 28px; width: 90%; max-width: 720px;
+    max-height: 85vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.5);
   }
-  @keyframes modalIn { from { opacity:0; transform:translateY(16px) scale(0.97); } to { opacity:1; transform:translateY(0) scale(1); } }
-  .modal h3 { font-size: 16px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
-  .modal .close-btn { background: none; border: none; color: var(--text-muted); font-size: 22px; cursor: pointer; border-radius: 6px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
-  .modal .close-btn:hover { color: var(--text-primary); background: var(--bg-card); }
+  .modal h3 { font-size: 16px; margin-bottom: 16px; display: flex; justify-content: space-between; }
+  .modal .close-btn { background: none; border: none; color: var(--text-muted); font-size: 24px; cursor: pointer; }
+  .modal .close-btn:hover { color: var(--text-primary); }
   .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  .detail-section { background: var(--bg-card); border-radius: var(--radius-sm); padding: 16px; border: 1px solid var(--border-light); }
-  .detail-section h4 { font-size: 13px; margin-bottom: 10px; color: var(--text-secondary); font-weight: 600; }
-  .detail-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 13px; border-bottom: 1px solid var(--border-light); }
+  .detail-section { background: var(--bg-card); border-radius: var(--radius-sm); padding: 16px; }
+  .detail-section h4 { font-size: 14px; margin-bottom: 10px; color: var(--text-secondary); }
+  .detail-row { display: flex; justify-content: space-between; padding: 5px 0; font-size: 13px; border-bottom: 1px solid var(--border-light); }
   .detail-row:last-child { border-bottom: none; }
 
   /* ===== INLINE EDIT MODAL ===== */
   .edit-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px; }
   @media (max-width:600px) { .edit-grid { grid-template-columns:1fr; } }
-  .edit-field label { display:block; font-size:10px; color:var(--text-muted); margin-bottom:4px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; }
+  .edit-field label { display:block; font-size:11px; color:var(--text-muted); margin-bottom:4px; font-weight:600; }
   .edit-field input {
     width:100%; padding:7px 10px; border-radius:6px;
     border:1px solid var(--border); background:var(--bg-input);
@@ -423,9 +337,8 @@
   .pay-amt-item .label { font-size:9px; color:var(--text-muted); }
   .pay-amt-item .value { font-size:13px; font-weight:700; }
   /* 展开指示箭头 */
-  .pay-card-expand-hint { position:absolute; bottom:5px; right:8px; opacity:0.35; transition:transform 0.3s ease; }
-  .pay-card-expand-hint svg { width:12px; height:12px; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; color:var(--text-muted); }
-  .pay-card.expanded .pay-card-expand-hint { transform:rotate(180deg); opacity:0.7; }
+  .pay-card-expand-hint { position:absolute; bottom:3px; right:8px; font-size:9px; color:var(--text-muted); opacity:0.4; transition:transform 0.35s ease; }
+  .pay-card.expanded .pay-card-expand-hint { transform:rotate(180deg); opacity:0.8; }
   /* 可展开区域 */
   .pay-card-detail { max-height:0; overflow:hidden; transition:max-height 0.45s ease, margin 0.35s ease, opacity 0.25s ease; opacity:0; }
   .pay-card.expanded .pay-card-detail { max-height:500px; margin-top:2px; opacity:1; }
@@ -534,14 +447,13 @@
     font-family: inherit; line-height: 1;
   }
   .date-range-btn:hover { border-color: var(--accent); }
-  .date-range-btn .arw { transition: var(--transition); display:inline-flex; align-items:center; }
-  .date-range-btn .arw svg { width:10px; height:10px; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  .date-range-btn .arw { font-size: 9px; color: var(--text-muted); transition: var(--transition); display:inline-block; }
   .date-range-btn.open .arw { transform: rotate(180deg); }
   .date-range-popover {
     position: absolute; top: calc(100% + 6px); left: 50%; transform: translateX(-50%);
     background: var(--bg-secondary); border: 1px solid var(--border);
     border-radius: var(--radius); padding: 12px; z-index: 210;
-    box-shadow: 0 12px 36px rgba(0,0,0,0.5); min-width: 420px;
+    box-shadow: 0 12px 36px rgba(0,0,0,0.5); min-width: 300px;
     display: none; flex-direction: column; gap: 10px;
   }
   .date-range-popover.show { display: flex; }
@@ -554,67 +466,9 @@
   }
   .preset-btn:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
   .preset-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
-  .custom-row { display: flex; align-items: center; gap: 6px; padding-top: 8px; border-top: 1px solid var(--border); flex-wrap: wrap; }
-  .custom-row label { font-size: 12px; color: var(--text-muted); white-space: nowrap; flex-shrink: 0; }
-  .custom-row > span { flex-shrink: 0; }
-  .custom-row > .preset-btn { flex-shrink: 0; }
-
-  /* ===== CUSTOM MONTH PICKER ===== */
-  .month-input-wrap { position: relative; flex: 1; min-width: 110px; box-sizing: border-box; }
-  .month-input {
-    width: 100%; padding: 6px 28px 6px 10px; border-radius: 8px;
-    border: 1px solid var(--border); background: var(--bg-input);
-    color: var(--text-primary); font-size: 12px; cursor: pointer;
-    font-family: inherit; outline: none; transition: border-color 0.2s, box-shadow 0.2s;
-    box-sizing: border-box; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-  .month-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
-  .month-input-icon {
-    position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
-    pointer-events: none; opacity: 0.4;
-  }
-  .month-input-icon svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-  .month-picker-dropdown {
-    position: absolute; top: calc(100% + 4px); left: 0;
-    background: var(--bg-secondary); border: 1px solid var(--border);
-    border-radius: var(--radius-sm); padding: 8px; z-index: 300;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.35); min-width: 220px;
-    display: none; animation: monthPickerIn 0.2s ease;
-  }
-  .month-picker-dropdown.show { display: block; }
-  @keyframes monthPickerIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
-  .mp-header { display: flex; align-items: center; justify-content: space-between; padding: 4px 4px 8px; border-bottom: 1px solid var(--border-light); margin-bottom: 6px; }
-  .mp-year-btn {
-    background: none; border: none; color: var(--text-primary);
-    font-size: 13px; font-weight: 700; cursor: pointer; padding: 2px 8px;
-    border-radius: 6px; transition: background 0.15s; font-family: inherit;
-  }
-  .mp-year-btn:hover { background: var(--bg-card); }
-  .mp-nav-btn {
-    background: none; border: none; color: var(--text-muted);
-    cursor: pointer; padding: 4px; border-radius: 4px;
-    display: flex; align-items: center; justify-content: center;
-    transition: background 0.15s, color 0.15s;
-  }
-  .mp-nav-btn:hover { background: var(--bg-card); color: var(--text-primary); }
-  .mp-nav-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-  .mp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
-  .mp-month {
-    padding: 8px 4px; border-radius: 6px; border: 1px solid transparent;
-    background: none; color: var(--text-secondary);
-    cursor: pointer; font-size: 12px; font-weight: 500;
-    text-align: center; transition: all 0.15s ease; font-family: inherit;
-  }
-  .mp-month:hover { background: var(--bg-card); border-color: var(--border); color: var(--text-primary); }
-  .mp-month.active { background: var(--accent); color: #fff; font-weight: 600; border-color: var(--accent); }
-  .mp-month.current { border-color: var(--accent); color: var(--accent); }
-  .mp-footer { display: flex; justify-content: space-between; padding-top: 8px; margin-top: 6px; border-top: 1px solid var(--border-light); }
-  .mp-footer-btn {
-    font-size: 11px; color: var(--accent-light); cursor: pointer;
-    background: none; border: none; font-weight: 500; padding: 2px 6px;
-    border-radius: 4px; transition: background 0.15s; font-family: inherit;
-  }
-  .mp-footer-btn:hover { background: rgba(99,102,241,0.1); }
+  .custom-row { display: flex; align-items: center; gap: 8px; padding-top: 8px; border-top: 1px solid var(--border); }
+  .custom-row label { font-size: 12px; color: var(--text-muted); white-space: nowrap; }
+  .custom-row input[type="month"] { flex: 1; min-width: 0; }
 
   /* ===== TRAFFIC LIGHT COMPACT ===== */
   .traffic-compact-row { display: grid; grid-template-columns: 210px 1fr 1fr; gap: 10px; margin-top: 12px; transition: var(--transition); }
@@ -715,13 +569,11 @@
       border-right: none; border-top: 1px solid var(--border);
       z-index: 100;
     }
-    .sidebar-logo, .sidebar-nav .nav-section-title, .nav-bottom, .sidebar-toggle { display: none; }
+    .sidebar-logo, .sidebar-nav .nav-section-title, .nav-bottom { display: none; }
     .sidebar-nav { display: flex; flex-direction: row; padding: 4px 8px; overflow-x: auto; }
     .nav-section { display: flex; }
     .nav-item { flex-direction: column; gap: 4px; padding: 8px 12px; font-size: 10px; }
-    .nav-item .nav-icon { width: auto; min-width: auto; height: auto; }
-    .nav-item .nav-icon svg { width: 18px; height: 18px; }
-    .nav-item .nav-label { font-size: 10px; }
+    .nav-item .icon { font-size: 16px; }
     .nav-item .badge { margin-left: 0; position: absolute; top: 0; right: 2px; font-size: 9px; padding: 1px 5px; }
     .main-header { padding: 12px 16px; }
     .main-header .page-title { font-size: 15px; }
@@ -765,8 +617,8 @@
   /* 暖色主题下的表格标题样式 */
   :root[data-theme="warm"] .data-table th,
   :root[data-theme="warm"] .pay-detail-table th {
-    background: #fff8f0 !important;
-    color: #8d6e63 !important;
+    background: #fff5eb !important;
+    color: #5d4037 !important;  /* 使用深色文字 */
     border-bottom-color: #ffd6b3;
   }
   
@@ -778,267 +630,7 @@
   /* 暖色主题下的产品线统计数值 */
   :root[data-theme="warm"] .product-card .line-stat .val {
     color: #5d4037 !important;
-  }
-
-  /* 暖色主题下的团期明细 */
-  :root[data-theme="warm"] .tour-detail-panel { background: var(--bg-card); border-color: #ffd6b3; }
-  :root[data-theme="warm"] .tour-row { border-bottom-color: rgba(255,214,179,0.3); }
-  :root[data-theme="warm"] .tour-row-name { color: #5d4037; }
-  :root[data-theme="warm"] .tour-row-divider { background: #ffd6b3; }
-  :root[data-theme="warm"] .tour-bar-val { color: rgba(93,64,55,0.8); }
-
-  /* 暖色主题下的侧边栏 */
-  :root[data-theme="warm"] .nav-item.active {
-    background: rgba(255,152,0,0.1);
-    box-shadow: inset 3px 0 0 var(--accent);
-  }
-  :root[data-theme="warm"] .sidebar-logo .logo-icon {
-    background: linear-gradient(135deg, #ff9800, #e65100);
-  }
-  :root[data-theme="warm"] .sup-tree-group:hover,
-  :root[data-theme="warm"] .sup-tree-child:hover { background: rgba(255,152,0,0.05); }
-  :root[data-theme="warm"] .sup-lib-section-hdr { background: rgba(255,152,0,0.04); }
-  :root[data-theme="warm"] .sup-lib-row:hover { background: rgba(255,152,0,0.05); }
-
-  /* ===== SUPPLIER LIBRARY STYLES ===== */
-  .sup-lib-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
-  .sup-lib-section { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
-  .sup-lib-section-hdr { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: rgba(99,102,241,0.03); border-bottom: 1px solid var(--border-light); }
-  .sup-lib-section-icon { display: flex; align-items: center; justify-content: center; width: 20px; height: 20px; flex-shrink: 0; }
-  .sup-lib-section-icon svg, .sup-cat-icon { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-  .sup-lib-section-name { font-size: 11px; font-weight: 700; flex: 1; }
-  .sup-lib-section-count { font-size: 10px; color: var(--text-muted); background: var(--bg-input); padding: 1px 7px; border-radius: 4px; }
-  .sup-lib-row { display: flex; align-items: center; padding: 5px 10px; border-bottom: 1px solid var(--border-light); font-size: 11px; transition: background 0.15s; }
-  .sup-lib-row:last-child { border-bottom: none; }
-  .sup-lib-row:hover { background: rgba(99,102,241,0.04); }
-  .sup-lib-row-name { flex: 1; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .sup-lib-row-multi { display: inline-flex; align-items: center; gap: 2px; margin-right: 4px; opacity: 0.7; }
-  .sup-lib-row-del { background: none; border: none; color: var(--text-muted); font-size: 11px; cursor: pointer; opacity: 0; transition: opacity 0.15s; padding: 2px 4px; }
-  .sup-lib-row:hover .sup-lib-row-del { opacity: 1; }
-  .sup-lib-row-del:hover { color: var(--danger); }
-
-  /* ===== SUPPLIER TREE TABLE STYLES (Accordion) ===== */
-  .sup-tree-wrap { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
-  .sup-tree-table { width: 100%; border-collapse: collapse; }
-  .sup-tree-table th {
-    font-size: 10px; color: var(--text-muted); font-weight: 600; padding: 10px 16px;
-    text-align: left; background: var(--bg-input); border-bottom: 1px solid var(--border);
-    text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap;
-  }
-  .sup-tree-table th:last-child { text-align: right; }
-  .sup-tree-table td { padding: 0; font-size: 12px; border-bottom: 1px solid var(--border-light); }
-  .sup-tree-table td:last-child { text-align: right; vertical-align: middle; padding: 12px 16px; }
-  /* Group (category) row — Accordion trigger */
-  .sup-tree-group { cursor: pointer; background: transparent; transition: background 0.2s ease; }
-  .sup-tree-group:hover { background: rgba(99,102,241,0.04); }
-  .sup-tree-group td { padding: 12px 16px; font-weight: 700; font-size: 13px; }
-  .sup-tree-group td:first-child {
-    display: flex; align-items: center; gap: 8px;
-    padding: 14px 16px; font-weight: 500; font-size: 13px;
-  }
-  .sup-tree-group-icon {
-    width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-  }
-  .sup-tree-group-icon svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-  .sup-tree-cat-name { font-weight: 600; color: var(--text-primary); }
-  .sup-tree-cat-count {
-    font-size: 10px; color: var(--text-muted); font-weight: 400;
-    background: var(--bg-input); padding: 2px 8px; border-radius: 10px;
-  }
-  .sup-tree-cat-bar { display: inline-block; height: 5px; border-radius: 3px; margin-left: 4px; vertical-align: middle; min-width: 4px; transition: width 0.4s ease; }
-  .sup-tree-chevron {
-    width: 16px; height: 16px; flex-shrink: 0; margin-left: auto;
-    stroke: var(--text-muted); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
-    transition: transform 0.25s ease;
-  }
-  .sup-tree-group.open .sup-tree-chevron { transform: rotate(180deg); }
-  /* Child (supplier) row — Accordion content */
-  .sup-tree-child {
-    background: var(--bg-card); transition: background 0.15s; cursor: pointer;
-  }
-  .sup-tree-child:hover { background: rgba(99,102,241,0.05); }
-  .sup-tree-child td { padding: 10px 16px 10px 52px; font-weight: 400; vertical-align: middle; }
-  .sup-tree-child td:last-child { padding: 12px 16px; }
-  .sup-tree-child.hidden { display: none; }
-  .sup-tree-sup-name { font-weight: 600; }
-  .sup-tree-sup-proj { font-size: 10px; color: var(--text-muted); margin-left: 6px; }
-  .sup-tree-pct { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
-  .sup-tree-pct.good { background: rgba(16,185,129,0.12); color: var(--success); }
-  .sup-tree-pct.bad  { background: rgba(239,68,68,0.12); color: var(--danger); }
-  .sup-tree-pct.mid  { background: rgba(245,158,11,0.12); color: var(--warning); }
-  /* Tour detail panel below tree table */
-  .sup-tour-panel { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); margin-top: 10px; overflow: hidden; max-height: 0; opacity: 0; transition: all 0.35s ease; }
-  .sup-tour-panel.sb-show { max-height: 400px; opacity: 1; }
-  .sup-tour-panel-header { padding: 10px 16px; border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center; }
-  .sup-tour-panel-title { font-size: 12px; font-weight: 700; }
-  .sup-tour-panel-close { font-size: 11px; color: var(--text-muted); cursor: pointer; padding: 2px 8px; border-radius: 4px; }
-  .sup-tour-panel-close:hover { background: rgba(239,68,68,0.1); color: var(--danger); }
-  .sup-tour-panel-list { max-height: 280px; overflow-y: auto; }
-  .sup-tour-panel-list::-webkit-scrollbar { width: 5px; }
-  .sup-tour-panel-list::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.2); border-radius: 3px; }
-  .sup-tour-item { display: flex; align-items: center; padding: 8px 16px; border-bottom: 1px solid var(--border-light); font-size: 12px; cursor: pointer; transition: background 0.15s; }
-  .sup-tour-item:hover { background: rgba(99,102,241,0.04); }
-  .sup-tour-item:last-child { border-bottom: none; }
-  .sup-tour-name { flex: 2; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .sup-tour-product { flex: 0.8; color: var(--text-muted); font-size: 11px; }
-  .sup-tour-cost { flex: 1; text-align: right; color: var(--danger); font-weight: 600; }
-  .sup-tour-status { flex: 0.6; text-align: right; }
-  .sb-pay-chip { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
-  .sb-pay-chip.sb-paid { background: rgba(16,185,129,0.12); color: var(--success); }
-  .sb-pay-chip.sb-unpaid { background: rgba(245,158,11,0.12); color: var(--warning); }
-  .sb-pay-chip.sb-partial { background: rgba(239,68,68,0.12); color: var(--danger); }
-
-  /* ===== ENHANCED TABLE (Module 6: Projects) ===== */
-  .data-table tr:nth-child(even) td { background: rgba(255,255,255,0.012); }
-  .data-table tr:hover td { background: rgba(99,102,241,0.06); }
-  .data-table td { transition: background 0.15s; }
-  /* Margin rate inline bar */
-  .margin-bar-wrap { display: inline-flex; align-items: center; gap: 6px; }
-  .margin-bar { width: 48px; height: 5px; border-radius: 3px; background: var(--border-light); overflow: hidden; display: inline-block; vertical-align: middle; }
-  .margin-bar-fill { height: 100%; border-radius: 3px; transition: width 0.4s ease; }
-  .margin-bar-fill.good { background: var(--success); }
-  .margin-bar-fill.bad { background: var(--danger); }
-  .margin-bar-fill.mid { background: var(--warning); }
-  /* Enhanced filter bar */
-  .filter-bar select {
-    padding: 5px 24px 5px 10px; border-radius: 8px; font-size: 11px;
-    appearance: none; -webkit-appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2394a3b8'/%3E%3C/svg%3E");
-    background-repeat: no-repeat; background-position: right 8px center; background-size: 8px;
-    cursor: pointer; min-width: 110px;
-  }
-  .filter-bar select:hover { border-color: var(--accent); }
-  /* Better pagination */
-  .pagination { gap: 3px; }
-  .pagination button {
-    min-width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center;
-    border-radius: 8px; font-weight: 600; transition: all 0.2s ease;
-  }
-  .pagination button:hover:not(.active):not(:disabled) { background: var(--bg-card-hover); border-color: var(--accent); }
-  .pagination button.active { box-shadow: 0 2px 8px rgba(99,102,241,0.3); }
-
-  /* ===== ENHANCED IMPORT MODULE (Module 7) ===== */
-  .import-zone {
-    border: 2px dashed var(--border); border-radius: var(--radius);
-    padding: 36px 28px; text-align: center; cursor: pointer;
-    transition: all 0.3s ease; margin-bottom: 0;
-    position: relative; overflow: hidden;
-  }
-  .import-zone::before {
-    content: ''; position: absolute; inset: 0;
-    background: linear-gradient(135deg, rgba(99,102,241,0.03), transparent 60%);
-    opacity: 0; transition: opacity 0.3s;
-  }
-  .import-zone:hover { border-color: var(--accent); }
-  .import-zone:hover::before { opacity: 1; }
-  .import-zone.dragover {
-    border-color: var(--accent); background: rgba(99,102,241,0.06);
-    transform: scale(1.01);
-  }
-  .import-zone.dragover::before { opacity: 1; }
-  .import-zone .icon { font-size: 42px; margin-bottom: 10px; transition: transform 0.3s; }
-  .import-zone:hover .icon { transform: translateY(-2px); }
-  .import-zone .iz-title { font-size: 15px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
-  .import-zone .iz-hint { font-size: 12px; color: var(--text-muted); }
-
-  /* Import header card */
-  .import-hdr-card {
-    background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
-    padding: 20px 24px; text-align: center; position: relative; overflow: hidden;
-  }
-  .import-hdr-card::after {
-    content: ''; position: absolute; top: -20px; right: -20px;
-    width: 80px; height: 80px; border-radius: 50%;
-    background: var(--accent); opacity: 0.04;
-  }
-  .import-hdr-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; justify-content: center; gap: 6px; }
-  .import-hdr-desc { font-size: 12px; color: var(--text-muted); line-height: 1.6; }
-  .import-action-row { display: flex; gap: 8px; justify-content: center; margin: 12px 0; }
-
-  /* Sync instruction steps */
-  .sync-panel { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 24px; }
-  .sync-panel-title { font-size: 14px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
-  .sync-method { margin-bottom: 18px; }
-  .sync-method:last-child { margin-bottom: 0; }
-  .sync-method-hdr {
-    display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
-    font-size: 13px; font-weight: 600; color: var(--text-primary);
-  }
-  .sync-method-num {
-    width: 26px; height: 26px; border-radius: 50%; display: inline-flex;
-    align-items: center; justify-content: center; font-size: 12px; font-weight: 700;
-    background: rgba(99,102,241,0.1); color: var(--accent-light); flex-shrink: 0;
-  }
-  .sync-steps { padding-left: 36px; list-style: none; }
-  .sync-steps li {
-    font-size: 12px; color: var(--text-secondary); line-height: 1.8;
-    position: relative; padding-left: 14px;
-  }
-  .sync-steps li::before {
-    content: ''; position: absolute; left: 0; top: 9px;
-    width: 5px; height: 5px; border-radius: 50%; background: var(--border);
-  }
-  .sync-steps li code {
-    background: var(--bg-input); padding: 1px 6px; border-radius: 4px;
-    font-size: 11px; color: var(--accent-light); font-family: 'SF Mono', 'Consolas', monospace;
-  }
-
-  /* Changelog timeline */
-  .log-timeline-item {
-    display: flex; align-items: flex-start; gap: 10px; padding: 10px 0;
-    border-bottom: 1px solid var(--border-light); font-size: 11px;
-    transition: background 0.15s;
-  }
-  .log-timeline-item:last-child { border-bottom: none; }
-  .log-timeline-item:hover { background: rgba(99,102,241,0.02); margin: 0 -8px; padding-left: 8px; padding-right: 8px; border-radius: 6px; }
-  .log-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
-  .log-dot.save { background: var(--success); }
-  .log-dot.rollback { background: var(--warning); }
-  .log-dot.edit { background: var(--info); }
-  .log-time { font-size: 10px; color: var(--text-muted); white-space: nowrap; min-width: 130px; }
-  .log-desc { font-weight: 600; color: var(--text-primary); flex: 1; }
-  .log-count { font-size: 10px; color: var(--text-muted); }
-  .log-rollback-tag { font-size: 9px; color: var(--success); background: var(--success-bg); padding: 1px 6px; border-radius: 4px; font-weight: 600; }
-
-  /* Import preview stats */
-  .preview-stat-card {
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    padding: 12px 16px; background: var(--bg-secondary); border: 1px solid var(--border-light);
-    border-radius: 10px; min-width: 90px;
-  }
-  .preview-stat-val { font-size: 22px; font-weight: 700; line-height: 1; }
-  .preview-stat-label { font-size: 10px; color: var(--text-muted); margin-top: 4px; font-weight: 500; }
-
-  /* Import preview tip */
-  .preview-tip {
-    margin-top: 12px; padding: 10px 14px; border-radius: 8px; font-size: 12px;
-    color: var(--text-secondary); line-height: 1.6;
-    background: rgba(99,102,241,0.06); border: 1px solid rgba(99,102,241,0.12);
-  }
-
-  /* Enhanced modal sub-items */
-  .sub-item {
-    display: flex; gap: 6px; align-items: center; padding: 8px 10px;
-    background: var(--bg-input); border-radius: 8px; margin-bottom: 4px;
-    border: 1px solid transparent; transition: border-color 0.15s;
-  }
-  .sub-item:hover { border-color: var(--border-light); }
-  .sub-item input { font-size: 12px; }
-
-  /* Warm theme overrides for new styles */
-  :root[data-theme="warm"] .data-table tr:nth-child(even) td { background: rgba(93,64,55,0.02); }
-  :root[data-theme="warm"] .data-table tr:hover td { background: rgba(255,152,0,0.05); }
-  :root[data-theme="warm"] .margin-bar { background: #ffd6b3; }
-  :root[data-theme="warm"] .sync-method-num { background: rgba(255,152,0,0.1); color: #ff9800; }
-  :root[data-theme="warm"] .sync-steps li code { color: #e65100; background: #fff3e0; }
-  :root[data-theme="warm"] .log-timeline-item:hover { background: rgba(255,152,0,0.04); }
-  :root[data-theme="warm"] .import-zone:hover { border-color: #ff9800; }
-  :root[data-theme="warm"] .import-zone.dragover { border-color: #ff9800; background: rgba(255,152,0,0.05); }
-  :root[data-theme="warm"] .filter-bar select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%236d4c41'/%3E%3C/svg%3E"); }
-  :root[data-theme="warm"] .pagination button:hover:not(.active):not(:disabled) { background: #fef6ee; border-color: #ff9800; }
-  :root[data-theme="warm"] .pagination button.active { background: #ff9800; border-color: #ff9800; }
-  :root[data-theme="warm"] .preview-tip { background: rgba(255,152,0,0.06); border-color: rgba(255,152,0,0.12); }
-</style>
+  }</style>
 </head>
 <body>
 
@@ -1052,71 +644,44 @@
 <!-- ===== SIDEBAR ===== -->
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-logo">
-    <div class="logo-icon">
-      <svg viewBox="0 0 50 39" xmlns="http://www.w3.org/2000/svg"><path d="M16.4992 2H37.5808L22.0816 24.9729H1L16.4992 2Z"/><path d="M17.4224 27.102L11.4192 36H33.5008L49 13.0271H32.7024L23.2064 27.102H17.4224Z"/></svg>
-    </div>
-    <div class="logo-text"><span class="brand">遇见美好</span><span class="sub">财务数据看板</span></div>
+    <div class="icon">📊</div>
+    <div class="text">遇见美好<span>财务数据看板 V3</span></div>
   </div>
   <nav class="sidebar-nav">
     <div class="nav-section">
       <div class="nav-section-title">核心概览</div>
-      <div class="nav-item active" data-pane="dashboard" data-tooltip="总览面板">
-        <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 16l4-8 4 4 5-9"/></svg></span>
-        <span class="nav-label">总览面板</span>
-      </div>
-      <div class="nav-item" data-pane="productLines" data-tooltip="产品线分析">
-        <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></span>
-        <span class="nav-label">产品线分析</span>
-      </div>
+      <div class="nav-item active" data-pane="dashboard"><span class="icon">📈</span>总览面板</div>
+      <div class="nav-item" data-pane="productLines"><span class="icon">🏷️</span>产品线分析</div>
     </div>
     <div class="nav-section">
       <div class="nav-section-title">财务管理</div>
-      <div class="nav-item" data-pane="receivables" data-tooltip="应收账款">
-        <span class="nav-icon"><svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 10h20"/><path d="M6 14h4"/></svg></span>
-        <span class="nav-label">应收账款</span><span class="badge" id="arBadge">0</span>
-      </div>
-      <div class="nav-item" data-pane="payables" data-tooltip="应付账款">
-        <span class="nav-icon"><svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/><path d="M14 14h4"/></svg></span>
-        <span class="nav-label">应付账款</span><span class="badge" id="apBadge">0</span>
-      </div>
-      <div class="nav-item" data-pane="suppliers" data-tooltip="供应商管理">
-        <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
-        <span class="nav-label">供应商管理</span>
-      </div>
+      <div class="nav-item" data-pane="receivables"><span class="icon">💰</span>应收账款<span class="badge" id="arBadge">0</span></div>
+      <div class="nav-item" data-pane="payables"><span class="icon">💳</span>应付账款<span class="badge" id="apBadge">0</span></div>
+      <div class="nav-item" data-pane="suppliers"><span class="icon">🤝</span>供应商管理</div>
     </div>
     <div class="nav-section">
       <div class="nav-section-title">数据管理</div>
-      <div class="nav-item" data-pane="projects" data-tooltip="团期明细">
-        <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M9 12h6"/><path d="M9 16h6"/></svg></span>
-        <span class="nav-label">团期明细</span>
-      </div>
-      <div class="nav-item" data-pane="dataImport" data-tooltip="数据导入">
-        <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>
-        <span class="nav-label">数据导入</span>
-      </div>
+      <div class="nav-item" data-pane="projects"><span class="icon">📋</span>团期明细</div>
+      <div class="nav-item" data-pane="dataImport"><span class="icon">📥</span>数据导入</div>
     </div>
   </nav>
   <div class="nav-bottom">
-    <div class="status-dot"></div> Supabase 云数据库
-  </div>
-  <div class="sidebar-toggle" id="sidebarToggle" title="折叠/展开侧边栏">
-    <span class="toggle-icon"><svg viewBox="0 0 24 24"><polyline points="11 17 6 12 11 7"/><polyline points="18 17 13 12 18 7"/></svg></span>
-    <span class="toggle-label">收起</span>
+    <div class="status-dot"></div> 数据来源：Supabase 云数据库
   </div>
 </aside>
 
 <!-- ===== MAIN AREA ===== -->
 <div class="main-area">
   <header class="main-header">
-    <div class="page-title" id="pageTitle">总览面板</div>
-    <button id="themeToggleBtn" onclick="toggleTheme(event)" style="background:var(--bg-card);border:1px solid var(--border);border-radius:20px;padding:4px 10px;cursor:pointer;color:var(--text-secondary);margin-left:10px;display:inline-flex;align-items:center;gap:4px;line-height:1;" title="切换主题"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
+    <div class="page-title" id="pageTitle">📈 总览面板</div>
+    <button id="themeToggleBtn" onclick="toggleTheme(event)" style="background:var(--bg-card);border:1px solid var(--border);border-radius:20px;padding:4px 10px;font-size:14px;cursor:pointer;color:var(--text-secondary);margin-left:10px;display:inline-flex;align-items:center;gap:4px;" title="切换主题">🌙</button>
     <small id="pageVer" style="font-size:9px;color:var(--text-muted);opacity:0.5;margin-left:8px;">v20260528b</small>
     <small id="filterStatus" style="font-size:9px;color:var(--text-muted);opacity:0.5;margin-left:6px;">等待筛选...</small>
     <div class="header-actions">
       <div style="position:relative;">
         <button class="date-range-btn" id="dateRangeBtn">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></svg> <span id="dateRangeLabel">2026年1月 - 2026年12月</span>
-          <span class="arw"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></span>
+          📅 <span id="dateRangeLabel">2026年1月 - 2026年12月</span>
+          <span class="arw">▼</span>
         </button>
         <div class="date-range-popover" id="dateRangePopover">
           <div class="preset-row">
@@ -1134,28 +699,18 @@
           </div>
           <div class="custom-row">
             <label>自定义</label>
-            <div class="month-input-wrap">
-              <input type="text" class="month-input" id="rangeStartDisplay" value="2026年01月" readonly>
-              <input type="hidden" id="rangeStart" value="2026-01">
-              <span class="month-input-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></svg></span>
-              <div class="month-picker-dropdown" id="mpStart"></div>
-            </div>
-            <span style="color:var(--text-muted);flex-shrink:0;display:inline-flex;align-items:center;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span>
-            <div class="month-input-wrap">
-              <input type="text" class="month-input" id="rangeEndDisplay" value="2026年12月" readonly>
-              <input type="hidden" id="rangeEnd" value="2026-12">
-              <span class="month-input-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></svg></span>
-              <div class="month-picker-dropdown" id="mpEnd"></div>
-            </div>
+            <input type="month" id="rangeStart" value="2026-01" title="开始月份">
+            <span style="color:var(--text-muted);">→</span>
+            <input type="month" id="rangeEnd" value="2026-12" title="结束月份">
             <button class="preset-btn" style="background:var(--success);color:white;" onclick="window._applyCustomRange()">确定</button>
           </div>
         </div>
       </div>
-      <button class="btn btn-outline" id="refreshBtn" title="重新拉取最新数据">刷新</button>
-      <span id="dataSourceBadge" style="display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:3px 8px;border-radius:10px;background:rgba(34,197,94,0.15);color:#22c55e;margin-left:4px;" title="当前数据源">Supabase</span>
-      <button class="btn" id="unitBtn">单位：万元</button>
+      <button class="btn btn-outline" id="refreshBtn" title="重新拉取最新数据">🔄 刷新</button>
+      <span id="dataSourceBadge" style="display:inline-block;font-size:11px;padding:3px 8px;border-radius:10px;background:rgba(34,197,94,0.15);color:#22c55e;margin-left:4px;" title="当前数据源">☁️ Supabase</span>
+      <button class="btn" id="unitBtn">单位：元</button>
       <button class="btn btn-accent" id="exportBtn">📤 导出Excel</button>
-      <button class="btn btn-outline" id="adminBtn" style="display:none;font-size:10px;padding:4px 8px;" onclick="window.location.href='admin.html'">管理</button>
+      <button class="btn btn-outline" id="adminBtn" style="display:none;font-size:10px;padding:4px 8px;" onclick="window.location.href='admin.html'">⚙️ 管理</button>
     </div>
   </header>
 
@@ -1183,14 +738,14 @@
         <div class="traffic-compact-row" id="trafficSection">
           <div class="traffic-compact-left">
             <div class="traffic-compact-btn green-btn" id="traffic-above">
-              <div class="tcb-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+              <div class="tcb-icon">✅</div>
               <div class="tcb-body">
                 <div class="tcb-num" id="trafficAboveCount">0</div>
                 <div class="tcb-label">高于阈值团期<span id="aboveModeTag" style="font-size:9px;opacity:.6"></span></div>
               </div>
             </div>
             <div class="traffic-compact-btn red-btn" id="traffic-below">
-              <div class="tcb-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg></div>
+              <div class="tcb-icon">⚠️</div>
               <div class="tcb-body">
                 <div class="tcb-num" id="trafficBelowCount">0</div>
                 <div class="tcb-label">低于阈值团期<span id="belowModeTag" style="font-size:9px;opacity:.6"></span></div>
@@ -1212,7 +767,7 @@
             <div class="hint">👆 点击左侧按钮<br>查看对应团期明细</div>
           </div>
           <div class="traffic-compact-right" id="trafficCompactRight">
-            <div class="hint"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.4;"><path d="M3 3v18h18"/><rect x="7" y="10" width="3" height="8"/><rect x="14" y="6" width="3" height="12"/></svg><br>点击按钮查看对比图表</div>
+            <div class="hint">📊<br>点击按钮查看对比图表</div>
           </div>
         </div>
       </div>
@@ -1225,7 +780,6 @@
         <div class="panel-header"><div class="panel-title"><span class="dot" style="background:var(--accent);"></span>各产品线收入对比排行</div></div>
         <div class="chart-wrap" style="height:240px;"><canvas id="lineBarChart"></canvas></div>
       </div>
-      <div id="tourDetailPanel"></div>
       <div class="product-cards" id="productCards"></div>
     </div>
 
@@ -1242,7 +796,7 @@
         </div>
         <!-- 月份快捷筛选 -->
         <div style="display:flex;align-items:center;gap:8px;padding:4px 16px 0;">
-          <span style="font-size:12px;font-weight:600;color:var(--text-secondary);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></svg> 月份筛选</span>
+          <span style="font-size:12px;font-weight:600;color:var(--text-secondary);">📅 月份筛选</span>
           <button class="btn btn-sm btn-outline" id="recMonthAll" style="font-size:11px;padding:3px 10px;">全部</button>
           <span style="font-size:11px;color:var(--text-muted);">← 左右滑动 →</span>
         </div>
@@ -1259,7 +813,7 @@
       <!-- 月份滑动选择器 -->
       <div class="panel" style="padding:12px 16px;">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
-          <span style="font-size:12px;font-weight:600;color:var(--text-secondary);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></svg> 选择月份</span>
+          <span style="font-size:12px;font-weight:600;color:var(--text-secondary);">📅 选择月份</span>
           <button class="btn btn-sm btn-outline" id="payMonthAll" style="font-size:11px;padding:3px 10px;">全部</button>
           <span style="font-size:11px;color:var(--text-muted);">← 左右滑动 →</span>
         </div>
@@ -1283,34 +837,31 @@
     <!-- ===== MODULE 5: SUPPLIERS ===== -->
     <div class="module-pane" id="pane-suppliers">
       <div class="kpi-grid" id="supplierKPI"></div>
-      <!-- Tree table: category groups + supplier rows -->
-      <div class="sup-tree-wrap">
-        <table class="sup-tree-table">
-          <thead><tr><th style="width:28%;">供应类型 / 供应商名称</th><th>关联团期</th><th>应付总额</th><th>已付总额</th><th>未付总额</th><th>付款进度</th></tr></thead>
-          <tbody id="supTreeBody"></tbody>
-        </table>
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title"><span class="dot" style="background:var(--info);"></span>供应商应付总览</div></div>
+        <div class="table-scroll"><table class="data-table" id="supplierTable"><thead><tr><th>供应商名称</th><th>供应类型</th><th>关联团期数</th><th>应付总额</th><th>已付总额</th><th>未付总额</th><th>付款进度</th></tr></thead><tbody></tbody></table></div>
       </div>
-      <!-- Tour detail panel (shown when clicking a supplier row) -->
-      <div class="sup-tour-panel" id="supTourPanel">
-        <div class="sup-tour-panel-header">
-          <span class="sup-tour-panel-title" id="supTourTitle">关联团期</span>
-          <span class="sup-tour-panel-close" onclick="window._supCloseTourDetail&&window._supCloseTourDetail()">收起 ✕</span>
+      <div class="traffic-compact-row" id="supplierDetailRow" style="margin-top:0;">
+        <div class="traffic-compact-left" id="supplierBtnList">
+          <div class="hint" style="font-size:12px;color:var(--text-muted);text-align:center;padding:12px;">👆 点击上方<br>供应商行查看<br>关联团期</div>
         </div>
-        <div class="sup-tour-panel-list" id="supTourList"></div>
+        <div class="traffic-compact-mid" id="supplierProjectsMid">
+          <div class="hint">👈 选择供应商<br>查看关联团期明细</div>
+        </div>
+        <div class="traffic-compact-right" id="supplierProjectsRight">
+          <div class="hint">📊<br>应付分布图表</div>
+        </div>
       </div>
       <!-- 供应商增删改 -->
       <div class="panel" style="margin-top:14px;">
         <div class="panel-header"><div class="panel-title"><span class="dot" style="background:var(--warning);"></span>供应商库管理</div></div>
         <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px;">
           <input type="text" id="newSupName" placeholder="供应商名称" style="flex:1;min-width:140px;padding:7px 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg-input);color:var(--text-primary);font-size:12px;font-family:inherit;">
-          <input type="text" id="newSupCat" list="supCatNameList" placeholder="供应类型" style="width:120px;padding:7px 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg-input);color:var(--text-primary);font-size:12px;font-family:inherit;">
+          <input type="text" id="newSupCat" placeholder="供应类型(如地接/车票)" style="width:130px;padding:7px 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg-input);color:var(--text-primary);font-size:12px;font-family:inherit;">
           <button class="btn btn-accent btn-sm" id="addSupBtn">＋ 新增</button>
-          <button class="btn btn-outline btn-sm" onclick="window._openCategoryModal()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg> 分类管理</button>
+          <button class="btn btn-outline btn-sm" onclick="window._openCategoryModal()">📁 分类管理</button>
         </div>
-        <datalist id="supCatNameList">
-          <option value="地接"><option value="车票"><option value="导服"><option value="代订"><option value="邮轮"><option value="保险"><option value="其他">
-        </datalist>
-        <div id="supplierEditList"></div>
+        <div id="supplierEditList" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
       </div>
       <!-- datalist for supplier autocomplete -->
       <datalist id="supplierList"></datalist>
@@ -1335,28 +886,28 @@
     <!-- ===== MODULE 7: DATA IMPORT ===== -->
     <div class="module-pane" id="pane-dataImport">
       <div class="grid-2">
-        <div class="import-hdr-card">
-          <div class="import-hdr-title">📂 Excel / CSV 批量导入</div>
-          <div class="import-hdr-desc">支持从系统导出的 Excel 文件拖拽上传，与导出的模板格式兼容</div>
-          <div class="import-action-row">
-            <button class="btn btn-outline btn-sm" onclick="downloadTemplate()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> 下载导入模板</button>
-            <button class="btn btn-accent btn-sm" id="importToSupabaseBtn" style="display:none;">导入到Supabase</button>
+        <div class="panel" style="text-align:center;">
+          <div class="panel-title" style="justify-content:center;margin-bottom:4px;">📂 Excel / CSV 批量导入</div>
+          <p style="font-size:13px;color:var(--text-muted);margin-bottom:8px;">支持从系统导出的Excel文件拖拽上传，与导出的模板格式兼容</p>
+          <div style="display:flex;gap:8px;justify-content:center;margin-bottom:10px;">
+            <button class="btn btn-outline btn-sm" onclick="downloadTemplate()">📥 下载导入模板</button>
+            <button class="btn btn-accent btn-sm" id="importToSupabaseBtn" style="display:none;">☁️ 导入到Supabase</button>
           </div>
           <div class="import-zone" id="importZone">
-            <div class="icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.5;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
-            <div class="iz-title">拖拽文件到此处 或 点击选择</div>
-            <div class="iz-hint">支持 .xlsx / .xls / .csv 格式</div>
+            <div class="icon">📁</div>
+            <p style="font-size:15px;font-weight:600;">拖拽文件到此处 或 点击选择</p>
+            <p style="font-size:12px;color:var(--text-muted);margin-top:6px;">支持 .xlsx / .xls / .csv 格式</p>
           </div>
           <input type="file" id="importFileInput" accept=".xlsx,.xls,.csv" style="display:none;">
           
           <!-- 数据预览区域 -->
           <div id="importPreview" style="margin-top:16px;display:none;">
-            <div style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:10px;padding:16px;">
+            <div style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:8px;padding:16px;">
               <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-                <h4 style="margin:0;font-size:14px;font-weight:700;color:var(--text-primary);">导入数据预览</h4>
+                <h4 style="margin:0;font-size:15px;color:var(--text-primary);">📊 导入数据预览</h4>
                 <button class="btn btn-outline btn-sm" onclick="cancelImport()" style="font-size:11px;">✕ 取消</button>
               </div>
-              <div id="previewStats" style="display:flex;gap:10px;margin-bottom:12px;"></div>
+              <div id="previewStats" style="display:flex;gap:12px;margin-bottom:12px;"></div>
               <div class="table-scroll" style="max-height:300px;overflow-y:auto;">
                 <table class="data-table" id="previewTable" style="font-size:12px;">
                   <thead>
@@ -1374,49 +925,43 @@
                   <tbody></tbody>
                 </table>
               </div>
-              <div class="preview-tip">
-                <strong>提示：</strong>请检查上方数据，确认无误后点击「导入到Supabase」按钮上传。重复团号将合并更新，新团号将新增。
+              <div style="margin-top:12px;padding:10px;background:rgba(99,102,241,0.1);border-radius:6px;font-size:12px;color:var(--text-secondary);">
+                💡 <strong>提示：</strong>请检查上方数据，确认无误后点击「☁️ 导入到Supabase」按钮上传。重复团号将合并更新，新团号将新增。
               </div>
             </div>
           </div>
         </div>
-        <div class="sync-panel">
-          <div class="sync-panel-title">🔧 从「遇见美好」系统同步</div>
-          <div class="sync-method">
-            <div class="sync-method-hdr"><span class="sync-method-num">1</span>油猴脚本自动同步</div>
-            <ul class="sync-steps">
-              <li>安装 <code>Tampermonkey</code> 浏览器扩展</li>
+        <div class="panel">
+          <div class="panel-title" style="margin-bottom:12px;">🔧 从「遇见美好」系统同步</div>
+          <div style="font-size:13px;color:var(--text-secondary);line-height:1.8;">
+            <p style="margin-bottom:10px;">📌 <strong>方式一：油猴脚本自动同步</strong></p>
+            <ol style="padding-left:20px;color:var(--text-muted);">
+              <li>安装 Tampermonkey 浏览器扩展</li>
               <li>导入 <code>tampermonkey-sync.js</code> 脚本</li>
               <li>打开 <code>op.yujianmeihao.net</code> 内部系统</li>
               <li>点击页面上的「同步到财务看板」按钮</li>
               <li>数据自动写入看板</li>
-            </ul>
-          </div>
-          <div class="sync-method">
-            <div class="sync-method-hdr"><span class="sync-method-num">2</span>复制表格粘贴</div>
-            <ul class="sync-steps">
-              <li>在内部系统中选择表格数据并复制 (Ctrl+C)</li>
-              <li>粘贴到 Excel 中简单整理</li>
-              <li>使用左侧 Excel 导入功能上传</li>
-            </ul>
-          </div>
-          <div class="sync-method">
-            <div class="sync-method-hdr"><span class="sync-method-num">3</span>手动录入（现有方式）</div>
-            <ul class="sync-steps">
-              <li>在移动端看板中手动录入后导出 data.js，覆盖共享文件夹</li>
-            </ul>
+            </ol>
+            <p style="margin:14px 0 8px;">📌 <strong>方式二：复制表格粘贴</strong></p>
+            <ol style="padding-left:20px;color:var(--text-muted);">
+              <li>在内部系统中选择表格数据并复制(Ctrl+C)</li>
+              <li>粘贴到Excel中简单整理</li>
+              <li>使用左侧Excel导入功能上传</li>
+            </ol>
+            <p style="margin:14px 0 8px;">📌 <strong>方式三：手动录入（现有方式）</strong></p>
+            <p style="color:var(--text-muted);">在移动端看板中手动录入后导出data.js，覆盖共享文件夹</p>
           </div>
         </div>
       </div>
       <div class="panel" style="margin-top:16px;">
         <div class="panel-header">
-          <div class="panel-title"><span class="dot" style="background:var(--info);"></span>操作日志</div>
-          <div style="display:flex;gap:6px;">
-            <button class="btn btn-sm btn-outline" onclick="refreshChangeLogUI()" style="font-size:10px;padding:4px 10px;">刷新</button>
-            <button class="btn btn-sm btn-accent" id="toggleRollbackBtn" onclick="toggleRollbackPanel()" style="font-size:10px;padding:4px 10px;">⏪ 版本回滚</button>
+          <div class="panel-title"><span class="dot" style="background:var(--info);"></span>📋 操作日志</div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-sm btn-outline" onclick="refreshChangeLogUI()" style="font-size:10px;padding:3px 8px;">🔄 刷新日志</button>
+            <button class="btn btn-sm btn-accent" id="toggleRollbackBtn" onclick="toggleRollbackPanel()" style="font-size:10px;padding:3px 8px;">⏪ 版本回滚</button>
           </div>
         </div>
-        <div id="importLog" style="font-size:12px;color:var(--text-muted);max-height:300px;overflow-y:auto;padding:4px 0;">暂无导入记录</div>
+        <div id="importLog" style="font-size:12px;color:var(--text-muted);max-height:300px;overflow-y:auto;">暂无导入记录</div>
       </div>
 
       <!-- 版本回滚面板（默认隐藏） -->
@@ -1537,27 +1082,6 @@ function setupRealtimeSubscription() {
    优先级: Supabase > 本地 data.js
 ========================================================================== */
 
-/* ---------- SVG 图标常量 ---------- */
-var ICO = {
-  clip: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M9 12h6"/><path d="M9 16h6"/></svg>',
-  card: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 10h20"/></svg>',
-  chart: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 16l4-8 4 4 5-9"/></svg>',
-  folder: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>',
-  calendar: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></svg>',
-  trend: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>',
-  trendDown: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></svg>',
-  coin: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M14.5 9a3.5 3.5 0 0 0-5 0"/><path d="M9.5 15a3.5 3.5 0 0 0 5 0"/><line x1="12" y1="6" x2="12" y2="18"/></svg>',
-  box: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>',
-  users: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
-  refresh: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>',
-  cloud: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>',
-  save: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7H7v7"/><path d="M7 3v4h8"/></svg>',
-  scissors: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><path d="M8.12 8.12 12 12"/><path d="M20 4 8.12 15.88"/><circle cx="6" cy="18" r="3"/><path d="M14.8 14.8 20 20"/></svg>',
-  settings: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>'
-};
-var ICO_SM = { s: ' style="vertical-align:-1px;"' };
-function ico(name, size) { var s = size || 12; return ICO[name].replace(/width="12"/g,'width="'+s+'"').replace(/height="12"/g,'height="'+s+'"'); }
-
 /* ---------- Supabase 数据存储（云数据库） ---------- */
 
 // UTF-8编码工具函数（保留用于兼容）
@@ -1658,79 +1182,91 @@ async function supabaseSaveData(data) {
     // 智能判断：单个团期 vs 团期数组
     var projectsArray = Array.isArray(data) ? data : [data];
     var isSingleProject = !Array.isArray(data);
-    
+
     console.log(`[Supabase] 开始保存 ${projectsArray.length} 个团期${isSingleProject ? ' (增量保存)' : ' (全量保存)'}...`);
-    
-    // 批量插入/更新团期数据
+
+    // ★ 批量收集所有记录，减少 API 调用次数
+    var allProjects = [];
+    var allIncomes = [];
+    var allCosts = [];
+    var allPeople = [];
+
     for (const project of projectsArray) {
-      // 保存团期基本信息
-      const { error: projectError } = await supabaseClient
-        .from('projects')
-        .upsert({
-          id: project.id,
-          name: project.name,
-          product_type: project.productType,
-          start_date: project.startDate || null,
-          operator: project.operator,
-          remark: project.remark
-        }, { onConflict: 'id' });
-      
-      if (projectError) throw projectError;
-      
-      // 保存收入项
+      // 收集团期基本信息
+      allProjects.push({
+        id: project.id,
+        name: project.name,
+        product_type: project.productType,
+        start_date: project.startDate || null,
+        operator: project.operator,
+        remark: project.remark
+      });
+
+      // 收集收入项
       if (project.incomes && project.incomes.length > 0) {
         for (const income of project.incomes) {
-          const { error: incomeError } = await supabaseClient
-            .from('incomes')
-            .upsert({
-              id: income.id || `${project.id}_income_${income.name}`,
-              project_id: project.id,
-              name: income.name,
-              amount: income.amount || 0
-            }, { onConflict: 'id' });
-          
-          if (incomeError) throw incomeError;
+          allIncomes.push({
+            id: income.id || `${project.id}_income_${income.name}`,
+            project_id: project.id,
+            name: income.name,
+            amount: income.amount || 0,
+            received_amount: income.receivedAmount || 0
+          });
         }
       }
-      
-      // 保存成本项
+
+      // 收集成本项
       if (project.costs && project.costs.length > 0) {
         for (const cost of project.costs) {
-          const { error: costError } = await supabaseClient
-            .from('costs')
-            .upsert({
-              id: cost.id || `${project.id}_cost_${cost.name}`,
-              project_id: project.id,
-              name: cost.name,
-              amount: cost.amount || 0,
-              paid_amount: cost.paidAmount || 0,
-              supplier_id: cost._supplierId || null
-            }, { onConflict: 'id' });
-          
-          if (costError) throw costError;
+          allCosts.push({
+            id: cost.id || `${project.id}_cost_${cost.name}`,
+            project_id: project.id,
+            name: cost.name,
+            amount: cost.amount || 0,
+            paid_amount: cost.paidAmount || 0,
+            supplier_id: cost._supplierId || null
+          });
         }
       }
-      
-      // 保存人员明细
+
+      // 收集人员明细
       if (project.peopleDetails && project.peopleDetails.length > 0) {
         for (const person of project.peopleDetails) {
-          const { error: personError } = await supabaseClient
-            .from('people_details')
-            .upsert({
-              id: `${project.id}_people_${person.name}`,
-              project_id: project.id,
-              name: person.name,
-              count: person.count || 0
-            }, { onConflict: 'id' });
-          
-          if (personError) throw personError;
+          allPeople.push({
+            id: `${project.id}_people_${person.name}`,
+            project_id: project.id,
+            name: person.name,
+            count: person.count || 0
+          });
         }
       }
     }
-    
-    console.log(`[Supabase] 保存成功！${isSingleProject ? '(单个团期)' : '(全量: ' + projectsArray.length + ' 个团期)'}`);
+
+    // ★ 并行批量 upsert（4 张表同时写入）
+    var tasks = [];
+
+    tasks.push(supabaseClient.from('projects').upsert(allProjects, { onConflict: 'id' }));
+
+    if (allIncomes.length > 0) {
+      tasks.push(supabaseClient.from('incomes').upsert(allIncomes, { onConflict: 'id' }));
+    }
+    if (allCosts.length > 0) {
+      tasks.push(supabaseClient.from('costs').upsert(allCosts, { onConflict: 'id' }));
+    }
+    if (allPeople.length > 0) {
+      tasks.push(supabaseClient.from('people_details').upsert(allPeople, { onConflict: 'id' }));
+    }
+
+    var results = await Promise.all(tasks);
+
+    // 检查是否有任何错误
+    for (var r of results) {
+      if (r.error) throw r.error;
+    }
+
+    console.log(`[Supabase] 保存成功！${isSingleProject ? '(增量: 1 个团期)' : '(全量: ' + projectsArray.length + ' 个团期)'} | projects:${allProjects.length} incomes:${allIncomes.length} costs:${allCosts.length} people:${allPeople.length}`);
     return true;
-    
+
   } catch(e) {
     console.error('[Supabase] 保存失败:', e.message);
     return false;
@@ -1863,12 +1399,12 @@ async function rollbackToVersion(logId) {
   var ok = await githubSaveData(projects);
   if (ok) {
     await appendChangeLog('rollback', '回滚到: ' + entry.description + ' (' + entry.time + ')', projects.length);
-    addImportLog('已回滚到版本: ' + entry.time + ' — ' + entry.description);
-    alert('回滚成功！数据已恢复到 ' + entry.time + ' 的版本');
+    addImportLog('🔄 已回滚到版本: ' + entry.time + ' — ' + entry.description);
+    alert('✅ 回滚成功！数据已恢复到 ' + entry.time + ' 的版本');
     renderCurrentPane();
     return true;
   } else {
-    alert('回滚失败：无法保存到Supabase');
+    alert('❌ 回滚失败：无法保存到Supabase');
     return false;
   }
 }
@@ -1966,7 +1502,7 @@ async function rollbackToVersion(logId) {
       window.TOUR_DATA = [];
     }
   } catch(err) {
-    console.error('[Supabase] 加载失败', err);
+    console.error('❌ Supabase 加载失败', err);
     window._supabaseError = err.message || String(err);
     window.TOUR_DATA = [];
   }
@@ -2135,28 +1671,6 @@ async function rollbackToVersion(logId) {
     return cats;
   }
 
-  // ★ 根据成本明细数据动态计算供应商分类
-  //   同一供应商关联了不同类型的成本 → 出现在多个分类中
-  //   没有关联任何成本 → 默认"其他"
-  //   支持后续手动修改（s._manualCat 覆盖）
-  function computeSupplierCategories() {
-    var supCats = {};
-    suppliers.forEach(function(s) { supCats[s.id] = []; });
-    projects.forEach(function(p) {
-      (p.costs||[]).forEach(function(c) {
-        var sid = c._supplierId;
-        if (!sid || !supCats[sid]) return;
-        var cat = COST_TO_CATEGORY[c.name] || null;
-        if (cat && supCats[sid].indexOf(cat) === -1) supCats[sid].push(cat);
-      });
-    });
-    suppliers.forEach(function(s) {
-      if (s._manualCat) { s.categories = [s._manualCat]; return; }
-      s.categories = supCats[s.id] && supCats[s.id].length > 0 ? supCats[s.id] : ['其他'];
-      s.category = s.categories[0]; // 主分类
-    });
-  }
-
   // 根据供应商名称匹配已有ID，若无则新建
   function resolveSupplierId(name) {
     if (!name || !name.trim()) return '';
@@ -2179,131 +1693,18 @@ async function rollbackToVersion(logId) {
     dl.innerHTML = suppliers.map(function(s){ return '<option value="' + escHtml(s.name) + '">'; }).join('');
   }
 
-  // 渲染供应商库管理区（按分类分组，整洁列表）
+  // 渲染供应商管理标签区
   function renderSupplierEditList() {
-    computeSupplierCategories(); // ★ 动态刷新分类
     var el = document.getElementById('supplierEditList');
     if (!el) return;
-    // 按分类分组（同一供应商可出现在多个分类）
-    var groups = {};
-    suppliers.forEach(function(s) {
-      (s.categories || ['其他']).forEach(function(cat) {
-        if (!groups[cat]) groups[cat] = [];
-        if (!groups[cat].find(function(x){return x.id===s.id;})) groups[cat].push(s);
-      });
-    });
-    var html = '<div class="sup-lib-grid">';
-    var catOrder = ['地接','车票','导服','代订','邮轮','保险','其他'];
-    var rendered = {};
-    function renderCatGroup(cat) {
-      if (!groups[cat] || !groups[cat].length) return;
-      var color = supCatColor(cat), icon = supCatIcon(cat);
-      var g = groups[cat];
-      html += '<div class="sup-lib-section">';
-      html += '<div class="sup-lib-section-hdr" style="border-left:3px solid '+color+';">';
-      html += '<span class="sup-lib-section-icon" style="color:'+color+';">'+icon+'</span>';
-      html += '<span class="sup-lib-section-name">'+escHtml(cat)+'</span>';
-      html += '<span class="sup-lib-section-count">'+g.length+'</span>';
-      html += '</div>';
-      g.forEach(function(s) {
-        html += '<div class="sup-lib-row">';
-        html += '<span class="sup-lib-row-name">'+escHtml(s.name)+'</span>';
-        if ((s.categories||[]).length > 1) {
-          html += '<span class="sup-lib-row-multi" title="关联多个分类">'+(s.categories||[]).map(function(c){return '<span class="sup-cat-icon" style="color:'+supCatColor(c)+';">'+supCatIcon(c)+'</span>';}).join('')+'</span>';
-        }
-        html += '<button class="sup-lib-row-del" onclick="deleteSupplier(\''+s.id+'\')">✕</button>';
-        html += '</div>';
-      });
-      html += '</div>';
-    }
-    catOrder.forEach(function(cat) { renderCatGroup(cat); rendered[cat] = true; });
-    Object.keys(groups).forEach(function(cat) { if (!rendered[cat]) renderCatGroup(cat); });
-    html += '</div>';
-    el.innerHTML = html;
+    el.innerHTML = suppliers.map(function(s){
+      return '<div style="display:flex;align-items:center;gap:4px;padding:4px 8px;border:1px solid var(--border);border-radius:16px;font-size:11px;background:var(--bg-card);">' +
+        '<span style="font-weight:600;">' + escHtml(s.name) + '</span>' +
+        '<span style="color:var(--text-muted);font-size:10px;">' + escHtml(s.category||'未分类') + '</span>' +
+        '<button onclick="deleteSupplier(\'' + s.id + '\')" style="background:var(--danger-bg);color:var(--danger);border:none;border-radius:50%;width:18px;height:18px;font-size:10px;cursor:pointer;line-height:1;">✕</button>' +
+        '</div>';
+    }).join('');
   }
-
-  // ===== 分类管理弹窗 =====
-  window._openCategoryModal = function() {
-    computeSupplierCategories();
-    var allCats = {};
-    suppliers.forEach(function(s) {
-      (s.categories||['其他']).forEach(function(c) {
-        if (!allCats[c]) allCats[c] = [];
-        if (!allCats[c].find(function(x){return x.id===s.id;})) allCats[c].push(s);
-      });
-    });
-    var catOrder = ['地接','车票','导服','代订','邮轮','保险','其他'];
-    var extraCats = Object.keys(allCats).filter(function(c){ return catOrder.indexOf(c) < 0; });
-    var orderedCats = catOrder.filter(function(c){ return !!allCats[c]; }).concat(extraCats);
-
-    var html = '<button class="close-btn" onclick="document.getElementById(\'modalOverlay\').classList.remove(\'show\')">✕</button>';
-    html += '<h3>供应商分类管理</h3>';
-    html += '<p style="font-size:11px;color:var(--text-muted);margin-bottom:10px;">分类根据成本明细自动识别。同一供应商关联多种成本时，会出现在多个分类中。下拉可手动锁定分类。</p>';
-    html += '<div style="margin-bottom:14px;display:flex;gap:8px;align-items:center;">';
-    html += '<input type="text" id="catModalNewName" placeholder="新分类名称" style="flex:1;padding:7px 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg-input);color:var(--text-primary);font-size:12px;">';
-    html += '<button class="btn btn-accent btn-sm" onclick="window._catModalAddCat()">＋ 添加分类</button>';
-    html += '</div>';
-
-    html += '<div id="catModalCatList" style="max-height:400px;overflow-y:auto;">';
-    orderedCats.forEach(function(cat) {
-      var color = supCatColor(cat), icon = supCatIcon(cat);
-      var sups = allCats[cat];
-      html += '<div style="margin-bottom:10px;border:1px solid var(--border-light);border-radius:8px;overflow:hidden;">';
-      html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:rgba(99,102,241,0.04);border-bottom:1px solid var(--border-light);border-left:3px solid '+color+';">';
-      html += '<span style="font-weight:700;font-size:13px;display:flex;align-items:center;gap:8px;"><span class="sup-tree-group-icon" style="color:'+color+';">'+icon+'</span>'+escHtml(cat)+'</span>';
-      html += '<span style="font-size:11px;color:var(--text-muted);">'+sups.length+'家</span>';
-      html += '</div>';
-      sups.forEach(function(s) {
-        var isManual = !!s._manualCat;
-        var allCatOptions = catOrder.map(function(c){ return '<option value="'+c+'"'+(c===(s._manualCat||s.category)?' selected':'')+'>'+c+'</option>'; }).join('');
-        html += '<div style="display:flex;align-items:center;gap:8px;padding:6px 12px;border-bottom:1px solid var(--border-light);">';
-        html += '<span style="flex:1;font-size:12px;font-weight:600;">'+escHtml(s.name)+'</span>';
-        if ((s.categories||[]).length > 1) {
-          html += '<span style="font-size:9px;color:var(--text-muted);background:var(--bg-input);padding:1px 5px;border-radius:3px;">'+(s.categories||[]).join('/')+'</span>';
-        }
-        html += '<select onchange="window._catModalChangeCat(\''+s.id+'\',this.value)" style="padding:4px 8px;border-radius:5px;border:1px solid var(--border-light);background:var(--bg-input);color:var(--text-primary);font-size:11px;min-width:90px;">';
-        html += '<option value=""'+(isManual?'':'  selected')+'>自动</option>';
-        html += allCatOptions;
-        html += '</select>';
-        html += '</div>';
-      });
-      html += '</div>';
-    });
-    html += '</div>';
-
-    document.getElementById('modalBox').innerHTML = html;
-    document.getElementById('modalOverlay').classList.add('show');
-  };
-
-  window._catModalAddCat = function() {
-    var name = document.getElementById('catModalNewName').value.trim();
-    if (!name) { alert('请输入分类名称'); return; }
-    if (!SUP_CAT_COLORS[name]) SUP_CAT_COLORS[name] = '#6366f1';
-    if (!SUP_CAT_ICONS[name]) SUP_CAT_ICONS[name] = SUP_CAT_ICONS['其他'];
-    suppliers.push({ id:'sup_'+Date.now(), name:'待分配', contact:'', phone:'', category:name, _manualCat:name, bankInfo:'' });
-    saveSuppliers();
-    refreshSupplierDatalist();
-    renderSupplierEditList();
-    renderSuppliers();
-    window._openCategoryModal();
-  };
-
-  window._catModalChangeCat = function(supId, newCat) {
-    var sup = suppliers.find(function(s){ return s.id === supId; });
-    if (sup) {
-      if (newCat === '' || !newCat) {
-        // 恢复自动分类
-        delete sup._manualCat;
-      } else {
-        sup._manualCat = newCat;
-      }
-      saveSuppliers();
-      computeSupplierCategories();
-      refreshSupplierDatalist();
-      renderSupplierEditList();
-      renderSuppliers();
-    }
-  };
 
   window.deleteSupplier = function(sid) {
     // ★ 检查是否有成本项关联此供应商
@@ -2529,7 +1930,7 @@ async function rollbackToVersion(logId) {
   }
 
   // ==================== 筛选函数 ====================
-  let unit = 'wan';
+  let unit = 'yuan';
   let excludeKeWei = localStorage.getItem('tour_excludeKeWei') === 'true';
   let marginThreshold = parseFloat(localStorage.getItem('tour_marginThreshold') || '30');
   let activeTrafficFilter = null; // 'above' | 'below' | null
@@ -2598,17 +1999,6 @@ async function rollbackToVersion(logId) {
   function fmtMargin(v) { return v==null ? '-' : v.toFixed(1)+'%'; }
   function fmtPct(numer, denom) { return denom ? (numer/denom*100).toFixed(1)+'%' : '0%'; }
 
-  // ==================== 侧边栏折叠 ====================
-  (function() {
-    var sidebar = document.getElementById('sidebar');
-    var toggleBtn = document.getElementById('sidebarToggle');
-    var toggleLabel = toggleBtn.querySelector('.toggle-label');
-    toggleBtn.addEventListener('click', function() {
-      sidebar.classList.toggle('collapsed');
-      if (toggleLabel) toggleLabel.textContent = sidebar.classList.contains('collapsed') ? '' : '收起';
-    });
-  })();
-
   // ==================== 导航 ====================
   let currentPane = 'dashboard';
   document.querySelectorAll('.nav-item').forEach(el => {
@@ -2619,10 +2009,10 @@ async function rollbackToVersion(logId) {
       document.querySelectorAll('.module-pane').forEach(p => p.classList.remove('active'));
       document.getElementById('pane-' + currentPane).classList.add('active');
       const titles = {
-        dashboard:'总览面板', productLines:'产品线分析',
-        receivables:'应收账款', payables:'应付账款',
-        suppliers:'供应商管理', projects:'团期明细',
-        dataImport:'数据导入'
+        dashboard:'📈 总览面板', productLines:'🏷️ 产品线分析',
+        receivables:'💰 应收账款', payables:'💳 应付账款',
+        suppliers:'🤝 供应商管理', projects:'📋 团期明细',
+        dataImport:'📥 数据导入'
       };
       document.getElementById('pageTitle').textContent = titles[currentPane] || '';
       syncDateRangeUI();
@@ -2676,10 +2066,10 @@ async function rollbackToVersion(logId) {
 
     const cards = [
       { cls:'income', label:'总收入', value: fmt(excludeKeWei ? excInc : totalInc), vcls:'income',
-        detail: excludeKeWei ? '(不含切位)' : ICO.scissors + ' 切位收入: '+fmt(cutAmount),
+        detail: excludeKeWei ? '(不含切位)' : '✂️ 切位收入: '+fmt(cutAmount),
         clickable:true },
       { cls:'cost', label:'总成本', value: fmt(excludeKeWei ? excCost : totalCost), vcls:'cost',
-        detail: excludeKeWei ? '(不含切位)' : '已付: '+fmt(totalPaid)+' | '+ ICO.scissors + '切位成本:'+fmt(cutAmount),
+        detail: excludeKeWei ? '(不含切位)' : '已付: '+fmt(totalPaid)+' | ✂️切位成本:'+fmt(cutAmount),
         clickable:true },
       { cls:'gross', label:'毛利', value: fmt(excGross), vcls:'gross',
         detail: excludeKeWei?'毛利额不变':'',
@@ -2744,7 +2134,7 @@ async function rollbackToVersion(logId) {
     if (activeTrafficFilter) { refreshTrafficPanel(); }
     else {
       document.getElementById('trafficCompactMid').innerHTML = '<div class="hint">👆 点击左侧按钮<br>查看对应团期明细</div>';
-      document.getElementById('trafficCompactRight').innerHTML = '<div class="hint">' + ico('chart',20) + '<br>点击按钮查看对比图表</div>';
+      document.getElementById('trafficCompactRight').innerHTML = '<div class="hint">📊<br>点击按钮查看对比图表</div>';
       if (tcChartInstance) { tcChartInstance.destroy(); tcChartInstance = null; }
     }
 
@@ -2756,148 +2146,73 @@ async function rollbackToVersion(logId) {
 
   // ==================== MODULE 2: PRODUCT LINES ====================
   var selectedProductType = null; // null=全部，否则=选中的产品线
-  var _plAnimState = null; // ★ FLIP飞入动画状态
   function renderProductLines() {
     const allList = getFilteredProjects('productLines');
     // ★ 检测当前主题
     var isWarm = document.documentElement.getAttribute('data-theme') === 'warm';
-    // ★ 始终用全量数据计算产品线分组（用于图表和团期明细）
-    const allGroups = {};
-    allList.forEach(p => {
+    // 如果选中了某个产品线，过滤数据
+    const list = selectedProductType ? allList.filter(p => (p.productType || '未分类') === selectedProductType) : allList;
+    const groups = {};
+    list.forEach(p => {
       const t = p.productType || '未分类';
-      if (!allGroups[t]) allGroups[t] = { count:0, income:0, cost:0, people:0, keWei:0, projects:[] };
-      allGroups[t].count++; allGroups[t].income += sumIncome(p);
-      allGroups[t].cost += sumCost(p); allGroups[t].people += sumPeople(p, false);
-      allGroups[t].keWei += sumPeople(p, false) - sumPeople(p, true);
-      allGroups[t].projects.push(p);
+      if (!groups[t]) groups[t] = { count:0, income:0, cost:0, people:0, projects:[] };
+      groups[t].count++; groups[t].income += sumIncome(p);
+      groups[t].cost += sumCost(p); groups[t].people += sumPeople(p, false);
+      groups[t].projects.push(p);
     });
-    const allEntries = Object.entries(allGroups).sort((a,b) => b[1].income - a[1].income);
-    // ★ 用于 KPI 显示的当前选中数据
-    const selectedList = selectedProductType ? allList.filter(p => (p.productType || '未分类') === selectedProductType) : allList;
-    const selectedGroups = {};
-    selectedList.forEach(p => {
-      const t = p.productType || '未分类';
-      if (!selectedGroups[t]) selectedGroups[t] = { count:0, income:0, cost:0, people:0, keWei:0, projects:[] };
-      selectedGroups[t].count++; selectedGroups[t].income += sumIncome(p);
-      selectedGroups[t].cost += sumCost(p); selectedGroups[t].people += sumPeople(p, false);
-      selectedGroups[t].keWei += sumPeople(p, false) - sumPeople(p, true);
-      selectedGroups[t].projects.push(p);
-    });
-    const selectedEntries = Object.entries(selectedGroups).sort((a,b) => b[1].income - a[1].income);
+    const entries = Object.entries(groups).sort((a,b) => b[1].income - a[1].income);
 
-    let totalIncome = 0, totalCost = 0, totalPeople = 0, totalExPeople = 0;
-    selectedList.forEach(p => { totalIncome += sumIncome(p); totalCost += sumCost(p); totalPeople += sumPeople(p, false); totalExPeople += sumPeople(p, true); });
+    let totalIncome = 0, totalCost = 0;
+    list.forEach(p => { totalIncome += sumIncome(p); totalCost += sumCost(p); });
     const totalGross = totalIncome - totalCost;
-    // ★ 切位收支计算（切位收入=切位成本，排除后收入和成本都减少，毛利额不变）
-    const cutAmount = selectedList.reduce((s,p) => s + (p.incomes||[]).filter(i=>i.name==='切位收入').reduce((ss,i)=>ss+(i.amount||0),0), 0);
-    const excInc = totalIncome - cutAmount;
-    const excCost = totalCost - cutAmount;
-    const excGross = totalIncome - totalCost; // 毛利额不变
-    const excMarginRate = excInc ? (excGross/excInc*100) : null;
-    var showInc = excludeKeWei ? excInc : totalIncome;
-    var showCost = excludeKeWei ? excCost : totalCost;
-    var showGross = excGross; // 始终不变
-    var showMargin = excludeKeWei ? excMarginRate : (totalIncome ? (totalGross/totalIncome*100) : null);
 
-    // KPI 标题：选中产品线时，左侧展示紧凑产品线卡片（点击可返回）
-    var kpiTitle = '';
-    if (selectedProductType && allGroups[selectedProductType]) {
-      var selD = allGroups[selectedProductType];
-      var selGross = selD.income - selD.cost;
-      var selNonKW = selD.people - selD.keWei;
-      var selShowPeople = excludeKeWei ? selNonKW : selD.people;
-      var selKW = selD.keWei;
-      // ★ 切位收支：选中产品线的切位收入
-      var selCutAmt = allGroups[selectedProductType].projects.reduce((s,p) => s + (p.incomes||[]).filter(i=>i.name==='切位收入').reduce((ss,i)=>ss+(i.amount||0),0), 0);
-      var selShowInc = excludeKeWei ? (selD.income - selCutAmt) : selD.income;
-      var selShowGross = selGross; // 毛利额不变
-      var selShowMargin = excludeKeWei ? ((selD.income - selCutAmt) ? (selGross/(selD.income - selCutAmt)*100) : 0) : (selD.income ? (selGross/selD.income*100) : 0);
-      kpiTitle = '<div class="kpi-card" style="cursor:pointer;border:2px solid var(--accent);min-width:auto;max-width:380px;" onclick="window._resetProductLine&&window._resetProductLine()" title="点击返回全部产品线">' +
-        '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
-          '<span style="color:var(--accent);font-weight:700;font-size:13px;">' + escHtml(selectedProductType) + '</span>' +
-          '<span style="font-size:10px;color:var(--info);cursor:pointer;">← 返回</span>' +
-          '<span style="width:1px;height:14px;background:var(--border-light);"></span>' +
-          '<span style="font-size:11px;color:var(--text-secondary);">收入 <b style="color:var(--success);">' + fmt(selShowInc) + '</b></span>' +
-          '<span style="font-size:11px;color:var(--text-secondary);">毛利 <b style="color:var(--info);">' + fmt(selShowGross) + '</b></span>' +
-          '<span style="font-size:11px;color:var(--text-secondary);">毛利率 <b style="color:' + (selShowMargin>=marginThreshold?'var(--success)':'var(--danger)') + ';">' + selShowMargin.toFixed(1) + '%</b></span>' +
-          (excludeKeWei && selCutAmt > 0 ? '<span style="font-size:9px;color:var(--text-muted);">(不含切位)</span>' : '') +
-          '<span style="width:1px;height:14px;background:var(--border-light);"></span>' +
-          '<span style="font-size:11px;color:var(--text-secondary);">👥 <b style="color:var(--purple);">' + selShowPeople + '</b>' + (selKW > 0 ? '<span style="font-size:9px;color:var(--warning);"> 切' + selKW + '</span>' : '') + '</span>' +
-        '</div>' +
-      '</div>';
-    }
+    // KPI 标题显示当前筛选状态 - 使用 window._resetProductLine 避免作用域问题
+    var kpiTitle = selectedProductType 
+      ? '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;"><div class="kpi-card income" style="min-width:auto;"><div class="kpi-label">当前产品线</div><div class="kpi-value" style="color:var(--accent);font-size:14px;">' + escHtml(selectedProductType) + '</div></div><span onclick="window._resetProductLine&&window._resetProductLine()" style="font-size:12px;color:var(--info);cursor:pointer;text-decoration:none;padding:2px 10px;border:1px solid var(--info);border-radius:4px;">← 返回全部</span></div>'
+      : '';
     // 选中产品线时显示团期数，否则显示产品线数
     var countLabel = selectedProductType ? '团期总数' : '产品线总数';
-    var countValue = selectedProductType ? (selectedEntries[0] ? selectedEntries[0][1].count : 0) : allEntries.length;
+    var countValue = selectedProductType ? (entries[0] ? entries[0][1].count : 0) : entries.length;
     document.getElementById('productLineKPI').innerHTML = (kpiTitle || '') + `
       <div class="kpi-card income"><div class="kpi-label">${countLabel}</div><div class="kpi-value" style="color:var(--info);">${countValue}</div></div>
-      <div class="kpi-card income kpi-clickable" onclick="window._toggleKeWei&&window._toggleKeWei()"><div class="kpi-label">总收入</div><div class="kpi-value income">${fmt(showInc)}</div><div class="kpi-change">${excludeKeWei ? '(不含切位)' : (cutAmount > 0 ? '切位: '+fmt(cutAmount) : '')}</div></div>
-      <div class="kpi-card cost kpi-clickable" onclick="window._toggleKeWei&&window._toggleKeWei()"><div class="kpi-label">总成本</div><div class="kpi-value cost">${fmt(showCost)}</div><div class="kpi-change">${excludeKeWei ? '(不含切位)' : (cutAmount > 0 ? '切位: '+fmt(cutAmount) : '')}</div></div>
-      <div class="kpi-card gross kpi-clickable" onclick="window._toggleKeWei&&window._toggleKeWei()"><div class="kpi-label">总毛利</div><div class="kpi-value gross">${fmt(showGross)}</div><div class="kpi-change">${excludeKeWei ? '毛利额不变' : ''}</div></div>
-      <div class="kpi-card margin kpi-clickable" onclick="window._toggleKeWei&&window._toggleKeWei()"><div class="kpi-label">整体毛利率</div><div class="kpi-value margin">${fmtMargin(showMargin)}</div><div class="kpi-change">${excludeKeWei ? '(不含切位)' : ''}</div></div>
-      <div class="kpi-card people kpi-clickable" onclick="window._toggleKeWei&&window._toggleKeWei()"><div class="kpi-label">成交人数</div><div class="kpi-value people">${excludeKeWei?totalExPeople:totalPeople}</div><div class="kpi-change">${excludeKeWei?'不含切位':'含切位'}</div></div>`;
+      <div class="kpi-card income"><div class="kpi-label">总收入</div><div class="kpi-value income">${fmt(totalIncome)}</div></div>
+      <div class="kpi-card cost"><div class="kpi-label">总成本</div><div class="kpi-value cost">${fmt(totalCost)}</div></div>
+      <div class="kpi-card gross"><div class="kpi-label">总毛利</div><div class="kpi-value gross">${fmt(totalGross)}</div></div>
+      <div class="kpi-card margin"><div class="kpi-label">整体毛利率</div><div class="kpi-value margin">${fmtMargin(totalIncome?(totalGross/totalIncome*100):null)}</div></div>`;
 
-    // ★ 图表面板和团期明细面板的切换
-    var chartPanelEl = document.getElementById('lineBarChart').closest('.panel');
-    var tourDetailEl = document.getElementById('tourDetailPanel');
-
-    if (selectedProductType && allGroups[selectedProductType]) {
-      // 选中产品线：隐藏图表，显示团期明细替换
-      chartPanelEl.style.display = 'none';
-      var tourProjects = allGroups[selectedProductType].projects.slice().sort(function(a,b){ return sumIncome(b) - sumIncome(a); });
-      var maxTourIncome = tourProjects.length > 0 ? sumIncome(tourProjects[0]) : 1;
-      if (maxTourIncome === 0) maxTourIncome = 1;
-      var tourRowsHtml = tourProjects.map(function(p) {
+    // 图表：选中产品线 → 各团期对比；否则 → 各产品线汇总对比
+    if (selectedProductType && entries.length > 0) {
+      // 选中某个产品线：水平条形图展示该品类下每个团期的收入/毛利
+      var tourGroups = entries[0][1].projects.slice().sort(function(a,b){ return sumIncome(b) - sumIncome(a); });
+      var tgLabels = tourGroups.map(function(p){
+        // 截取团期名关键部分，太长影响显示
         var nm = p.name || '未命名';
-        var tIncome = sumIncome(p);
-        var tCost = sumCost(p);
-        var tGross = tIncome - tCost;
-        var tPeople = sumPeople(p, false);
-        var tExPeople = sumPeople(p, true);
-        var tKeWei = tPeople - tExPeople;
-        var showPpl = excludeKeWei ? tExPeople : tPeople;
-        var incomePct = (tIncome / maxTourIncome * 100).toFixed(1);
-        var grossPct = Math.max(0, tGross / maxTourIncome * 100).toFixed(1);
-        var incomeStr = tIncome >= 10000 ? (tIncome/10000).toFixed(1)+'万' : tIncome.toLocaleString();
-        var grossStr = tGross >= 10000 ? (tGross/10000).toFixed(1)+'万' : tGross.toLocaleString();
-        var kwBadge = tKeWei > 0 ? '<span class="tour-badge-kw">切' + tKeWei + '</span>' : '';
-        return '<div class="tour-row">' +
-          '<div class="tour-row-name" title="' + escHtml(nm) + '">' + escHtml(nm) + '</div>' +
-          '<div class="tour-row-badges"><span class="tour-badge-ppl">👥 ' + showPpl + '</span>' + kwBadge + '</div>' +
-          '<div class="tour-row-divider"></div>' +
-          '<div class="tour-row-bars">' +
-            '<div class="tour-bar" style="width:' + incomePct + '%;background:rgba(16,185,129,0.6);"><span class="tour-bar-val">¥' + incomeStr + '</span></div>' +
-            '<div class="tour-bar" style="width:' + grossPct + '%;background:rgba(59,130,246,0.6);"><span class="tour-bar-val">¥' + grossStr + '</span></div>' +
-          '</div>' +
-        '</div>';
-      }).join('');
-      tourDetailEl.innerHTML = '<div class="tour-detail-panel">' +
-        '<div class="tour-detail-header">' +
-          '<span class="dot" style="background:var(--accent);"></span>' + escHtml(selectedProductType) + ' — 各团期收入/毛利明细' +
-          '<span onclick="window._resetProductLine&&window._resetProductLine()" style="margin-left:auto;font-size:11px;color:var(--info);cursor:pointer;padding:2px 8px;border:1px solid var(--info);border-radius:4px;">← 返回全部</span>' +
-        '</div>' +
-        '<div class="tour-detail-legend">' +
-          '<span><span class="sq" style="background:rgba(16,185,129,0.7);"></span>收入</span>' +
-          '<span><span class="sq" style="background:rgba(59,130,246,0.7);"></span>毛利</span>' +
-          '<span><span class="sq" style="background:rgba(139,92,246,0.5);"></span>人数</span>' +
-          (tourProjects.some(function(p){ return sumPeople(p,false) - sumPeople(p,true) > 0; }) ? '<span><span class="sq" style="background:rgba(245,158,11,0.6);"></span>切位</span>' : '') +
-        '</div>' +
-        tourRowsHtml +
-      '</div>';
-    } else {
-      // 未选中：显示图表，隐藏团期明细
-      chartPanelEl.style.display = '';
-      tourDetailEl.innerHTML = '';
-      // 图表：各产品线汇总对比（全量数据）
+        if (nm.length > 28) nm = nm.substring(0, 26) + '…';
+        return nm;
+      });
       renderChart('lineBarChart', 'bar', {
-        labels: allEntries.map(e=>e[0]),
+        labels: tgLabels,
         datasets: [
-          { label:'收入', data:allEntries.map(function(e){return e[1].income;}), backgroundColor:'rgba(16,185,129,0.6)', borderRadius:6 },
-          { label:'毛利', data:allEntries.map(function(e){return e[1].income-e[1].cost;}), backgroundColor:'rgba(59,130,246,0.6)', borderRadius:6 }
+          { label:'收入', data: tourGroups.map(function(p){return sumIncome(p);}), backgroundColor:'rgba(16,185,129,0.6)', borderRadius:6 },
+          { label:'毛利', data: tourGroups.map(function(p){return sumIncome(p)-sumCost(p);}), backgroundColor:'rgba(59,130,246,0.6)', borderRadius:6 }
         ]
       }, {
         indexAxis: 'y',
-        plugins: { tooltip: { callbacks: { label: function(ctx) { var v = ctx.parsed.x; return ctx.dataset.label + ': ' + (v >= 10000 ? (v/10000).toFixed(1)+'万' : v); } } } },
+        scales: {
+          y: { ticks: { color: isWarm ? '#5d4037' : '#e2e8f0', font: { size: 11 } }, grid: { display: false } },
+          x: { ticks: { color: isWarm ? '#5d4037' : '#94a3b8', callback: function(v){return v>=10000?(v/10000).toFixed(1)+'万':v;} }, grid: { color: isWarm ? 'rgba(255,214,179,0.4)' : 'rgba(30,58,95,0.4)' } }
+        }
+      });
+    } else {
+      // 全部产品线汇总对比
+      renderChart('lineBarChart', 'bar', {
+        labels: entries.map(e=>e[0]),
+        datasets: [
+          { label:'收入', data:entries.map(function(e){return e[1].income;}), backgroundColor:'rgba(16,185,129,0.6)', borderRadius:6 },
+          { label:'毛利', data:entries.map(function(e){return e[1].income-e[1].cost;}), backgroundColor:'rgba(59,130,246,0.6)', borderRadius:6 }
+        ]
+      }, {
+        indexAxis: 'y',
         scales: {
           y: { ticks: { color: isWarm ? '#5d4037' : '#e2e8f0', font: { size: 12, weight: 'bold' } }, grid: { display: false } },
           x: { ticks: { color: isWarm ? '#5d4037' : '#94a3b8', callback: function(v){return v>=10000?(v/10000).toFixed(1)+'万':v;} }, grid: { color: isWarm ? 'rgba(255,214,179,0.4)' : 'rgba(30,58,95,0.4)' } }
@@ -2905,15 +2220,10 @@ async function rollbackToVersion(logId) {
       });
     }
 
-    var cardHtml = allEntries.map(([type,d]) => {
+    var cardHtml = entries.map(([type,d]) => {
       var gross = d.income - d.cost;
       var margin = d.income ? (gross/d.income*100) : 0;
       var isActive = (type === selectedProductType);
-      var nonKW = d.people - d.keWei;
-      var showPeople = excludeKeWei ? nonKW : d.people;
-      var pplTotal = d.people || 1;
-      var pPct = (nonKW / pplTotal * 100).toFixed(1);
-      var kPct = (d.keWei / pplTotal * 100).toFixed(1);
       return '<div class="product-card' + (isActive ? ' active-card' : '') + '" data-pl-type="' + escHtml(type).replace(/"/g,'&quot;') + '" style="cursor:pointer;" title="点击查看' + escHtml(type) + '详情">' +
         '<div class="line-name" style="color:var(--text-primary);">' + escHtml(type) + ' <span style="font-size:11px;color:var(--text-muted);font-weight:400;">' + d.count + '个团期' + (isActive ? ' (已选中)' : '') + '</span></div>' +
         '<div class="line-stats">' +
@@ -2921,24 +2231,10 @@ async function rollbackToVersion(logId) {
           '<div class="line-stat">成本<span class="val cost">' + fmt(d.cost) + '</span></div>' +
           '<div class="line-stat">毛利<span class="val" style="color:var(--info);">' + fmt(gross) + '</span></div>' +
           '<div class="line-stat">毛利率<span class="val" style="color:' + (margin>=marginThreshold?'var(--success)':'var(--danger)') + ';">' + margin.toFixed(1) + '%</span></div>' +
-        '</div>' +
-        '<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border-light);">' +
-          '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">' +
-            '<span style="font-size:11px;color:var(--text-secondary);">👥 人数</span>' +
-            '<span style="font-size:12px;font-weight:600;color:var(--purple);">' + showPeople + (excludeKeWei ? ' <span style="font-size:9px;color:var(--text-muted);font-weight:400;">不含切位</span>' : '') + '</span>' +
-          '</div>' +
-          '<div style="height:8px;background:var(--bg-primary);border-radius:4px;overflow:hidden;display:flex;">' +
-            '<div style="width:' + pPct + '%;background:rgba(139,92,246,0.6);"></div>' +
-            '<div style="width:' + kPct + '%;background:rgba(245,158,11,0.7);"></div>' +
-          '</div>' +
-          (d.keWei > 0 ? '<div style="font-size:9px;color:var(--text-muted);margin-top:3px;">' + nonKW + '人 + 切位 ' + d.keWei + '人</div>' : '') +
-        '</div>' +
-      '</div>';
+        '</div></div>';
     }).join('');
     
     document.getElementById('productCards').innerHTML = cardHtml;
-    // ★ 选中产品线时隐藏卡片区域，让团期明细占满下方
-    document.getElementById('productCards').style.display = selectedProductType ? 'none' : '';
     
     // ★ 使用事件委托绑定点击（避免重复绑定和卡顿问题）
     var productCardsEl = document.getElementById('productCards');
@@ -2953,8 +2249,6 @@ async function rollbackToVersion(logId) {
       if (!card) return;
       var t = card.getAttribute('data-pl-type');
       if (!t) return;
-      // ★ 捕获点击的卡片位置（飞入动画起点）
-      _plAnimState = { type: t, fromRect: card.getBoundingClientRect() };
       if (selectedProductType === t) {
         selectedProductType = null; // 再次点击取消选中
       } else {
@@ -2962,75 +2256,10 @@ async function rollbackToVersion(logId) {
       }
       renderProductLines();
     });
-    // ★ 执行飞入动画
-    _playProductLineAnimation();
-  }
-  
-  // ★ FLIP 飞入动画：在 DOM 重建后执行
-  function _playProductLineAnimation() {
-    if (!_plAnimState) return;
-    var st = _plAnimState;
-    _plAnimState = null;
-    requestAnimationFrame(function() {
-      if (selectedProductType && st.fromRect) {
-        // 正向飞入：从产品卡片位置 → KPI 卡片位置
-        var kpiCard = document.querySelector('#productLineKPI .kpi-card[style*="border"]');
-        if (kpiCard) {
-          var toRect = kpiCard.getBoundingClientRect();
-          var dx = st.fromRect.left - toRect.left;
-          var dy = st.fromRect.top - toRect.top;
-          var sw = st.fromRect.width / Math.max(toRect.width, 1);
-          var sh = st.fromRect.height / Math.max(toRect.height, 1);
-          kpiCard.style.transform = 'translate(' + dx + 'px,' + dy + 'px) scale(' + sw + ',' + sh + ')';
-          kpiCard.style.transition = 'none';
-          kpiCard.style.transformOrigin = 'top left';
-          kpiCard.style.zIndex = '100';
-          kpiCard.style.opacity = '0.85';
-          requestAnimationFrame(function() {
-            kpiCard.style.transition = 'transform 0.5s cubic-bezier(0.22,1,0.36,1), opacity 0.3s';
-            kpiCard.style.transform = 'none';
-            kpiCard.style.opacity = '1';
-            kpiCard.addEventListener('transitionend', function handler() {
-              kpiCard.style.cssText = kpiCard.style.cssText.replace(/transform[^;]*;?/g,'').replace(/transition[^;]*;?/g,'').replace(/zIndex[^;]*;?/g,'').replace(/opacity[^;]*;?/g,'').replace(/transformOrigin[^;]*;?/g,'');
-              kpiCard.removeEventListener('transitionend', handler);
-            });
-          });
-        }
-      } else if (!selectedProductType && st.toRect) {
-        // 反向飞回：从 KPI 位置 → 产品卡片位置
-        var targetCard = document.querySelector('#productCards .product-card[data-pl-type="' + st.type + '"]');
-        if (targetCard) {
-          var toRect2 = targetCard.getBoundingClientRect();
-          var dx2 = st.toRect.left - toRect2.left;
-          var dy2 = st.toRect.top - toRect2.top;
-          var sw2 = st.toRect.width / Math.max(toRect2.width, 1);
-          var sh2 = st.toRect.height / Math.max(toRect2.height, 1);
-          targetCard.style.transform = 'translate(' + dx2 + 'px,' + dy2 + 'px) scale(' + sw2 + ',' + sh2 + ')';
-          targetCard.style.transition = 'none';
-          targetCard.style.transformOrigin = 'top left';
-          targetCard.style.zIndex = '100';
-          targetCard.style.opacity = '0.85';
-          requestAnimationFrame(function() {
-            targetCard.style.transition = 'transform 0.5s cubic-bezier(0.22,1,0.36,1), opacity 0.3s';
-            targetCard.style.transform = 'none';
-            targetCard.style.opacity = '1';
-            targetCard.addEventListener('transitionend', function handler() {
-              targetCard.style.cssText = targetCard.style.cssText.replace(/transform[^;]*;?/g,'').replace(/transition[^;]*;?/g,'').replace(/zIndex[^;]*;?/g,'').replace(/opacity[^;]*;?/g,'').replace(/transformOrigin[^;]*;?/g,'');
-              targetCard.removeEventListener('transitionend', handler);
-            });
-          });
-        }
-      }
-    });
   }
   
   // 暴露到 window 供 HTML 内联事件使用
   window._resetProductLine = function() {
-    // ★ 捕获当前 KPI 卡片位置（反向飞回动画起点）
-    var kpiCard = document.querySelector('#productLineKPI .kpi-card[style*="border"]');
-    if (kpiCard) {
-      _plAnimState = { type: selectedProductType, toRect: kpiCard.getBoundingClientRect() };
-    }
     selectedProductType = null;
     renderProductLines();
   };
@@ -3087,7 +2316,7 @@ async function rollbackToVersion(logId) {
         <td class="amount-cost">${fmt(sumIncome(p)-received)}</td>
         <td><span class="status-chip status-${status}">${{paid:'已结清',partial:'部分收款',unpaid:'未收款'}[status]}</span></td>
         <td>${p.startDate||'-'}</td>
-        <td><button class="btn btn-sm btn-accent" onclick="event.stopPropagation();openRecModal('${p.id}')" style="font-size:10px;padding:2px 8px;">' + ICO.card + ' 登记</button></td>
+        <td><button class="btn btn-sm btn-accent" onclick="event.stopPropagation();openRecModal('${p.id}')" style="font-size:10px;padding:2px 8px;">💳 登记</button></td>
       </tr>`;
     }).join('') || '<tr><td colspan="9" style="text-align:center;padding:30px;color:var(--text-muted);">暂无应收账款数据</td></tr>';
 
@@ -3244,22 +2473,22 @@ async function rollbackToVersion(logId) {
         '<span class="pay-card-tag" style="background:' + statusColor + '20;color:' + statusColor + ';">' + statusLabel + '</span>' +
       '</div>' +
       '<div class="pay-card-meta">' +
-        '<span>' + ICO.box + ' ' + (p.productType||'未分类') + '</span>' +
-        '<span>' + ICO.users + ' ' + (p.operator||'-') + '</span>' +
-        '<span>' + ICO.calendar + ' ' + (p.startDate||'-') + '</span>' +
+        '<span>📦' + (p.productType||'未分类') + '</span>' +
+        '<span>👤' + (p.operator||'-') + '</span>' +
+        '<span>📅' + (p.startDate||'-') + '</span>' +
       '</div>' +
       '<div class="pay-card-amounts">' +
         '<div class="pay-amt-item"><div class="label">应付</div><div class="value" style="color:var(--danger);">' + fmt(totalCost) + '</div></div>' +
         '<div class="pay-amt-item"><div class="label">已付</div><div class="value" style="color:var(--success);">' + fmt(totalPaid) + '</div></div>' +
         '<div class="pay-amt-item"><div class="label">未付</div><div class="value" style="color:' + (unpaid>0?'var(--danger)':'var(--text-muted)') + ';">' + fmt(unpaid) + '</div></div>' +
       '</div>' +
-      '<span class="pay-card-expand-hint"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></span>' +
+      '<span class="pay-card-expand-hint">▼</span>' +
       // 可展开区域
       '<div class="pay-card-detail">' +
         (costRows ? '<div class="pay-card-costs">' + costRows + '</div>' : '<div style="font-size:11px;color:var(--text-muted);padding:8px 0;">暂无成本明细</div>') +
         '<div class="pay-card-actions">' +
-          '<button class="btn btn-sm" onclick="event.stopPropagation();window._showProjectDetail(\'' + p.id + '\')">' + ICO.clip + ' 详情</button>' +
-          '<button class="btn btn-sm btn-accent" onclick="event.stopPropagation();openPayModal(\'' + p.id + '\')">' + ICO.card + ' 登记付款</button>' +
+          '<button class="btn btn-sm" onclick="event.stopPropagation();window._showProjectDetail(\'' + p.id + '\')">📋 详情</button>' +
+          '<button class="btn btn-sm btn-accent" onclick="event.stopPropagation();openPayModal(\'' + p.id + '\')">💳 登记付款</button>' +
         '</div>' +
       '</div>' +
     '</div>';
@@ -3294,9 +2523,9 @@ async function rollbackToVersion(logId) {
     var totalPaid = supEntries.reduce(function(s,x){return s+x.currentPaid;},0);
 
     var html = '<button class="close-btn" onclick="closePayModal()">✕</button>';
-    html += '<h3>' + ICO.card + ' 登记付款 · '+escHtml(p.name)+'</h3>';
+    html += '<h3>💳 登记付款 · '+escHtml(p.name)+'</h3>';
     html += '<div style="font-size:12px;color:var(--text-muted);margin-bottom:4px;">'+p.productType+' | 应付总额 '+fmt(totalCost)+' | 已付合计 '+fmt(totalPaid)+'</div>';
-    html += '<div style="font-size:11px;color:var(--warning);margin-bottom:10px;">提示：直接修改"已付"金额，保存后自动按今天日期生成付款记录</div>';
+    html += '<div style="font-size:11px;color:var(--warning);margin-bottom:10px;">💡 直接修改"已付"金额，保存后自动按今天日期生成付款记录</div>';
 
     supEntries.forEach(function(se){
       var sup = suppliers.find(function(s){return s.id===se.supplierId;});
@@ -3317,7 +2546,7 @@ async function rollbackToVersion(logId) {
     html += '</div>';
     html += '<div class="modal-save-bar">';
     html += '<button class="btn btn-outline" onclick="closePayModal()">取消</button>';
-    html += '<button class="btn btn-accent" onclick="submitPayment(\''+projId+'\')">保存</button>';
+    html += '<button class="btn btn-accent" onclick="submitPayment(\''+projId+'\')">💾 保存</button>';
     html += '</div>';
 
     document.getElementById('payModalBox').innerHTML = html;
@@ -3340,6 +2569,10 @@ async function rollbackToVersion(logId) {
     var p = projects.find(function(x){return x.id===projId;});
     if (!p) return;
 
+    // ★ 禁用保存按钮 + 显示保存中状态
+    var saveBtn = document.querySelector('#payModalOverlay .btn-accent');
+    if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = '保存中...'; }
+
     // 1. 先清空该团期所有 cost 的 paidAmount
     (p.costs||[]).forEach(function(c){ c.paidAmount = 0; });
 
@@ -3358,8 +2591,8 @@ async function rollbackToVersion(logId) {
       }
     });
 
-    // 3. 同步到云端 data.json
-    var ok = await githubSaveData(projects);
+    // 3. ★ 增量保存：仅同步当前修改的团期到云端
+    var ok = await githubSaveData(p);
     if (ok) {
       // 云端保存成功 → 安全清除 localStorage 中的旧付款数据
       try {
@@ -3374,9 +2607,11 @@ async function rollbackToVersion(logId) {
       closePayModal();
       renderPayables();
       renderSuppliers();
-      showToast('付款已保存并同步至云端');
+      showToast('✅ 付款已保存并同步至云端');
     } else {
-      showToast('云端保存失败，请检查网络后重试');
+      // ★ 保存失败时恢复按钮状态
+      if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = '💾 保存'; }
+      showToast('❌ 云端保存失败，请检查网络后重试');
     }
   };
 
@@ -3388,9 +2623,9 @@ async function rollbackToVersion(logId) {
     var totalReceived = sumProjectReceipts(p.id);
 
     var html = '<button class="close-btn" onclick="closeRecModal()">✕</button>';
-    html += '<h3>' + ICO.card + ' 登记收款 · '+escHtml(p.name)+'</h3>';
+    html += '<h3>💳 登记收款 · '+escHtml(p.name)+'</h3>';
     html += '<div style="font-size:12px;color:var(--text-muted);margin-bottom:4px;">'+p.productType+' | 应收总额 '+fmt(totalIncome)+' | 已收合计 '+fmt(totalReceived)+'</div>';
-    html += '<div style="font-size:11px;color:var(--warning);margin-bottom:10px;">提示：直接修改每个收入项的"已收"金额，保存后自动同步到云端</div>';
+    html += '<div style="font-size:11px;color:var(--warning);margin-bottom:10px;">💡 直接修改每个收入项的"已收"金额，保存后自动同步到云端</div>';
 
     (p.incomes||[]).forEach(function(i, idx){
       // ★ 兼容缺少 id 的旧数据（如Excel导入），用数组索引作为 fallback
@@ -3408,7 +2643,7 @@ async function rollbackToVersion(logId) {
     html += '</div>';
     html += '<div class="modal-save-bar">';
     html += '<button class="btn btn-outline" onclick="closeRecModal()">取消</button>';
-    html += '<button class="btn btn-accent" onclick="submitReceipt(\''+projId+'\')">保存</button>';
+    html += '<button class="btn btn-accent" onclick="submitReceipt(\''+projId+'\')">💾 保存</button>';
     html += '</div>';
 
     document.getElementById('recModalBox').innerHTML = html;
@@ -3431,6 +2666,10 @@ async function rollbackToVersion(logId) {
     var p = projects.find(function(x){return x.id===projId;});
     if (!p) return;
 
+    // ★ 禁用保存按钮 + 显示保存中状态
+    var saveBtn = document.querySelector('#recModalOverlay .btn-accent');
+    if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = '保存中...'; }
+
     // 遍历弹窗中每个收入项的输入框 → 写入 receivedAmount
     document.querySelectorAll('.rec-income-input').forEach(function(inp){
       var incomeId = inp.getAttribute('data-income-id');
@@ -3446,8 +2685,8 @@ async function rollbackToVersion(logId) {
       }
     });
 
-    // 同步到云端 data.json
-    var ok = await githubSaveData(projects);
+    // ★ 增量保存：仅同步当前修改的团期到云端
+    var ok = await githubSaveData(p);
     if (ok) {
       // 云端保存成功 → 安全清除 localStorage 中的旧收款数据
       try {
@@ -3461,9 +2700,11 @@ async function rollbackToVersion(logId) {
       } catch(e){}
       closeRecModal();
       renderReceivables();
-      showToast('收款已保存并同步至云端');
+      showToast('✅ 收款已保存并同步至云端');
     } else {
-      showToast('云端保存失败，请检查网络后重试');
+      // ★ 保存失败时恢复按钮状态
+      if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = '💾 保存'; }
+      showToast('❌ 云端保存失败，请检查网络后重试');
     }
   };
 
@@ -3512,10 +2753,10 @@ async function rollbackToVersion(logId) {
       var mothTotal = analysisList.reduce(function(s,p){return s+sumCost(p);},0);
       var mothPaid = analysisList.reduce(function(s,p){return s+sumProjectPayments(p.id);},0);
       var html = '<div class="pay-analysis-card">' +
-        '<h4>' + ICO.chart + ' ' + payMonthFilter + ' 供应商应付占比</h4>' +
+        '<h4>📊 ' + payMonthFilter + ' 供应商应付占比</h4>' +
         '<div style="font-size:11px;color:var(--text-muted);margin-bottom:4px;">该月应付总额 '+fmt(mothTotal)+' · 已付 '+fmt(mothPaid)+'</div>' +
         '<div class="pay-chart-wrap"><canvas id="payMonthlyChart"></canvas></div></div>';
-      html += '<div class="pay-analysis-card"><h4>' + ICO.clip + ' ' + payMonthFilter + ' 团期应付排行</h4><div style="max-height:260px;overflow-y:auto;">';
+      html += '<div class="pay-analysis-card"><h4>📋 ' + payMonthFilter + ' 团期应付排行</h4><div style="max-height:260px;overflow-y:auto;">';
       var projRank = analysisList.map(function(p){
         var cost = sumCost(p);
         var paid = sumProjectPayments(p.id);
@@ -3561,7 +2802,7 @@ async function rollbackToVersion(logId) {
 
     } else {
       // === 全部视图：月度趋势图 + 供应商排行 ===
-      var html = '<div class="pay-analysis-card"><h4>' + ICO.chart + ' 月度应付趋势</h4><div class="pay-chart-wrap"><canvas id="payMonthlyChart"></canvas></div></div>';
+      var html = '<div class="pay-analysis-card"><h4>📊 月度应付趋势</h4><div class="pay-chart-wrap"><canvas id="payMonthlyChart"></canvas></div></div>';
       html += '<div class="pay-analysis-card"><h4>🏢 供应商应付排行</h4><div style="max-height:260px;overflow-y:auto;">';
       supRank.forEach(function(s,idx){
         var unpaid = s.payable - s.paid;
@@ -3638,13 +2879,13 @@ async function rollbackToVersion(logId) {
     });
 
     if (payKPIDetail === 'paid') {
-      title = ICO.coin + ' 已付总额明细'; color = 'var(--info)';
+      title = '💰 已付总额明细'; color = 'var(--info)';
       projData = projData.filter(function(x){return x.paid>0;}).sort(function(a,b){return b.paid - a.paid;});
     } else if (payKPIDetail === 'unpaid') {
-      title = '未付总额明细'; color = 'var(--danger)';
+      title = '⚠️ 未付总额明细'; color = 'var(--danger)';
       projData = projData.filter(function(x){return x.unpaid>0;}).sort(function(a,b){return b.unpaid - a.unpaid;});
     } else if (payKPIDetail === 'unsettled') {
-      title = ICO.clip + ' 未结清团期明细'; color = 'var(--warning)';
+      title = '📋 未结清团期明细'; color = 'var(--warning)';
       projData = projData.filter(function(x){return x.status!=='paid';}).sort(function(a,b){return b.unpaid - a.unpaid;});
     }
     if (projData.length === 0) {
@@ -3685,178 +2926,202 @@ async function rollbackToVersion(logId) {
       '</div>';
   }
 
-  // ==================== MODULE 5: SUPPLIERS (Tree Table) ====================
-  let supOpenCats = {}, supActiveSupKey = null, supCatGroups = {};
-  var SUP_CAT_COLORS = { '地接':'#6366f1', '车票':'#8b5cf6', '导服':'#10b981', '代订':'#3b82f6', '其他':'#94a3b8', '邮轮':'#f59e0b', '保险':'#ec4899' };
-  var SUP_CAT_ICONS = {
-    '地接': '<svg viewBox="0 0 24 24"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></svg>',
-    '车票': '<svg viewBox="0 0 24 24"><path d="M2 18h1.4c1.3 0 2.5-.6 3.3-1.7l6.1-8.6c.7-1.1 2-1.7 3.3-1.7H22"/><path d="m18 2 4 4-4 4"/><path d="M2 6h1.9c1.5 0 2.9.9 3.6 2.2"/><path d="M22 18h-1.4c-1.3 0-2.5-.6-3.3-1.7l-6.1-8.6A3.96 3.96 0 0 0 7.9 6H2"/><path d="M2 22h1.9c1.5 0 2.9-.9 3.6-2.2"/></svg>',
-    '导服': '<svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>',
-    '代订': '<svg viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>',
-    '其他': '<svg viewBox="0 0 24 24"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>',
-    '邮轮': '<svg viewBox="0 0 24 24"><path d="M2 21c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1 .6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M19.38 20A11.6 11.6 0 0 0 21 14l-9-4-9 4c0 2.9.94 5.34 2.81 7.76"/><path d="M19 13V7a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v6"/><path d="M12 1v4"/></svg>',
-    '保险': '<svg viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>'
-  };
-  function supCatColor(cat) { return SUP_CAT_COLORS[cat] || '#6366f1'; }
-  function supCatIcon(cat) { return SUP_CAT_ICONS[cat] || SUP_CAT_ICONS['其他']; }
-
-  // 成本项固定排序 & 分类映射
-  var COST_NAME_ORDER = ['车票款', '地接款', '代订费用', '导服费', '其他'];
-  var COST_TO_CATEGORY = { '车票款':'车票', '地接款':'地接', '代订费用':'代订', '导服费':'导服', '其他':'其他' };
-  var COST_NAME_TO_CAT = {};
-  COST_NAME_ORDER.forEach(function(n){ COST_NAME_TO_CAT[n] = COST_TO_CATEGORY[n]; });
-  // 收入项固定排序
-  var INCOME_NAME_ORDER = ['线上收入', '线下收入', '切位收入'];
-  // 排序辅助函数
-  function costSortIndex(name) { var i = COST_NAME_ORDER.indexOf(name); return i >= 0 ? i : 999; }
-  function incomeSortIndex(name) { var i = INCOME_NAME_ORDER.indexOf(name); return i >= 0 ? i : 999; }
-  function sortCosts(arr) { return arr.slice().sort(function(a,b){ return costSortIndex(a.name) - costSortIndex(b.name); }); }
-  function sortIncomes(arr) { return arr.slice().sort(function(a,b){ return incomeSortIndex(a.name) - incomeSortIndex(b.name); }); }
-
+  // ==================== MODULE 5: SUPPLIERS ====================
+  let activeSupplierId = null, supListPage = 1, supChartInstance = null;
   function renderSuppliers() {
-    computeSupplierCategories(); // ★ 动态计算分类
-    var list = getFilteredProjects('suppliers');
-    var supStats = {};
-    suppliers.forEach(function(s) { supStats[s.id] = { id:s.id, name:s.name, categories:s.categories||['其他'], projectCount:0, totalPayable:0, totalPaid:0, projects:new Set(), projectList:[] }; });
-    list.forEach(function(p) {
-      var projSupPaid = {};
-      (p.costs||[]).forEach(function(c) {
-        var sid = c._supplierId || 'sup_6';
+    const list = getFilteredProjects('suppliers');
+    const supStats = {};
+    suppliers.forEach(s => { supStats[s.id] = { ...s, projectCount:0, totalPayable:0, totalPaid:0, projects:new Set(), projectList:[] }; });
+    list.forEach(p => {
+      var projSupPaid = {}; // 防止同一供应商多成本项重复累加已付
+      (p.costs||[]).forEach(c => {
+        const sid = c._supplierId || 'sup_6';
         if (supStats[sid]) {
           supStats[sid].totalPayable += c.amount;
-          if (!projSupPaid[sid]) projSupPaid[sid] = sumCostPayments(p.id, c.id, sid);
+          // 按供应商维度计算已付（每个团期+供应商只算一次）
+          if (!projSupPaid[sid]) {
+            projSupPaid[sid] = sumCostPayments(p.id, c.id, sid);
+          }
           supStats[sid].totalPaid += projSupPaid[sid];
           supStats[sid].projects.add(p.id);
-          if (!supStats[sid].projectList.find(function(x){return x.id===p.id;})) supStats[sid].projectList.push(p);
+          if (!supStats[sid].projectList.find(x=>x.id===p.id)) supStats[sid].projectList.push(p);
         }
       });
     });
 
-    var statsArr = Object.values(supStats).filter(function(s){return s.totalPayable > 0;}).sort(function(a,b){return b.totalPayable - a.totalPayable;});
-    var totalPayable = statsArr.reduce(function(s,x){return s+x.totalPayable;},0);
-    var totalPaid = statsArr.reduce(function(s,x){return s+x.totalPaid;},0);
+    const statsArr = Object.values(supStats).filter(s => s.totalPayable > 0).sort((a,b) => b.totalPayable - a.totalPayable);
+    const totalPayable = statsArr.reduce((s,x)=>s+x.totalPayable,0);
+    const totalPaid = statsArr.reduce((s,x)=>s+x.totalPaid,0);
+    window._supplierStatsArr = statsArr;
 
-    // KPI
-    document.getElementById('supplierKPI').innerHTML =
-      '<div class="kpi-card"><div class="kpi-label">供应商总数</div><div class="kpi-value" style="color:var(--info);">'+statsArr.length+'</div></div>' +
-      '<div class="kpi-card cost"><div class="kpi-label">应付总额</div><div class="kpi-value cost">'+fmt(totalPayable)+'</div></div>' +
-      '<div class="kpi-card gross"><div class="kpi-label">已付总额</div><div class="kpi-value gross">'+fmt(totalPaid)+'</div></div>' +
-      '<div class="kpi-card cost"><div class="kpi-label">未付总额</div><div class="kpi-value cost">'+fmt(totalPayable - totalPaid)+'</div></div>';
+    document.getElementById('supplierKPI').innerHTML = `
+      <div class="kpi-card"><div class="kpi-label">供应商总数</div><div class="kpi-value" style="color:var(--info);">${statsArr.length}</div></div>
+      <div class="kpi-card cost"><div class="kpi-label">应付总额</div><div class="kpi-value cost">${fmt(totalPayable)}</div></div>
+      <div class="kpi-card gross"><div class="kpi-label">已付总额</div><div class="kpi-value gross">${fmt(totalPaid)}</div></div>
+      <div class="kpi-card cost"><div class="kpi-label">未付总额</div><div class="kpi-value cost">${fmt(totalPayable - totalPaid)}</div></div>`;
 
-    // Group by category (★ 同一供应商可出现在多个分类)
-    supCatGroups = {};
-    statsArr.forEach(function(s) {
-      (s.categories || ['其他']).forEach(function(cat) {
-        if (!supCatGroups[cat]) supCatGroups[cat] = { suppliers:[], totalPayable:0, totalPaid:0, projSet:new Set() };
-        supCatGroups[cat].suppliers.push(s);
-        supCatGroups[cat].totalPayable += s.totalPayable;
-        supCatGroups[cat].totalPaid += s.totalPaid;
-        s.projects.forEach(function(pid){ supCatGroups[cat].projSet.add(pid); });
-      });
-    });
+    // Table without 联系人/联系电话
+    document.getElementById('supplierTable').querySelector('tbody').innerHTML = statsArr.map(s => {
+      const unpaid = s.totalPayable - s.totalPaid;
+      const pct = fmtPct(s.totalPaid, s.totalPayable);
+      return `<tr style="cursor:pointer;" onclick="window._selectSupplier('${s.id}')" class="${activeSupplierId===s.id ? 'supplier-row-active' : ''}" id="supRow_${s.id}">
+        <td style="font-weight:700;">${escHtml(s.name)}</td><td>${s.category}</td>
+        <td>${s.projects.size}</td>
+        <td class="amount-cost">${fmt(s.totalPayable)}</td>
+        <td>${fmt(s.totalPaid)}</td>
+        <td class="amount-cost">${fmt(unpaid)}</td>
+        <td><span class="status-chip ${unpaid>0?'status-unpaid':'status-paid'}">${pct}</span></td>
+      </tr>`;
+    }).join('') || '<tr><td colspan="7" style="text-align:center;padding:30px;color:var(--text-muted);">暂无供应商数据，请先在团期成本中关联供应商</td></tr>';
 
-    var catEntries = Object.entries(supCatGroups).sort(function(a,b){return b[1].totalPayable - a[1].totalPayable;});
-    var maxPayable = catEntries.length > 0 ? catEntries[0][1].totalPayable : 1;
-
-    // Build tree table
-    var html = '';
-    catEntries.forEach(function(entry) {
-      var cat = entry[0], g = entry[1];
-      var color = supCatColor(cat), icon = supCatIcon(cat);
-      var isOpen = !!supOpenCats[cat];
-      var unpaid = g.totalPayable - g.totalPaid;
-      var pct = g.totalPayable > 0 ? Math.round(g.totalPaid / g.totalPayable * 100) : 0;
-      var pctCls = pct >= 80 ? 'good' : (pct >= 50 ? 'mid' : 'bad');
-      var barW = Math.max(4, Math.round(g.totalPayable / maxPayable * 60));
-
-      // Group row
-      html += '<tr class="sup-tree-group'+(isOpen?' open':'')+'" onclick="window._supToggleCat(\''+cat+'\')">';
-      html += '<td><span class="sup-tree-group-icon" style="color:'+color+';">'+icon+'</span>';
-      html += '<span class="sup-tree-cat-name">'+escHtml(cat)+'</span>';
-      html += '<span class="sup-tree-cat-count">'+g.suppliers.length+'家</span>';
-      html += '<span class="sup-tree-cat-bar" style="width:'+barW+'px;background:'+color+';"></span>';
-      html += '<svg class="sup-tree-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></td>';
-      html += '<td>'+g.projSet.size+'</td>';
-      html += '<td style="color:var(--danger);font-weight:700;">'+fmt(g.totalPayable)+'</td>';
-      html += '<td style="color:var(--success);">'+fmt(g.totalPaid)+'</td>';
-      html += '<td style="color:var(--warning);font-weight:600;">'+fmt(unpaid)+'</td>';
-      html += '<td><span class="sup-tree-pct '+pctCls+'">'+pct+'%</span></td>';
-      html += '</tr>';
-
-      // Child rows (suppliers)
-      g.suppliers.forEach(function(s, i) {
-        var sUnpaid = s.totalPayable - s.totalPaid;
-        var sPct = s.totalPayable > 0 ? Math.round(s.totalPaid / s.totalPayable * 100) : 0;
-        var sPctCls = sPct >= 80 ? 'good' : (sPct >= 50 ? 'mid' : 'bad');
-        var supKey = cat + ':' + i;
-        var isActive = supActiveSupKey === supKey;
-        html += '<tr class="sup-tree-child'+(isOpen?'':' hidden')+'" onclick="window._supSelectSup(\''+cat+'\','+i+')" style="'+(isActive?'background:rgba(99,102,241,0.08);':'')+'">';
-        html += '<td><span class="sup-tree-sup-name">'+escHtml(s.name)+'</span><span class="sup-tree-sup-proj">'+s.projects.size+'个团期</span></td>';
-        html += '<td>'+s.projects.size+'</td>';
-        html += '<td style="color:var(--danger);">'+fmt(s.totalPayable)+'</td>';
-        html += '<td style="color:var(--success);">'+fmt(s.totalPaid)+'</td>';
-        html += '<td style="color:'+(sUnpaid>0?'var(--warning)':'var(--success)')+';">'+(sUnpaid>0?fmt(sUnpaid):'已付清')+'</td>';
-        html += '<td><span class="sup-tree-pct '+sPctCls+'">'+sPct+'%</span></td>';
-        html += '</tr>';
-      });
-    });
-    document.getElementById('supTreeBody').innerHTML = html;
-
-    // Tour detail panel
-    if (supActiveSupKey) {
-      var parts = supActiveSupKey.split(':');
-      var aCat = parts[0], aIdx = parseInt(parts[1]);
-      if (supCatGroups[aCat] && supCatGroups[aCat].suppliers[aIdx]) {
-        supShowTourDetail(aCat, aIdx);
-      } else {
-        supActiveSupKey = null;
-        document.getElementById('supTourPanel').classList.remove('sb-show');
-      }
+    // Highlight active row
+    if (activeSupplierId && statsArr.find(s=>s.id===activeSupplierId)) {
+      refreshSupplierDetail();
     } else {
-      document.getElementById('supTourPanel').classList.remove('sb-show');
+      activeSupplierId = null;
+      document.getElementById('supplierBtnList').innerHTML = '<div class="hint" style="font-size:12px;color:var(--text-muted);text-align:center;padding:12px;">👆 点击上方<br>供应商行查看<br>关联团期</div>';
+      document.getElementById('supplierProjectsMid').innerHTML = '<div class="hint">👈 选择供应商<br>查看关联团期明细</div>';
+      document.getElementById('supplierProjectsRight').innerHTML = '<div class="hint">📊<br>应付分布图表</div>';
+      if (supChartInstance) { supChartInstance.destroy(); supChartInstance = null; }
     }
   }
 
-  function supShowTourDetail(cat, idx) {
-    var g = supCatGroups[cat];
-    if (!g || !g.suppliers[idx]) return;
-    var s = g.suppliers[idx];
-    var projList = s.projectList || [];
+  function refreshSupplierDetail() {
+    const s = window._supplierStatsArr.find(x => x.id === activeSupplierId);
+    if (!s) return;
+    const unpaid = s.totalPayable - s.totalPaid;
+    const pct = fmtPct(s.totalPaid, s.totalPayable);
 
-    document.getElementById('supTourTitle').textContent = s.name + ' · 关联团期 (' + projList.length + '个)';
-    var html = '';
-    projList.forEach(function(p) {
-      var supCost = (p.costs||[]).filter(function(c){return c._supplierId === s.id;}).reduce(function(ss,c){return ss+c.amount;},0);
-      var supPaid = (p.costs||[]).filter(function(c){return c._supplierId === s.id;}).reduce(function(ss,c){return ss+(c.paidAmount||0);},0);
-      var status = supPaid >= supCost && supCost > 0 ? 'sb-paid' : (supPaid === 0 ? 'sb-unpaid' : 'sb-partial');
-      var statusText = supPaid >= supCost && supCost > 0 ? '已付清' : (supPaid === 0 ? '未付' : '部分付');
-      html += '<div class="sup-tour-item" onclick="window._showProjectDetail(\''+p.id+'\')">';
-      html += '<span class="sup-tour-name" title="'+escHtml(p.name)+'">'+escHtml(p.name)+'</span>';
-      html += '<span class="sup-tour-product">'+(p.productType||'未分类')+'</span>';
-      html += '<span class="sup-tour-cost">'+fmt(supCost)+'</span>';
-      html += '<span class="sup-tour-status"><span class="sb-pay-chip '+status+'">'+statusText+'</span></span>';
-      html += '</div>';
-    });
-    if (projList.length === 0) html = '<div style="text-align:center;padding:20px;color:var(--text-muted);font-size:12px;">暂无关联团期数据</div>';
-    document.getElementById('supTourList').innerHTML = html;
-    document.getElementById('supTourPanel').classList.add('sb-show');
+    // Left: supplier info buttons
+    document.getElementById('supplierBtnList').innerHTML = `
+      <div class="traffic-compact-btn green-btn active" style="border-left:4px solid var(--info);">
+        <div class="tcb-icon">🤝</div>
+        <div class="tcb-body">
+          <div class="tcb-num" style="color:var(--info);">${escHtml(s.name)}</div>
+          <div class="tcb-label">${s.category} · ${s.projects.size}个关联团期</div>
+        </div>
+      </div>
+      <div class="tcb-threshold-row" style="flex-direction:column;gap:4px;align-items:flex-start;">
+        <span style="font-size:11px;color:var(--text-muted);">应付 ${fmt(s.totalPayable)}</span>
+        <span style="font-size:11px;color:var(--text-muted);">已付 ${fmt(s.totalPaid)}</span>
+        <span style="font-size:11px;color:var(--text-muted);">未付 ${fmt(unpaid)} (${pct})</span>
+      </div>`;
+
+    // Middle: 关联团期明细
+    const projList = s.projectList || [];
+    const perPage = 6;
+    const totalPages = Math.ceil(projList.length / perPage) || 1;
+    if (supListPage > totalPages) supListPage = totalPages;
+    const paged = projList.slice((supListPage-1)*perPage, supListPage*perPage);
+
+    let midHtml = '<div class="tc-panel-header-row">';
+    midHtml += '<span style="font-size:12px;font-weight:600;">📋 关联团期 · ' + projList.length + '个</span>';
+    midHtml += '</div>';
+    midHtml += '<div class="tc-content-area"><div class="tc-proj-list">';
+    for (var j = 0; j < paged.length; j++) {
+      var p = paged[j];
+      var margin = getTrafficMargin(p);
+      var mc = margin !== null && margin >= marginThreshold ? 'var(--success)' : 'var(--danger)';
+      midHtml += '<div class="tc-proj-item" style="animation-delay:' + (j*0.04) + 's" onclick="window._showProjectDetail(\'' + p.id + '\')">';
+      midHtml += '<div class="tc-top"><span class="tc-name">' + escHtml(p.name) + '</span>';
+      midHtml += '<span class="tc-margin" style="background:' + mc + '20;color:' + mc + ';">' + fmtMargin(margin) + '</span></div>';
+      midHtml += '<div class="tc-meta">';
+      midHtml += '<span>📦' + (p.productType||'未分类') + '</span>';
+      midHtml += '<span>💰' + fmt(sumIncome(p)) + '</span>';
+      midHtml += '<span>📉' + fmt(sumCost(p)) + '</span>';
+      midHtml += '</div></div>';
+    }
+    midHtml += '</div></div>';
+    if (totalPages > 1) {
+      midHtml += '<div class="tc-mini-pagination">';
+      for (var pg = 1; pg <= totalPages; pg++) {
+        midHtml += '<button class="' + (pg===supListPage?'active':'') + '" onclick="window._supGoPage(' + pg + ')">' + pg + '</button>';
+      }
+      midHtml += '</div>';
+    }
+    document.getElementById('supplierProjectsMid').innerHTML = midHtml;
+
+    // Right: 应付分布图表
+    document.getElementById('supplierProjectsRight').innerHTML = '<div class="tc-chart-wrap-full"><canvas id="supPayChart"></canvas></div>';
+    setTimeout(function(){ renderSupChart(s); }, 50);
   }
 
-  // Global bindings
-  window._supToggleCat = function(cat) {
-    supOpenCats[cat] = !supOpenCats[cat];
-    supActiveSupKey = null;
-    renderSuppliers();
-  };
-  window._supSelectSup = function(cat, idx) {
-    var key = cat + ':' + idx;
-    supActiveSupKey = (supActiveSupKey === key) ? null : key;
-    renderSuppliers();
-  };
-  window._supCloseTourDetail = function() {
-    supActiveSupKey = null;
-    document.getElementById('supTourPanel').classList.remove('sb-show');
-  };
+  function renderSupChart(supplierStat) {
+    if (supChartInstance) { supChartInstance.destroy(); supChartInstance = null; }
+    var ctx = document.getElementById('supPayChart');
+    if (!ctx) return;
+
+    var projList = supplierStat.projectList || [];
+    // Sort by cost (应付 from this supplier) descending
+    var sorted = projList.slice().sort(function(a,b){
+      var ca = (a.costs||[]).filter(function(c){ return c._supplierId === activeSupplierId; }).reduce(function(s,c){return s+c.amount;},0);
+      var cb = (b.costs||[]).filter(function(c){ return c._supplierId === activeSupplierId; }).reduce(function(s,c){return s+c.amount;},0);
+      return cb - ca;
+    });
+    var labels = sorted.map(function(p){ var n = p.name||''; return n.length > 14 ? n.substring(0,12)+'…' : n; });
+    var payables = sorted.map(function(p){
+      return (p.costs||[]).filter(function(c){ return c._supplierId === activeSupplierId; }).reduce(function(s,c){return s+c.amount;},0);
+    });
+    var paidAmts = sorted.map(function(p){
+      return (p.costs||[]).filter(function(c){ return c._supplierId === activeSupplierId; }).reduce(function(s,c){return s+sumCostPayments(p.id, c.id);},0);
+    });
+
+    supChartInstance = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: '应付',
+            data: payables,
+            backgroundColor: 'rgba(239,68,68,0.7)',
+            borderColor: '#ef4444',
+            borderWidth: 1,
+            borderRadius: 3
+          },
+          {
+            label: '已付',
+            data: paidAmts,
+            backgroundColor: 'rgba(16,185,129,0.7)',
+            borderColor: '#10b981',
+            borderWidth: 1,
+            borderRadius: 3
+          }
+        ]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { labels: { color: '#94a3b8', font: { size: 10 }, usePointStyle: true, boxWidth: 8 } },
+          tooltip: {
+            callbacks: {
+              title: function(items){ var i = items[0].dataIndex; return sorted[i].name; },
+              label: function(ctx){ return (ctx.dataset.label||'') + ': ' + fmt(ctx.raw); },
+              afterLabel: function(context){
+                var i = context.dataIndex;
+                var p = sorted[i];
+                return '团号: ' + p.name + ' | 产品线: ' + (p.productType||'未分类') + ' | 总成本: ' + fmt(sumCost(p));
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            title: { display: true, text: '金额', color: '#94a3b8', font:{size:10} },
+            ticks: { color: '#94a3b8', font:{size:10} },
+            grid: { color: 'rgba(30,58,95,0.3)' },
+            min: 0
+          },
+          y: {
+            ticks: { color: '#94a3b8', font:{size:10} },
+            grid: { display: false }
+          }
+        }
+      }
+    });
+  }
 
   // ==================== MODULE 6: PROJECTS ====================
   let projPage = 1, projTypeFilter = 'all', projOpFilter = 'all', projMarginFilter = 'all';
@@ -3892,7 +3157,7 @@ async function rollbackToVersion(logId) {
       }).length;
       
       var hint = list.length < validTotal
-        ? '<span style="font-size:11px;color:var(--info);margin-left:8px;font-weight:500;background:var(--info-bg);padding:2px 8px;border-radius:4px;">' + list.length + ' / ' + validTotal + ' 条匹配</span>'
+        ? '<span style="font-size:11px;color:var(--info);margin-left:8px;font-weight:normal;">(' + list.length + '/' + validTotal + ' 条匹配当前时间筛选)</span>'
         : '';
       panelTitle.innerHTML = '<span class="dot" style="background:var(--success);"></span>团期明细列表' + hint;
     }
@@ -3901,23 +3166,17 @@ async function rollbackToVersion(logId) {
       const margin = getTrafficMargin(p);
       // 提取月份 (YYYY-MM)
       var month = p.startDate ? p.startDate.substring(0, 7) : '-';
-      // Margin bar: good >= threshold, bad < threshold
-      var marginClass = margin !== null ? (margin >= marginThreshold ? 'good' : (margin >= marginThreshold * 0.7 ? 'mid' : 'bad')) : 'bad';
-      var marginBarW = margin !== null ? Math.min(Math.max(margin, 0), 100) : 0;
-      var marginHtml = margin !== null
-        ? '<span class="margin-bar-wrap"><span style="font-weight:700;color:' + (marginClass === 'good' ? 'var(--success)' : (marginClass === 'mid' ? 'var(--warning)' : 'var(--danger)')) + ';min-width:42px;text-align:right;display:inline-block;">' + fmtMargin(margin) + '</span><span class="margin-bar"><span class="margin-bar-fill ' + marginClass + '" style="width:' + marginBarW + '%;"></span></span></span>'
-        : '-';
       return `<tr>
-        <td style="font-weight:600;color:var(--text-secondary);font-size:11px;">${month}</td>
-        <td style="font-weight:600;">${escHtml(p.name)}</td><td>${p.productType||'-'}</td><td>${p.operator||'-'}</td>
+        <td style="font-weight:600;color:var(--text-secondary);">${month}</td>
+        <td>${escHtml(p.name)}</td><td>${p.productType||'-'}</td><td>${p.operator||'-'}</td>
         <td class="amount-income">${fmt(sumIncome(p))}</td>
         <td class="amount-cost">${fmt(sumCost(p))}</td>
         <td class="amount-gross">${fmt(sumGross(p))}</td>
-        <td>${marginHtml}</td>
+        <td style="font-weight:700;color:${margin!==null&&margin>=marginThreshold?'var(--success)':'var(--danger)'};">${fmtMargin(margin)}</td>
         <td>${sumPeople(p, excludeKeWei)}</td>
         <td><button class="btn btn-sm" onclick="window._showProjectDetail('${p.id}')"> 详情</button></td>
       </tr>`;
-    }).join('') || '<tr><td colspan="10" style="text-align:center;padding:40px 20px;color:var(--text-muted);font-size:13px;">' + ico('clip',24) + '<div style="margin:8px 0;opacity:0.4;">暂无团期数据</div><small style="font-size:11px;opacity:0.6;">请先导入数据或调整筛选条件</small></td></tr>';
+    }).join('') || '<tr><td colspan="10" style="text-align:center;padding:30px;color:var(--text-muted);">暂无团期数据</td></tr>';
 
     document.getElementById('projectPagination').innerHTML = totalPages > 1
       ? Array.from({length:totalPages},(_,i)=>`<button class="${i+1===projPage?'active':''}" onclick="window._projPage=${i+1};window._renderProjects()">${i+1}</button>`).join('')
@@ -3948,16 +3207,7 @@ async function rollbackToVersion(logId) {
 
   function renderDataImport() {
     // Import zone click
-    var zone = document.getElementById('importZone');
-    zone.onclick = function(){ document.getElementById('importFileInput').click(); };
-    // Drag-and-drop visual feedback
-    zone.ondragover = function(e) { e.preventDefault(); zone.classList.add('dragover'); };
-    zone.ondragleave = function() { zone.classList.remove('dragover'); };
-    zone.ondrop = function(e) {
-      e.preventDefault(); zone.classList.remove('dragover');
-      var file = e.dataTransfer.files[0];
-      if (file) { document.getElementById('importFileInput').files = e.dataTransfer.files; handleFileImport({target:{files:[file]}}); }
-    };
+    document.getElementById('importZone').onclick = function(){ document.getElementById('importFileInput').click(); };
     document.getElementById('importFileInput').onchange = handleFileImport;
     // 导入到云端按钮
     document.getElementById('importToSupabaseBtn').onclick = pushImportedToGitHub;
@@ -3973,8 +3223,8 @@ async function rollbackToVersion(logId) {
       try {
         var wb = XLSX.read(ev.target.result, { type: 'array' });
         var ws = wb.Sheets[wb.SheetNames[0]];
-        var data = XLSX.utils.sheet_to_json(ws, {defval: ''});
-        if (data.length === 0) { showImportMsg('文件中没有数据'); return; }
+        var data = XLSX.utils.sheet_to_json(ws);
+        if (data.length === 0) { showImportMsg('⚠️ 文件中没有数据'); return; }
 
         // 智能列名匹配（支持新旧两种模板格式）
         var firstRow = data[0];
@@ -3999,15 +3249,11 @@ async function rollbackToVersion(logId) {
         colMap.incomeOffline = findCol(['线下收入金额','线下收入']);
         colMap.incomeCutPos  = findCol(['切位收入金额','切位收入']);
 
-        // ★新：成本独立列（6组：金额+供应商，地接款支持扩展列）
+        // ★新：成本独立列（5组：金额+供应商）
         colMap.costTicketAmt = findCol(['车票款金额']);
         colMap.costTicketSup = findCol(['车票款供应商']);
-        // ★ 地接款2必须在"地接款"之前匹配，避免indexOf误匹配
-        colMap.costLocalAmt2 = findCol(['地接款金额2']);
-        colMap.costLocalSup2 = findCol(['地接款供应商2']);
-        // ★ 基础地接款列：排除已匹配的扩展列（防止indexOf误匹配）
-        colMap.costLocalAmt  = cols.find(function(c){ return c.indexOf('地接款金额')!==-1 && c !== colMap.costLocalAmt2; }) || null;
-        colMap.costLocalSup  = cols.find(function(c){ return c.indexOf('地接款供应商')!==-1 && c !== colMap.costLocalSup2; }) || null;
+        colMap.costLocalAmt  = findCol(['地接款金额']);
+        colMap.costLocalSup  = findCol(['地接款供应商']);
         colMap.costBookingAmt = findCol(['代订费用金额']);
         colMap.costBookingSup = findCol(['代订费用供应商']);
         colMap.costGuideAmt  = findCol(['导服费金额','导服费用金额']);
@@ -4026,7 +3272,7 @@ async function rollbackToVersion(logId) {
         colMap.people   = findCol(['人数明细','人数','people']);
 
         if (!colMap.name) {
-          showImportMsg('未找到「团号/团期名称」列，请检查表头。<br>可用列名：' + cols.join(', '));
+          showImportMsg('⚠️ 未找到「团号/团期名称」列，请检查表头。<br>可用列名：' + cols.join(', '));
           return;
         }
 
@@ -4036,7 +3282,7 @@ async function rollbackToVersion(logId) {
 
         // 判断是否使用新的独立列格式
         var useNewIncome  = !!(colMap.incomeOnline || colMap.incomeOffline || colMap.incomeCutPos);
-        var useNewCost    = !!(colMap.costTicketAmt || colMap.costLocalAmt || colMap.costLocalAmt2 || colMap.costBookingAmt || colMap.costGuideAmt || colMap.costOtherAmt);
+        var useNewCost    = !!(colMap.costTicketAmt || colMap.costLocalAmt || colMap.costBookingAmt || colMap.costGuideAmt || colMap.costOtherAmt);
         var useNewPeople  = !!(colMap.peopleOnline || colMap.peopleOffline || colMap.peopleCutPos);
 
         // 解析收入（优先新格式，回退旧格式）
@@ -4080,7 +3326,6 @@ async function rollbackToVersion(logId) {
             }
             addCost('车票款',   colMap.costTicketAmt,  colMap.costTicketSup);
             addCost('地接款',   colMap.costLocalAmt,   colMap.costLocalSup);
-            addCost('地接款2',  colMap.costLocalAmt2,  colMap.costLocalSup2);
             addCost('代订费用', colMap.costBookingAmt, colMap.costBookingSup);
             addCost('导服费',   colMap.costGuideAmt,   colMap.costGuideSup);
             addCost('其他',     colMap.costOtherAmt,   colMap.costOtherSup);
@@ -4249,7 +3494,7 @@ async function rollbackToVersion(logId) {
         // 显示预览界面
         showImportPreview(_pendingImport);
       } catch(err) {
-        showImportMsg('<span style="color:var(--danger);">导入失败：' + err.message + '</span>');
+        showImportMsg('<span style="color:var(--danger);">❌ 导入失败：' + err.message + '</span>');
       }
     };
     reader.readAsArrayBuffer(file);
@@ -4277,17 +3522,17 @@ async function rollbackToVersion(logId) {
     // 显示统计信息
     var stats = importData.stats;
     previewStats.innerHTML = `
-      <div class="preview-stat-card" style="flex:1;">
-        <div class="preview-stat-val" style="color:var(--success);">${stats.imported}</div>
-        <div class="preview-stat-label">新增团期</div>
+      <div style="flex:1;padding:10px;background:rgba(34,197,94,0.1);border-radius:6px;text-align:center;">
+        <div style="font-size:20px;font-weight:bold;color:#22c55e;">${stats.imported}</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">新增团期</div>
       </div>
-      <div class="preview-stat-card" style="flex:1;">
-        <div class="preview-stat-val" style="color:var(--info);">${stats.updated}</div>
-        <div class="preview-stat-label">更新团期</div>
+      <div style="flex:1;padding:10px;background:rgba(59,130,246,0.1);border-radius:6px;text-align:center;">
+        <div style="font-size:20px;font-weight:bold;color:#3b82f6;">${stats.updated}</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">更新团期</div>
       </div>
-      <div class="preview-stat-card" style="flex:1;">
-        <div class="preview-stat-val" style="color:var(--danger);">${stats.skipped}</div>
-        <div class="preview-stat-label">跳过行</div>
+      <div style="flex:1;padding:10px;background:rgba(239,68,68,0.1);border-radius:6px;text-align:center;">
+        <div style="font-size:20px;font-weight:bold;color:#ef4444;">${stats.skipped}</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">跳过行</div>
       </div>
     `;
     
@@ -4295,13 +3540,13 @@ async function rollbackToVersion(logId) {
     var html = '';
     importData.data.forEach(function(item) {
       var statusBadge = item.isUpdate 
-        ? '<span style="padding:2px 8px;border-radius:6px;background:rgba(59,130,246,0.12);color:var(--info);font-size:10px;font-weight:600;">更新</span>'
-        : '<span style="padding:2px 8px;border-radius:6px;background:rgba(34,197,94,0.12);color:var(--success);font-size:10px;font-weight:600;">新增</span>';
+        ? '<span style="padding:2px 8px;border-radius:4px;background:rgba(59,130,246,0.15);color:#3b82f6;font-size:11px;">更新</span>'
+        : '<span style="padding:2px 8px;border-radius:4px;background:rgba(34,197,94,0.15);color:#22c55e;font-size:11px;">新增</span>';
       
       // ★ 显示匹配类型提示
       var matchBadge = '';
       if (item.isUpdate && item._matchType === 'smart') {
-        matchBadge = '<br><small style="color:#3b82f6;">智能匹配</small>';
+        matchBadge = '<br><small style="color:#3b82f6;">🔍 智能匹配</small>';
       }
       
       var incomeCount = (item.incomes||[]).length;
@@ -4316,7 +3561,7 @@ async function rollbackToVersion(logId) {
       if (costCount === 0) warnings.push('无成本项');
       
       var warningHtml = warnings.length > 0 
-        ? '<br><small style="color:#f59e0b;">' + warnings.join(', ') + '</small>'
+        ? '<br><small style="color:#f59e0b;">⚠️ ' + warnings.join(', ') + '</small>'
         : '';
       
       html += '<tr>';
@@ -4338,7 +3583,7 @@ async function rollbackToVersion(logId) {
     
     // 显示导入按钮
     document.getElementById('importToSupabaseBtn').style.display = 'inline-block';
-    document.getElementById('importToSupabaseBtn').textContent = '确认导入 (' + (stats.imported + stats.updated) + '个团期)';
+    document.getElementById('importToSupabaseBtn').textContent = '☁️ 确认导入 (' + (stats.imported + stats.updated) + '个团期)';
     
     console.log('[导入预览] 已加载', importData.data.length, '条数据');
   }
@@ -4349,14 +3594,14 @@ async function rollbackToVersion(logId) {
     document.getElementById('importPreview').style.display = 'none';
     document.getElementById('importFileInput').value = '';
     document.getElementById('importToSupabaseBtn').style.display = projects.length > 0 ? 'inline-block' : 'none';
-    document.getElementById('importToSupabaseBtn').textContent = '导入到云端';
+    document.getElementById('importToSupabaseBtn').textContent = '☁️ 导入到云端';
     console.log('[导入] 已取消导入');
   }
 
   // 确认导入到云端
   async function pushImportedToGitHub() {
     if (!_pendingImport) {
-      alert('没有待导入的数据，请先上传Excel文件');
+      alert('⚠️ 没有待导入的数据，请先上传Excel文件');
       return;
     }
     
@@ -4426,38 +3671,37 @@ async function rollbackToVersion(logId) {
       refreshSupplierDatalist();
       
       var stats = _pendingImport.stats;
-      showImportMsg('导入成功！新增 ' + stats.imported + ' 个，更新 ' + stats.updated + ' 个团期。<br><small style="color:var(--text-muted);">' + _pendingImport.detailLog.join('<br>') + '</small>');
-      addImportLog('从 "' + _pendingImport.fileName + '" 导入：新增'+stats.imported+' 更新'+stats.updated);
+      showImportMsg('✅ 导入成功！新增 ' + stats.imported + ' 个，更新 ' + stats.updated + ' 个团期。<br><small style="color:var(--text-muted);">' + _pendingImport.detailLog.join('<br>') + '</small>');
+      addImportLog('☁️ 从 "' + _pendingImport.fileName + '" 导入：新增'+stats.imported+' 更新'+stats.updated);
       
       // 清空预览
       _pendingImport = null;
       document.getElementById('importFileInput').value = '';
-      document.getElementById('importToSupabaseBtn').textContent = '导入到云端';
+      document.getElementById('importToSupabaseBtn').textContent = '☁️ 导入到云端';
       
     } catch(e) {
       progressBar.style.opacity = '0';
       setTimeout(function() { progressBar.remove(); }, 300);
-      showImportMsg('<span style="color:var(--danger);">导入失败：'+e.message+'</span>');
+      showImportMsg('<span style="color:var(--danger);">❌ 导入失败：'+e.message+'</span>');
     }
     
     btn.disabled = false;
     if (_pendingImport) {
       var stats = _pendingImport.stats;
-      btn.textContent = '确认导入 (' + (stats.imported + stats.updated) + '个团期)';
+      btn.textContent = '☁️ 确认导入 (' + (stats.imported + stats.updated) + '个团期)';
     } else {
-      btn.textContent = '导入到云端';
+      btn.textContent = '☁️ 导入到云端';
     }
   }
 
   function showImportMsg(msg) {
-    document.getElementById('importPreview').innerHTML = '<div style="padding:16px;text-align:center;font-size:13px;color:var(--text-secondary);line-height:1.8;">' + msg + '</div>';
+    document.getElementById('importPreview').innerHTML = '<p>' + msg + '</p>';
   }
 
   function addImportLog(msg) {
     const log = document.getElementById('importLog');
     const time = new Date().toLocaleString('zh-CN');
-    var item = '<div class="log-timeline-item"><span class="log-dot edit"></span><span class="log-time">' + time + '</span><span class="log-desc">' + msg + '</span></div>';
-    log.innerHTML = item + log.innerHTML;
+    log.innerHTML = `<div>🕐 ${time} — ${msg}</div>` + log.innerHTML;
   }
 
   function updateDataSourceBadge(source) {
@@ -4478,10 +3722,10 @@ async function rollbackToVersion(logId) {
     } else {
       var errInfo = window._githubError || _githubLastError || '';
       if (errInfo) {
-        badge.innerHTML = ico('folder',10) + ' 本地 <span style="color:var(--warning);font-weight:700;">!</span>';
+        badge.innerHTML = '📁 本地 ⚠️';
         badge.title = 'GitHub拉取失败: ' + errInfo + ' | 已回退到本地data.js';
       } else {
-        badge.innerHTML = ico('folder',10) + ' 本地';
+        badge.innerHTML = '📁 本地';
         badge.title = '当前使用本地 data.js 数据';
       }
       badge.style.background = 'rgba(239,68,68,0.15)';
@@ -4516,29 +3760,29 @@ async function rollbackToVersion(logId) {
   async function refreshChangeLogUI() {
     var logEl = document.getElementById('importLog');
     if (!logEl) return;
-    logEl.innerHTML = '<div style="color:var(--text-muted);padding:12px;text-align:center;font-size:11px;">⏳ 加载变更日志中...</div>';
+    logEl.innerHTML = '<div style="color:var(--text-muted);padding:8px;">⏳ 加载变更日志中...</div>';
     try {
       var changelog = await loadChangeLog();
       if (!changelog || changelog.length === 0) {
-        logEl.innerHTML = '<div style="color:var(--text-muted);padding:12px;text-align:center;font-size:11px;">暂无变更日志记录</div>';
+        logEl.innerHTML = '<div style="color:var(--text-muted);padding:8px;">暂无变更日志记录</div>';
         return;
       }
       var html = '';
       changelog.forEach(function(entry) {
         var time = new Date(entry.time).toLocaleString('zh-CN');
-        var dotClass = entry.action === 'save' ? 'save' : entry.action === 'rollback' ? 'rollback' : 'edit';
+        var icon = entry.action === 'save' ? '💾' : entry.action === 'rollback' ? '🔄' : '📝';
         var desc = entry.description || '未知操作';
-        var count = entry.recordCount ? '<span class="log-count">(' + entry.recordCount + '条)</span>' : '';
-        html += '<div class="log-timeline-item">' +
-          '<span class="log-dot ' + dotClass + '"></span>' +
-          '<span class="log-time">' + time + '</span>' +
-          '<span class="log-desc">' + escHtml(desc) + count + '</span>' +
-          (entry.snapshot ? '<span class="log-rollback-tag">可回滚</span>' : '') +
+        var count = entry.recordCount ? ' (' + entry.recordCount + '条)' : '';
+        html += '<div style="padding:6px 0;border-bottom:1px solid var(--border-light);font-size:11px;">' +
+          '<span style="color:var(--text-muted);">' + time + '</span> ' +
+          icon + ' <strong>' + escHtml(desc) + '</strong>' +
+          '<span style="color:var(--text-muted);">' + count + '</span>' +
+          (entry.snapshot ? ' <span style="color:var(--success);font-size:10px;">[可回滚]</span>' : '') +
           '</div>';
       });
       logEl.innerHTML = html;
     } catch(e) {
-      logEl.innerHTML = '<div style="color:var(--danger);padding:8px;">加载日志失败: ' + escHtml(e.message) + '</div>';
+      logEl.innerHTML = '<div style="color:var(--danger);padding:8px;">❌ 加载日志失败: ' + escHtml(e.message) + '</div>';
     }
   }
 
@@ -4571,22 +3815,22 @@ async function rollbackToVersion(logId) {
       changelog.forEach(function(entry) {
         var time = new Date(entry.time).toLocaleString('zh-CN');
         var hasSnapshot = !!entry.snapshot;
-        var icon = entry.action === 'save' ? ICO.chart : entry.action === 'rollback' ? ICO.trendDown : ICO.clip;
+        var icon = entry.action === 'save' ? '💾' : entry.action === 'rollback' ? '🔄' : '📝';
         var count = entry.recordCount ? entry.recordCount + '条' : '';
         html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-bottom:1px solid var(--border-light);">' +
-          '<div style="display:flex;align-items:center;gap:6px;">' +
+          '<div>' +
             '<span style="color:var(--text-muted);font-size:10px;">' + time + '</span><br>' +
-            '<span style="display:inline-flex;align-items:center;gap:4px;">' + icon + ' <strong style="font-size:12px;">' + escHtml(entry.description) + '</strong>' +
-            '<span style="color:var(--text-muted);font-size:10px;"> ' + count + '</span></span>' +
+            icon + ' <strong style="font-size:12px;">' + escHtml(entry.description) + '</strong>' +
+            '<span style="color:var(--text-muted);font-size:10px;"> ' + count + '</span>' +
           '</div>' +
           (hasSnapshot
-            ? '<button class="btn btn-sm btn-warning" onclick="rollbackToVersion(\'' + entry.id + '\')" style="font-size:10px;padding:3px 10px;">回滚</button>'
+            ? '<button class="btn btn-sm btn-warning" onclick="rollbackToVersion(\'' + entry.id + '\')" style="font-size:10px;padding:3px 10px;">⬅ 回滚</button>'
             : '<span style="font-size:10px;color:var(--text-muted);">无快照</span>') +
           '</div>';
       });
       listEl.innerHTML = html;
     } catch(e) {
-      listEl.innerHTML = '<div style="color:var(--danger);padding:16px;text-align:center;">加载失败: ' + escHtml(e.message) + '</div>';
+      listEl.innerHTML = '<div style="color:var(--danger);padding:16px;text-align:center;">❌ 加载失败: ' + escHtml(e.message) + '</div>';
     }
   }
 
@@ -4596,7 +3840,7 @@ async function rollbackToVersion(logId) {
     if (!p) return;
 
     let html = `<button class="close-btn" onclick="document.getElementById('modalOverlay').classList.remove('show')">✕</button>
-    <h3>${ICO.clip} ${escHtml(p.name)}</h3>
+    <h3>📋 ${escHtml(p.name)}</h3>
 
     <div class="edit-grid">
       <div class="edit-field"><label>团号</label><input type="text" id="ed_name" value="${escHtml(p.name)}"></div>
@@ -4606,41 +3850,33 @@ async function rollbackToVersion(logId) {
       <div class="edit-field"><label>备注</label><input type="text" id="ed_remark" value="${escHtml(p.remark||'')}"></div>
     </div>`;
 
-    // 收入明细（可编辑，下拉选择+支持新增，固定排序）
-    html += '<h4 style="margin:16px 0 8px;font-size:13px;color:var(--text-secondary);display:flex;align-items:center;gap:6px;"><span style="width:6px;height:6px;border-radius:50%;background:var(--success);display:inline-block;"></span>' + ICO.coin + ' 收入明细</h4>';
+    // 收入明细（可编辑）
+    html += '<h4 style="margin:14px 0 8px;">💰 收入明细</h4>';
     html += '<div id="ed_incomes_list" class="sub-item-list">';
-    var origIncomes = p.incomes||[];
-    var sortedIncomes = origIncomes.map(function(inc,i){ return {inc:inc,oi:i}; })
-      .sort(function(a,b){ return incomeSortIndex(a.inc.name) - incomeSortIndex(b.inc.name); });
-    sortedIncomes.forEach(function(item,idx){
-      var inc = item.inc;
-      html += '<div class="sub-item" data-orig-idx="'+item.oi+'"><input list="incomeNameList" placeholder="收入类型" value="'+escHtml(inc.name)+'" data-inc-name="'+idx+'" style="min-width:100px;">';
-      html += '<input placeholder="金额" value="'+(inc.amount||0)+'" data-inc-amt="'+idx+'" style="width:110px;" type="number" step="0.01">';
-      html += '<button onclick="this.parentElement.remove()">✕</button></div>';
+    (p.incomes||[]).forEach(function(inc,idx){
+      html += `<div class="sub-item"><input placeholder="名称" value="${escHtml(inc.name)}" data-inc-name="${idx}">`;
+      html += `<input placeholder="金额" value="${inc.amount||0}" data-inc-amt="${idx}" style="width:110px;">`;
+      html += `<button onclick="this.parentElement.remove()">✕</button></div>`;
     });
     html += '</div>';
-    html += '<button class="btn btn-sm btn-outline" onclick="addSubItemInline(\'ed_incomes_list\',\'income\')" style="margin-bottom:12px;">＋ 添加收入项</button>';
+    html += `<button class="btn btn-sm btn-outline" onclick="addSubItemInline('ed_incomes_list','income')" style="margin-bottom:12px;">＋ 添加收入项</button>`;
 
-    // 成本明细（可编辑，下拉选择+支持新增，固定排序）
-    html += '<h4 style="margin:16px 0 8px;font-size:13px;color:var(--text-secondary);display:flex;align-items:center;gap:6px;"><span style="width:6px;height:6px;border-radius:50%;background:var(--danger);display:inline-block;"></span>' + ICO.trendDown + ' 成本明细</h4>';
+    // 成本明细（可编辑，含供应商自由输入）
+    html += '<h4 style="margin:12px 0 8px;">📉 成本明细</h4>';
     html += '<div id="ed_costs_list" class="sub-item-list">';
-    var origCosts = p.costs||[];
-    var sortedCosts = origCosts.map(function(c,i){ return {c:c,oi:i}; })
-      .sort(function(a,b){ return costSortIndex(a.c.name) - costSortIndex(b.c.name); });
-    sortedCosts.forEach(function(item,idx){
-      var c = item.c;
+    (p.costs||[]).forEach(function(c,idx){
       var sup = suppliers.find(function(s){return s.id===c._supplierId;});
       var supName = sup ? sup.name : (c._supplierId || '');
-      html += '<div class="sub-item" data-orig-idx="'+item.oi+'"><input list="costNameList" placeholder="成本类型" value="'+escHtml(c.name)+'" data-cost-name="'+idx+'" style="min-width:100px;">';
+      html += '<div class="sub-item"><input placeholder="成本项名称" value="'+escHtml(c.name)+'" data-cost-name="'+idx+'">';
       html += '<input placeholder="金额" value="'+(c.amount||0)+'" data-cost-amt="'+idx+'" style="width:90px;" type="number" step="0.01">';
       html += '<input list="supplierList" placeholder="供应商(可手输)" value="'+escHtml(supName)+'" data-cost-sup="'+idx+'" style="flex:1;padding:5px 6px;border-radius:6px;border:1px solid var(--border-light);background:var(--bg-secondary);color:var(--text-primary);font-size:11px;min-width:0;font-family:inherit;">';
       html += '<button onclick="this.parentElement.remove()">✕</button></div>';
     });
     html += '</div>';
-    html += '<button class="btn btn-sm btn-outline" onclick="addSubItemInline(\'ed_costs_list\',\'cost\')" style="margin-bottom:12px;">＋ 添加成本项</button>';
+    html += `<button class="btn btn-sm btn-outline" onclick="addSubItemInline('ed_costs_list','cost')" style="margin-bottom:12px;">＋ 添加成本项</button>`;
 
     // 人数明细（固定3个渠道：线上/线下/切位）
-    html += '<h4 style="margin:16px 0 8px;font-size:13px;color:var(--text-secondary);display:flex;align-items:center;gap:6px;"><span style="width:6px;height:6px;border-radius:50%;background:var(--purple);display:inline-block;"></span>👥 人数明细</h4>';
+    html += '<h4 style="margin:12px 0 8px;">👥 人数明细</h4>';
     html += '<div id="ed_people_list" class="sub-item-list">';
     
     // 确保有3个固定渠道的数据
@@ -4665,18 +3901,10 @@ async function rollbackToVersion(logId) {
     html += '</div>';
     // ★ 隐藏“添加人数类型”按钮，不允许用户添加其他类型
 
-    // 下拉选项 datalist（收入类型 + 成本类型）
-    html += '<datalist id="incomeNameList">';
-    INCOME_NAME_ORDER.forEach(function(n){ html += '<option value="'+n+'">'; });
-    html += '</datalist>';
-    html += '<datalist id="costNameList">';
-    COST_NAME_ORDER.forEach(function(n){ html += '<option value="'+n+'">'; });
-    html += '</datalist>';
-
     // 操作按钮
     html += `<div class="modal-save-bar">
       <button class="btn btn-outline" onclick="document.getElementById('modalOverlay').classList.remove('show')">取消</button>
-      <button class="btn btn-accent" onclick="saveDetailToCloud('${id}')">保存到云端</button>
+      <button class="btn btn-accent" onclick="saveDetailToCloud('${id}')">💾 保存到云端</button>
     </div>`;
 
     document.getElementById('modalBox').innerHTML = html;
@@ -4689,9 +3917,9 @@ async function rollbackToVersion(logId) {
     var idx = container.children.length;
     var h = '<div class="sub-item">';
     if (type==='income') {
-      h+='<input list="incomeNameList" placeholder="收入类型" data-inc-name="'+idx+'" style="min-width:100px;"><input placeholder="金额" value="0" data-inc-amt="'+idx+'" style="width:110px;" type="number" step="0.01">';
+      h+='<input placeholder="收入项名称" data-inc-name="'+idx+'"><input placeholder="金额" value="0" data-inc-amt="'+idx+'" style="width:110px;">';
     } else if(type==='cost') {
-      h+='<input list="costNameList" placeholder="成本类型" data-cost-name="'+idx+'" style="min-width:100px;"><input placeholder="金额" value="0" data-cost-amt="'+idx+'" style="width:90px;" type="number" step="0.01">';
+      h+='<input placeholder="成本项名称" data-cost-name="'+idx+'"><input placeholder="金额" value="0" data-cost-amt="'+idx+'" style="width:90px;" type="number" step="0.01">';
       h+='<input list="supplierList" placeholder="供应商(可手输)" value="" data-cost-sup="'+idx+'" style="flex:1;padding:5px 6px;border-radius:6px;border:1px solid var(--border-light);background:var(--bg-secondary);color:var(--text-primary);font-size:11px;min-width:0;font-family:inherit;">';
     } else {
       h+='<input placeholder="类型" data-ppl-name="'+idx+'"><input placeholder="人数" value="0" data-ppl-cnt="" style="width:90px;">';
@@ -4708,11 +3936,11 @@ async function rollbackToVersion(logId) {
     var incomes=[], costs=[], peopleDetails=[];
 
     // 收入项：从编辑框读取，保留已有的 id 和 receivedAmount
+    var incIdx=0;
     document.querySelectorAll('#ed_incomes_list .sub-item').forEach(function(el){
       var n=el.querySelector('[data-inc-name]'), a=el.querySelector('[data-inc-amt]');
       if(n&&n.value.trim()) {
-        var oi = parseInt(el.getAttribute('data-orig-idx'));
-        var oldInc = (!isNaN(oi) && oldIncomes[oi]) ? oldIncomes[oi] : {};
+        var oldInc = oldIncomes[incIdx] || {};
         incomes.push({
           id: oldInc.id || ('income_'+Date.now()+'_'+incomes.length),
           name: n.value.trim(),
@@ -4720,16 +3948,15 @@ async function rollbackToVersion(logId) {
           receivedAmount: oldInc.receivedAmount || 0
         });
       }
+      incIdx++;
     });
-    // 按固定顺序排序
-    incomes.sort(function(a,b){ return incomeSortIndex(a.name) - incomeSortIndex(b.name); });
 
     // 成本项：从编辑框读取，保留已有的 id 和 paidAmount
+    var costIdx=0;
     document.querySelectorAll('#ed_costs_list .sub-item').forEach(function(el){
       var n=el.querySelector('[data-cost-name]'), a=el.querySelector('[data-cost-amt]'), s=el.querySelector('[data-cost-sup]');
       if(n&&n.value.trim()) {
-        var oi = parseInt(el.getAttribute('data-orig-idx'));
-        var oldCost = (!isNaN(oi) && oldCosts[oi]) ? oldCosts[oi] : {};
+        var oldCost = oldCosts[costIdx] || {};
         var supId = resolveSupplierId(s?s.value:''); // 自由输入 → 匹配已有或新建供应商
         costs.push({
           id: oldCost.id || ('cost_'+Date.now()+'_'+costs.length),
@@ -4739,9 +3966,8 @@ async function rollbackToVersion(logId) {
           paidAmount: oldCost.paidAmount || 0
         });
       }
+      costIdx++;
     });
-    // 按固定顺序排序
-    costs.sort(function(a,b){ return costSortIndex(a.name) - costSortIndex(b.name); });
 
     // ★ 人数明细：只处理3个固定渠道（线上/线下/切位），忽略其他类型
     var peopleMap = {
@@ -4788,9 +4014,9 @@ async function rollbackToVersion(logId) {
       if (!ok) throw new Error('Supabase写入失败');
 
       document.getElementById('modalOverlay').classList.remove('show');
-      alert('已保存到云端：'+updated.name);
+      alert('✅ 已保存到云端：'+updated.name);
     } catch(e) {
-      alert('保存失败：'+e.message);
+      alert('❌ 保存失败：'+e.message);
     }
   };
 
@@ -4872,7 +4098,7 @@ async function rollbackToVersion(logId) {
         return;
       }
     } catch(e) {
-      addImportLog('GitHub 刷新失败: ' + e.message);
+      addImportLog('⚠️ GitHub 刷新失败: ' + e.message);
     }
 
     // 2️⃣ 本地刷新
@@ -4883,9 +4109,9 @@ async function rollbackToVersion(logId) {
       projects = (window.TOUR_DATA || []).map(p => normalizeProject(p));
       updateDataSourceBadge('local');
       renderCurrentPane();
-      addImportLog('本地刷新：已加载 ' + projects.length + ' 个团期');
+      addImportLog('📁 本地刷新：已加载 ' + projects.length + ' 个团期');
     };
-    script.onerror = () => { addImportLog('刷新失败：无法加载data.js'); };
+    script.onerror = () => { addImportLog('❌ 刷新失败：无法加载data.js'); };
     document.head.appendChild(script);
   });
 
@@ -4895,101 +4121,27 @@ async function rollbackToVersion(logId) {
     renderCurrentPane();
   });
 
-  // 时间筛选 - 自定义月份选择器
-  (function() {
-    var MONTH_NAMES = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
-    var mpChevronL = '<svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>';
-    var mpChevronR = '<svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>';
-    var now = new Date();
-    var curYear = now.getFullYear(), curMonth = now.getMonth() + 1;
-
-    function parseVal(id) {
-      var v = document.getElementById(id).value || '';
-      var parts = v.split('-');
-      return { year: parseInt(parts[0]) || curYear, month: parseInt(parts[1]) || 1 };
-    }
-
-    function renderPicker(containerId, hiddenId, displayId) {
-      var container = document.getElementById(containerId);
-      var parsed = parseVal(hiddenId);
-      var viewYear = parsed.year;
-      var selMonth = parsed.month;
-
-      function draw() {
-        var html = '<div class="mp-header">';
-        html += '<button class="mp-nav-btn" data-act="prev">' + mpChevronL + '</button>';
-        html += '<button class="mp-year-btn">' + viewYear + '</button>';
-        html += '<button class="mp-nav-btn" data-act="next">' + mpChevronR + '</button>';
-        html += '</div>';
-        html += '<div class="mp-grid">';
-        for (var i = 1; i <= 12; i++) {
-          var cls = 'mp-month';
-          if (i === selMonth && viewYear === parsed.year) cls += ' active';
-          if (i === curMonth && viewYear === curYear) cls += ' current';
-          html += '<button class="' + cls + '" data-month="' + i + '">' + MONTH_NAMES[i-1] + '</button>';
-        }
-        html += '</div>';
-        html += '<div class="mp-footer">';
-        html += '<button class="mp-footer-btn" data-act="clear">清除</button>';
-        html += '<button class="mp-footer-btn" data-act="today">本月</button>';
-        html += '</div>';
-        container.innerHTML = html;
-
-        container.querySelector('[data-act="prev"]').onclick = function(e) { e.stopPropagation(); viewYear--; draw(); };
-        container.querySelector('[data-act="next"]').onclick = function(e) { e.stopPropagation(); viewYear++; draw(); };
-        var clearBtn = container.querySelector('[data-act="clear"]');
-        if (clearBtn) clearBtn.onclick = function(e) { e.stopPropagation(); container.classList.remove('show'); };
-        var todayBtn = container.querySelector('[data-act="today"]');
-        if (todayBtn) todayBtn.onclick = function(e) {
-          e.stopPropagation();
-          var val = curYear + '-' + String(curMonth).padStart(2, '0');
-          document.getElementById(hiddenId).value = val;
-          document.getElementById(displayId).value = curYear + '年' + String(curMonth).padStart(2, '0') + '月';
-          getPaneRange()[hiddenId === 'rangeStart' ? 'start' : 'end'] = val;
-          updateDateRangeLabel();
-          container.classList.remove('show');
-        };
-        container.querySelectorAll('.mp-month').forEach(function(btn) {
-          btn.onclick = function(e) {
-            e.stopPropagation();
-            var m = parseInt(this.dataset.month);
-            var val = viewYear + '-' + String(m).padStart(2, '0');
-            document.getElementById(hiddenId).value = val;
-            document.getElementById(displayId).value = viewYear + '年' + String(m).padStart(2, '0') + '月';
-            getPaneRange()[hiddenId === 'rangeStart' ? 'start' : 'end'] = val;
-            updateDateRangeLabel();
-            container.classList.remove('show');
-          };
-        });
-      }
-      draw();
-    }
-
-    // 点击显示输入框打开选择器
-    document.getElementById('rangeStartDisplay').addEventListener('click', function(e) {
-      e.stopPropagation();
-      document.getElementById('mpEnd').classList.remove('show');
-      var mp = document.getElementById('mpStart');
-      if (mp.classList.contains('show')) { mp.classList.remove('show'); return; }
-      renderPicker('mpStart', 'rangeStart', 'rangeStartDisplay');
-      mp.classList.add('show');
-    });
-    document.getElementById('rangeEndDisplay').addEventListener('click', function(e) {
-      e.stopPropagation();
-      document.getElementById('mpStart').classList.remove('show');
-      var mp = document.getElementById('mpEnd');
-      if (mp.classList.contains('show')) { mp.classList.remove('show'); return; }
-      renderPicker('mpEnd', 'rangeEnd', 'rangeEndDisplay');
-      mp.classList.add('show');
-    });
-    // 点击外部关闭
-    document.addEventListener('click', function(e) {
-      if (!e.target.closest('.month-input-wrap')) {
-        document.getElementById('mpStart').classList.remove('show');
-        document.getElementById('mpEnd').classList.remove('show');
-      }
-    });
-  })();
+  // 时间筛选 - 只在确定按钮时触发筛选
+  document.getElementById('rangeStart').addEventListener('input', function() { 
+    getPaneRange().start = this.value; 
+    updateDateRangeLabel();
+    // 不关闭弹窗，不触发筛选
+  });
+  document.getElementById('rangeStart').addEventListener('change', function() { 
+    getPaneRange().start = this.value; 
+    updateDateRangeLabel();
+    // 不关闭弹窗，不触发筛选
+  });
+  document.getElementById('rangeEnd').addEventListener('input', function() { 
+    getPaneRange().end = this.value; 
+    updateDateRangeLabel();
+    // 不关闭弹窗，不触发筛选
+  });
+  document.getElementById('rangeEnd').addEventListener('change', function() { 
+    getPaneRange().end = this.value; 
+    updateDateRangeLabel();
+    // 不关闭弹窗，不触发筛选
+  });
   document.getElementById('applyThreshold').addEventListener('click', function() {
     marginThreshold = parseFloat(document.getElementById('marginThresholdGreen').value) || 30;
     localStorage.setItem('tour_marginThreshold', marginThreshold);
@@ -4998,7 +4150,7 @@ async function rollbackToVersion(logId) {
     if (tcChartInstance) { tcChartInstance.destroy(); tcChartInstance = null; }
     document.querySelectorAll('.traffic-compact-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('trafficCompactMid').innerHTML = '<div class="hint">👆 点击左侧按钮<br>查看对应团期明细</div>';
-    document.getElementById('trafficCompactRight').innerHTML = '<div class="hint">' + ico('chart',20) + '<br>点击按钮查看对比图表</div>';
+    document.getElementById('trafficCompactRight').innerHTML = '<div class="hint">📊<br>点击按钮查看对比图表</div>';
     renderCurrentPane();
   });
   document.getElementById('exportBtn').addEventListener('click', exportExcel);
@@ -5012,34 +4164,6 @@ async function rollbackToVersion(logId) {
   document.getElementById('payMonthAll').addEventListener('click', function() { payMonthFilter = 'all'; renderPayables(); });
   document.getElementById('payModalOverlay').addEventListener('click', function(e) { if (e.target===this) closePayModal(); });
   document.getElementById('recModalOverlay').addEventListener('click', function(e) { if (e.target===this) closeRecModal(); });
-
-  // ESC 键关闭所有弹窗
-  document.addEventListener('keydown', function(e) {
-    if (e.key !== 'Escape') return;
-    var closed = false;
-    // 主弹窗（分类管理、团期详情、导入预览等）
-    var mo = document.getElementById('modalOverlay');
-    if (mo && mo.classList.contains('show')) { mo.classList.remove('show'); closed = true; }
-    // 付款登记弹窗
-    var po = document.getElementById('payModalOverlay');
-    if (po && po.classList.contains('show')) { po.classList.remove('show'); closed = true; }
-    // 收款登记弹窗
-    var ro = document.getElementById('recModalOverlay');
-    if (ro && ro.classList.contains('show')) { ro.classList.remove('show'); closed = true; }
-    // 日期范围选择器
-    var dr = document.getElementById('dateRangePopover');
-    if (dr && dr.classList.contains('show')) { dr.classList.remove('show'); var btn = document.getElementById('dateRangeBtn'); if(btn) btn.classList.remove('open'); closed = true; }
-    // 自定义月份选择器
-    var ms = document.getElementById('mpStart');
-    if (ms && ms.classList.contains('show')) { ms.classList.remove('show'); closed = true; }
-    var me = document.getElementById('mpEnd');
-    if (me && me.classList.contains('show')) { me.classList.remove('show'); closed = true; }
-    // 供应商关联团期面板
-    var sp = document.getElementById('supTourPanel');
-    if (sp && sp.classList.contains('sb-show')) { sp.classList.remove('sb-show'); closed = true; }
-    // 阻止 ESC 触发浏览器默认行为（如退出全屏）
-    if (closed) e.preventDefault();
-  });
 
   // 供应商新增
   document.getElementById('addSupBtn').addEventListener('click', function(){
@@ -5068,6 +4192,13 @@ async function rollbackToVersion(logId) {
   window._renderPayables = renderPayables;
   window._renderProjects = renderProjects;
   window._tcGoPage = function(pg) { tcListPage = pg; refreshTrafficPanel(); };
+  window._selectSupplier = function(sid) {
+    activeSupplierId = (activeSupplierId === sid) ? null : sid;
+    supListPage = 1;
+    if (supChartInstance) { supChartInstance.destroy(); supChartInstance = null; }
+    renderSuppliers();
+  };
+  window._supGoPage = function(pg) { supListPage = pg; if (activeSupplierId) refreshSupplierDetail(); };
 
   // ==================== EXPORT EXCEL (每个字段独立一列) ====================
   function exportExcel() {
@@ -5078,36 +4209,35 @@ async function rollbackToVersion(logId) {
       function findCost(name) { return (p.costs||[]).find(function(x){return x.name===name;}); }
       function findPpl(name) { var d=(p.peopleDetails||[]).find(function(x){return x.name===name;}); return d?d.count:0; }
       function supName(c) { if(!c) return ''; var s=suppliers.find(function(x){return x.id===c._supplierId;}); return s?s.name:''; }
-      var ticket=findCost('车票款'), local=findCost('地接款'), local2=findCost('地接款2'), booking=findCost('代订费用');
+      var ticket=findCost('车票款'), local=findCost('地接款'), booking=findCost('代订费用');
       var guide=findCost('导服费')||findCost('导服费用'), other=findCost('其他')||findCost('其他费用');
       return {
         '团号': p.name,
         '产品线': p.productType || '',
         '计调': p.operator || '',
         '出发日期': p.startDate || '',
-        '线上人数': findPpl('线上'),
-        '线下人数': findPpl('线下'),
-        '切位人数': findPpl('切位'),
+        '备注': p.remark || '',
         '线上收入金额': findInc('线上')||findInc('线上收入')||0,
         '线下收入金额': findInc('线下')||findInc('线下收入')||0,
         '切位收入金额': findInc('切位')||findInc('切位收入')||0,
         '车票款金额': ticket?ticket.amount:0, '车票款供应商': supName(ticket),
         '地接款金额': local?local.amount:0, '地接款供应商': supName(local),
-        '地接款金额2': local2?local2.amount:0, '地接款供应商2': supName(local2),
         '代订费用金额': booking?booking.amount:0, '代订费用供应商': supName(booking),
         '导服费金额': guide?guide.amount:0, '导服费供应商': supName(guide),
-        '其他费用金额': other?other.amount:0, '其他费用供应商': supName(other)
+        '其他费用金额': other?other.amount:0, '其他费用供应商': supName(other),
+        '线上人数': findPpl('线上'),
+        '线下人数': findPpl('线下'),
+        '切位人数': findPpl('切位')
       };
     });
     var ws = XLSX.utils.json_to_sheet(data);
     ws['!cols'] = [
-      { wch: 28 },{ wch: 10 },{ wch: 8 },{ wch: 12 },
-      { wch: 10 },{ wch: 10 },{ wch: 10 },
+      { wch: 28 },{ wch: 10 },{ wch: 8 },
+      { wch: 12 },{ wch: 14 },
       { wch: 12 },{ wch: 12 },{ wch: 12 },
       { wch: 12 },{ wch: 14 },{ wch: 12 },{ wch: 14 },
-      { wch: 12 },{ wch: 14 },
       { wch: 14 },{ wch: 14 },{ wch: 12 },{ wch: 14 },
-      { wch: 14 },{ wch: 14 }
+      { wch: 10 },{ wch: 10 },{ wch: 10 }
     ];
     var wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, '团期数据');
@@ -5117,25 +4247,12 @@ async function rollbackToVersion(logId) {
 
   // 下载空白导入模版（每个字段独立一列，方便一一对应）
   window.downloadTemplate = function() {
-    // ★ 收集当前看板中已有的产品线名称（去重排序）
-    var typeSet = {};
-    projects.forEach(function(p) {
-      var t = p.productType || '未分类';
-      typeSet[t] = true;
-    });
-    var typeList = Object.keys(typeSet).sort();
-    if (typeList.length === 0) {
-      typeList = ['国内游', '出境游', '周边游']; // 默认兜底
-    }
-
     var data = [{
       '团号': '示例团期名称（如：YJMH-越南-20260110 南宁）',
       '产品线': '国内游',
       '计调': '张三',
       '出发日期': '2026-05-01',
-      '线上人数': 30,
-      '线下人数': 10,
-      '切位人数': 5,
+      '备注': '备注信息',
       '线上收入金额': 50000,
       '线下收入金额': 20000,
       '切位收入金额': 10000,
@@ -5143,50 +4260,27 @@ async function rollbackToVersion(logId) {
       '车票款供应商': '火车票代订',
       '地接款金额': 25000,
       '地接款供应商': '南宁地接社',
-      '地接款金额2': 12000,
-      '地接款供应商2': '桂林地接社',
       '代订费用金额': 3000,
       '代订费用供应商': '',
       '导服费金额': 2000,
       '导服费供应商': '',
       '其他费用金额': 500,
-      '其他费用供应商': ''
+      '其他费用供应商': '',
+      '线上人数': 30,
+      '线下人数': 10,
+      '切位人数': 5
     }];
     var ws = XLSX.utils.json_to_sheet(data);
     ws['!cols'] = [
-      { wch: 28 },{ wch: 10 },{ wch: 8 },{ wch: 12 },
-      { wch: 10 },{ wch: 10 },{ wch: 10 },
+      { wch: 28 },{ wch: 10 },{ wch: 8 },
+      { wch: 12 },{ wch: 14 },
       { wch: 12 },{ wch: 12 },{ wch: 12 },
       { wch: 12 },{ wch: 14 },{ wch: 12 },{ wch: 14 },
-      { wch: 12 },{ wch: 14 },
       { wch: 14 },{ wch: 14 },{ wch: 12 },{ wch: 14 },
-      { wch: 14 },{ wch: 14 }
+      { wch: 10 },{ wch: 10 },{ wch: 10 }
     ];
-
-    // ★ 创建隐藏参考表，存放产品线列表（供B列下拉选择）
-    var refData = typeList.map(function(t) { return { '产品线列表': t }; });
-    var wsRef = XLSX.utils.json_to_sheet(refData);
-    wsRef['!cols'] = [{ wch: 16 }];
-
     var wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, '导入模板');
-    XLSX.utils.book_append_sheet(wb, wsRef, '产品线参考');
-    wb.Workbook = wb.Workbook || {};
-    wb.Workbook.Sheets = wb.Workbook.Sheets || [];
-    wb.Workbook.Sheets[0] = { Hidden: 0 }; // 导入模板：可见
-    wb.Workbook.Sheets[1] = { Hidden: 1 }; // 产品线参考：隐藏
-
-    // ★ 添加B列数据验证（下拉选择产品线）
-    var lastRefRow = typeList.length + 1; // +1因为参考表有表头占第1行，数据从A2开始
-    ws['!dataValidations'] = [
-      {
-        sqref: 'B2:B200',
-        type: 'list',
-        formulae: ["'产品线参考'!$A$2:$A$" + lastRefRow],
-        showDropDown: false
-      }
-    ];
-
     XLSX.writeFile(wb, '导入模板_空白.xlsx');
   };
 
@@ -5196,11 +4290,6 @@ async function rollbackToVersion(logId) {
     var s = r.start.replace('-', '年') + '月';
     var e = r.end.replace('-', '年') + '月';
     document.getElementById('dateRangeLabel').textContent = s + ' - ' + e;
-    // 同步自定义月份显示输入框
-    var sd = document.getElementById('rangeStartDisplay');
-    var ed = document.getElementById('rangeEndDisplay');
-    if (sd) sd.value = s;
-    if (ed) ed.value = e;
   }
 
   // ==================== 快捷时间预设 ====================
@@ -5399,12 +4488,12 @@ async function rollbackToVersion(logId) {
 
     if (!target.length) {
       mid.innerHTML = '<div class="hint">暂无对应团期数据</div>';
-      right.innerHTML = '<div class="hint">' + ico('chart',20) + '<br>暂无数据</div>';
+      right.innerHTML = '<div class="hint">📊<br>暂无数据</div>';
       if (tcChartInstance) { tcChartInstance.destroy(); tcChartInstance = null; }
       return;
     }
 
-    var labMap = {above:'高于阈值', below:'低于阈值'};
+    var labMap = {above:'✅ 高于阈值', below:'⚠️ 低于阈值'};
     var lab = labMap[activeTrafficFilter] || '';
     var perPage = 6;
     var totalPages = Math.ceil(target.length / perPage) || 1;
@@ -5432,13 +4521,13 @@ async function rollbackToVersion(logId) {
       }
       midHtml += '</span></div>';
       midHtml += '<div class="tc-meta">';
-      midHtml += '<span>' + ICO.box + (p.productType||'未分类') + '</span>';
-      midHtml += '<span>' + ICO.coin + fmt(sumIncome(p)) + '</span>';
-      midHtml += '<span>' + ICO.trendDown + fmt(sumCost(p)) + '</span>';
+      midHtml += '<span>📦' + (p.productType||'未分类') + '</span>';
+      midHtml += '<span>💰' + fmt(sumIncome(p)) + '</span>';
+      midHtml += '<span>📉' + fmt(sumCost(p)) + '</span>';
       // 如果有切位收入，额外显示切位金额
       var cutIncome = (p.incomes||[]).find(function(i){ return i.name === '切位收入'; });
       if (cutIncome && cutIncome.amount > 0) {
-        midHtml += '<span title="切位收入金额">' + ICO.scissors + fmt(cutIncome.amount) + '</span>';
+        midHtml += '<span title="切位收入金额">✂️' + fmt(cutIncome.amount) + '</span>';
       }
       midHtml += '</div></div>';
     }
@@ -5587,11 +4676,11 @@ async function rollbackToVersion(logId) {
     if (isWarm) {
       root.removeAttribute('data-theme');
       localStorage.setItem('theme', 'dark');
-      document.getElementById('themeToggleBtn').innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+      document.getElementById('themeToggleBtn').textContent = '🌙';
     } else {
       root.setAttribute('data-theme', 'warm');
       localStorage.setItem('theme', 'warm');
-      document.getElementById('themeToggleBtn').innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>';
+      document.getElementById('themeToggleBtn').textContent = '☀️';
     }
   };
 
@@ -5669,7 +4758,7 @@ async function rollbackToVersion(logId) {
       }
       else {
         document.getElementById('trafficCompactMid').innerHTML = '<div class="hint">👆 点击左侧按钮<br>查看对应团期明细</div>';
-        document.getElementById('trafficCompactRight').innerHTML = '<div class="hint">' + ico('chart',20) + '<br>点击按钮查看对比图表</div>';
+        document.getElementById('trafficCompactRight').innerHTML = '<div class="hint">📊<br>点击按钮查看对比图表</div>';
       }
     });
     document.getElementById('traffic-below').addEventListener('click', function(){
@@ -5683,7 +4772,7 @@ async function rollbackToVersion(logId) {
       }
       else {
         document.getElementById('trafficCompactMid').innerHTML = '<div class="hint">👆 点击左侧按钮<br>查看对应团期明细</div>';
-        document.getElementById('trafficCompactRight').innerHTML = '<div class="hint">' + ico('chart',20) + '<br>点击按钮查看对比图表</div>';
+        document.getElementById('trafficCompactRight').innerHTML = '<div class="hint">📊<br>点击按钮查看对比图表</div>';
       }
     });
 
@@ -5733,7 +4822,7 @@ async function rollbackToVersion(logId) {
     var fs = document.getElementById('filterStatus');
     if (fs) fs.textContent = getPaneRange().start + '~' + getPaneRange().end;
     console.log('[版本] v20260528b 已加载，修复data.json编码乱码问题');
-    addImportLog('系统启动（V3 Supabase版），已加载 ' + projects.length + ' 个团期数据，来源: Supabase');
+    addImportLog('系统启动（V3 Supabase版），已加载 ' + projects.length + ' 个团期数据，来源: ☁️ Supabase');
     if (window._githubError) {
       addImportLog('️ Supabase异常: ' + window._githubError + ' | 使用本地数据兜底');
     }
