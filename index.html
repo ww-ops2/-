@@ -708,7 +708,7 @@
       </div>
       <button class="btn btn-outline" id="refreshBtn" title="重新拉取最新数据">🔄 刷新</button>
       <span id="dataSourceBadge" style="display:inline-block;font-size:11px;padding:3px 8px;border-radius:10px;background:rgba(34,197,94,0.15);color:#22c55e;margin-left:4px;" title="当前数据源">☁️ Supabase</span>
-      <button class="btn" id="unitBtn">单位：元</button>
+      <button class="btn" id="unitBtn">单位：万元</button>
       <button class="btn btn-accent" id="exportBtn">📤 导出Excel</button>
       <button class="btn btn-outline" id="adminBtn" style="display:none;font-size:10px;padding:4px 8px;" onclick="window.location.href='admin.html'">⚙️ 管理</button>
     </div>
@@ -1930,7 +1930,7 @@ async function rollbackToVersion(logId) {
   }
 
   // ==================== 筛选函数 ====================
-  let unit = 'yuan';
+  let unit = 'wan';
   let excludeKeWei = localStorage.getItem('tour_excludeKeWei') === 'true';
   let marginThreshold = parseFloat(localStorage.getItem('tour_marginThreshold') || '30');
   let activeTrafficFilter = null; // 'above' | 'below' | null
